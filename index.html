@@ -14,17 +14,15 @@
 </head>
 <body>
     <nav>
-        <div style="color: #af9453;">Main Events</div>
+        <div style="color: #af9453; margin-left: 4em;">Main Events</div>
         <div>
-            <a href="#" style="color: #af9453;">Home</a>
-            <a href="#">Services</a>
-            <a href="#">About</a>
-            <a href="#">Gallery</a>
-            <a href="#">Contact</a>
+            <a href="page2.html#home" style="color: #af9453;">Home</a>
+            <a href="page2.html#services">Services</a>
+            <a href="page2.html#about">About</a>
+            <a href="page2.html#gallery">Gallery</a>
+            <a href="page2.html#contact">Contact</a>
         </div>
     </nav>
-
-
     <section class="background-image child-1">
         <div class="scrollable-content">
             <main>
@@ -36,12 +34,12 @@
     </section>
     <section>
         <div class="scrollable-content">
-            <main>
+            <main style="padding: 0;">
                 <div class="services-section">
                     <div class="services-column">
                         <h2>SERVICES</h2>
                         <img src="images/flower_copy.png" alt="Flower Image">
-                        <p>Turn the dream into a <br><br>reality</p><br><br>
+                        <p style="margin-bottom: 5em;">Turn the dream into a <br><br>reality</p><br><br>
                         <a href="#" class="button">DISCOVER</a>
                     </div>
                     <div class="image-column">
@@ -51,8 +49,12 @@
                 <div class="testimonial-section">
                     <div class="testimonial-content">
                         <div class="quote">"</div>
-                        <p>I'm a testimonial<br>Jimmy and Janice</p>
-                        <div class="arrows">&lt; &gt;</div>
+                        <p>I'm a testimonial. Click to edit</p>
+                        <p>this text and say something nice</p>
+                        <p>about you and your services.</p>
+                        
+                        <div class="empty-space"></div>
+                        <p style="color: #a18a4f; font-size: medium;">Jimmy and Janice</p>
                     </div>
                 </div>
             </main>
@@ -61,16 +63,19 @@
             </main>
         </div>
     </section>
-    <section class="background-image child-2">
-        <div class="scrollable-content">
+    <section class="background-image child-2" style="margin: 0 4em;">
+        <div class="scrollable-content" style="margin-right: 2em;">
             <main>
-                <div class="gallery-section">
-                    <div class="gallery-column">
+                <div class="services-section" style="width:300px; float:right; margin:1em 0;">
+                    <!-- <div style="flex: 3; background-color: transparent !important;"></div> -->
+                    <div class="services-column" style="margin-right:0;">
                                 <h2>GALLERY</h2>
+                                <img src="images/flower_copy.png" alt="Flower Image">
                                 <!-- <img src="images/flower.png" alt="Flower Image"> -->
-                                <p>Unforgettable Memories</p>
-                                <a href="#" class="discover-button">DISCOVER</a>
+                                <p style="margin-bottom: 5em;">Unforgettable Memories</p>
+                                <a href="#" class="button">DISCOVER</a>
                     </div>
+                    
                 </div>
             </main>
         </div>

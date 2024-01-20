@@ -3,6 +3,9 @@
             font-family: Times, serif;
             padding: 0;
             background-color: #ffffff;
+            width: 1239px;
+            /* height: 1330px; */
+            align-content: center;
         }
 
         nav {
@@ -15,6 +18,7 @@
             position: sticky;
             top: 0;
             z-index: 100;
+            margin: 0;
         }
 
         nav a {
@@ -24,19 +28,23 @@
             margin: 0 0.5em;
         }
 
+        nav a:hover{
+            color: #a18a4f;
+        }
+
         main {
             padding: 2em;
         }
 
         
         footer {
-            background-color: #a98f55;
+            background-color: #a18a4f;
             color: #fff;
             text-align: center;
-            padding: 5em;
+            padding: 4em;
             position: relative;
             z-index: 2;
-            margin: 5em;
+            margin: 4em;
         }
 
         /* Footer Columns */
@@ -79,7 +87,7 @@
         .scrollable-content {
             position: relative;
             z-index: 1;
-            margin: 5em;
+            margin: 0 4em;
         }
 
         .background-image {
@@ -105,6 +113,7 @@
             padding:1.5em;
             letter-spacing: 0.3em;
             line-height: 1.5em;
+            margin-top: 1.3em;
         }
 
         .services-section {
@@ -112,7 +121,7 @@
             background-color: #fff;
             justify-content: space-between;
             align-items: center;
-            margin-top: 20px;
+            margin: 4em 0;
             align-items: stretch;
             height: 500px;
         }
@@ -193,41 +202,79 @@
         }
 
         .testimonial-section {
-            background-color: #fff;
-            padding: 20px;
+            background-color: #fff; /* Set the background color as needed */
             text-align: center;
-        }
-
-        .testimonial-content {
             position: relative;
-            margin-bottom: 20px;
+            margin-bottom: 4em;
         }
-
+        
+        .testimonial-content {
+            display: inline-block;
+            position: relative;
+            padding: 20px;
+        }
+        
         .quote {
             font-size: 36px;
             font-weight: bold;
-            position: absolute;
-            top: 0;
-            left: 0;
+            margin-right: 10px;
+            font-family: 'Times New Roman';
+        }
+        
+        .testimonial-content p {
+            margin: 10px 0;
+            font-size: 28px;
+            font-family: math;
+            letter-spacing: 0.15em;
+        }
+        
+        .empty-space {
+            /* height: 80px; Adjust the height of the empty space as needed */
+            margin: 4em 0;
+
         }
 
+        
         .arrows {
             font-size: 24px;
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            right: 0;
         }
+        
+        /* .arrows::before,
+        .arrows::after {
+            content: '\2039'; /* Unicode for left-pointing single angle quotation mark */
+            /* display: inline-block;
+        }
+        
+        .arrows::after {
+            content: '\203A'; /* Unicode for right-pointing single angle quotation mark */
+            /* margin-left: 20px; Adjust the margin as needed */
+        /* } */ 
+        
+        
+        
 
         .gallery-section {
             /* background-image: url('images/image2.png'); Replace with your second background image path */
-            background-size: cover;
-            background-position: center;
-            height: 400px; /* Set the height of the background image section */
-            position: relative;
+            display: flex;
+            background-color: #fff;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            align-items: stretch;
+            height: 500px;
         }
 
         .gallery-column {
-            color: #fff;
-            text-align: center;
+            background-color: #a18a4f;
+            margin-right: 40px;
+            flex: 1.5; /* Adjust the flex value to make it less wide */
+            margin-left: 50px; /* Adjust the margin as needed for space between columns */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #a18a4f;
         }
