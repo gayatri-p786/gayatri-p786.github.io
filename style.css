@@ -41,7 +41,7 @@
             background-color: #a18a4f;
             color: #fff;
             text-align: center;
-            padding: 4em;
+            padding: 4em 6em;
             position: relative;
             z-index: 2;
             margin: 4em;
@@ -55,15 +55,18 @@
         }
 
         .column {
-            width: 20%; /* Adjust the width as needed */
+            /* width: 20%; Adjust the width as needed */
             text-align: left;
+            font-size: 16px;
             padding: 0 1em;
+            align-items: center;
         }
 
         .column:nth-child(1),
         .column:nth-child(2) {
             border-right: 2px solid #fff;
             height: 80px;
+            vertical-align: top;
         }
 
         /* Fourth column (button) */
@@ -197,8 +200,7 @@
         .services-column img,
         .gallery-column img {
             width: 100%;
-            
-            margin-bottom: 10px;
+            margin: 1em auto;
         }
 
         .testimonial-section {
