@@ -1,20 +1,101 @@
-/**
- * Copyright 2021 Google LLC
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+/* style.css */
 
- body {
-    font-family: "helvetica", sans-serif;
-    text-align: center;
-  }
+body {
+  font-family: 'Arial', serif;
+  margin: 0;
+  padding: 0;
+  background-color: white;
+  
+}
+
+header {
+  text-align: center;
+  padding: 20px;
+  /* font-weight: lighter; */
+  /* background-color: #333; Add background color for header */
+  color: black; /* Text color for header */
+}
+.backg{
+  background-image: url('images/back.svg');
+  background-size: cover;
+  background-position: center;
+  height: 350px;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+form {
+  display: flex;
+  align-items: center;
+  width: 70%; 
+}
+#stockSearchForm{
+  border: 0.1px solid #ddd; /*White border*/
+  border-radius: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Box shadow */
+}
+#errorSection{
+  display: flex;
+  align-items: center;
+  width: 70%;
+  border: 0.1px solid #ddd; /*White border*/
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 2px 4px white; 
+  background-color: rgb(210, 209, 209);
+  padding: 1em;
+}
+#stockTicker {
+  flex: 1;
+  padding: 10px;
+  font-size: 16px;
+  border: none;
+}
+
+button {
+  background-color: rgb(255, 253, 253); /* Green background color for buttons */
+  color: #fff; /* Text color for buttons */
+  border: none;
+  align-items: center;
+  width: 40px; /* Adjust the size as needed */
+  display: flex; /* Ensures that the button behaves like a flex container */
+  align-items: center; 
+  height: 40px;
+  width: 40px;
+
+  /* border: 1px solid #ddd;
+  border-radius: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  height: 40px; */
+  /* margin-left: 10px; */
+}
+#searchButton{
+  background-image: url('images/search-solid.svg');
+  background-size: 60% 60%;
+  background-position: center;
+  /* height: 20px;
+  width: 20px; */
+  border-top-left-radius: 15px;
+  border-bottom-left-radius: 15px;
+  background-repeat: no-repeat;
+}
+
+#clearButton{  
+  background-image: url('images/times-solid.svg');
+  background-size: 60% 60%;
+  background-position: center;
+  /* height: 20px;
+  width: 20px; */
+  border-top-right-radius: 15px;
+  border-bottom-right-radius: 15px;
+  background-repeat: no-repeat;
+}
+

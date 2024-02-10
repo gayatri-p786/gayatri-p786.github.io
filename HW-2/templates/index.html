@@ -1,34 +1,44 @@
-<!doctype html>
-<!--
- Copyright 2021 Google LLC
-
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
-
-      http://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
--->
-
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <title>Datastore and Firebase Auth Example</title>
-  <script src="{{ url_for('static', filename='script.js') }}"></script>
-  <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="{{ url_for('static', filename='script.js') }}" defer></script>
+    <title>Stock Search App</title>
 </head>
 <body>
+  <section class="backg">
+    <header>
+        <h1>Stock Search</h1>
+    </header>
 
-  <h1>Datastore and Firebase Auth Example</h1>
+    <main>
+        <form id="stockSearchForm">
+            
+            <button type="submit" id="searchButton" onclick="searchStock()">
+            </button>
+            <input type="text" id="stockTicker" placeholder="Enter Stock Ticker Symbol" required>
+            <button type="button" id="clearButton" onclick="clearResult()">
+            </button>
+        </form>
+        <div id="searchResult"></div>
+        <br><br>
+    </main>
+  </section>
+  <section>
+    <main>
+      <div id="errorSection" style="display: none;"></div>
+    </main>
+  </section>
+<!-- 
+        <div id="stockDetailsTabs">
+            Result area will be displayed here
+        </div>
+    </main> -->
 
-  <h2>Last 10 visits</h2>
-  {% for time in times %}
-    <p>{{ time }}</p>
-  {% endfor %}
-
+    <footer>
+        <!-- Your footer content, if any -->
+    </footer>
 </body>
 </html>
