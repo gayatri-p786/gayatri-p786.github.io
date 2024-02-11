@@ -99,3 +99,68 @@ button {
   background-repeat: no-repeat;
 }
 
+#result{
+  /* display:none; */
+  justify-content: center;
+  
+}
+
+/* CSS for centered tabs and table */
+.tabs-container {
+  display: flex;
+  /* justify-content: center; */
+  /* margin:0 65px; */
+  /* width: 3em; */
+}
+
+.out-cont{
+  /* margin: 0 65px; */
+  margin: 0 8em;
+  background-color: aliceblue;
+}
+
+.tab {
+  display: inline-block;
+  padding: 20px 15px;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px 5px 0 0;
+  background-color: #f2f2f2;
+  margin-right: -5px; /* Remove gaps between tabs */
+}
+
+.tab:hover {
+  background-color: #e6e6e6;
+}
+
+.tab.active {
+  background-color: #ccc; /* Grey background for active tab */
+}
+
+.tab-content table {
+  margin: auto;
+  border-collapse: collapse;
+}
+
+.tab-content table td {
+  padding: 10px;
+  border-top: 1px solid #ccc; /* Top border */
+  border-bottom: 1px solid #ccc;
+  /* border: 1px solid #ccc; Only row borders for table */
+}
+
+.tab-content table td:first-child {
+  font-weight: bold;
+}
+
+.company-info {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.company-info img {
+  width: 100px; /* Adjust the size of the logo */
+  height: 100px; /* Adjust the size of the logo */
+  margin-bottom: 20px;
+}
+
