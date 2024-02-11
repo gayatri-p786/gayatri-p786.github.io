@@ -29,6 +29,7 @@ function searchStock() {
       // Extract profile and quote data
         profileData = data.profile;
         quoteData = data.quote;
+        recData = data.recommendation
         // Display company data
         displayCompanyData(profileData);
     
@@ -105,7 +106,7 @@ function activateTab(tabId, contentId) {
 }
 
   // Function to display stock summary data
-  function displaySummaryData(profile, quo) {
+  function displaySummaryData(profile, quo, rec) {
     activateTab('summaryTab', 'summaryContent');
     const summaryContent = document.getElementById('summaryContent');
     summaryContent.innerHTML = `
@@ -144,7 +145,29 @@ function activateTab(tabId, contentId) {
                 <td>${quo.dp}</td>
             </tr>
         </table>
+        
       </div>
+      <div style="margin-top: 20px;"></div>
+      <div>
+          <div id="indicatorTable">
+              <div class="indicator-row">
+                <div class="indicator-cell" style="color: red;">
+                    <div style="line-height: 1;">Strong</div>
+                    <div style="line-height: 1;">Sell</div>
+                </div>
+                  <div class="indicator-cell" id="strongSell">${rec.strongSell}</div>
+                  <div class="indicator-cell" id="sell">${rec.sell}</div>
+                  <div class="indicator-cell" id="hold">${rec.hold}</div>
+                  <div class="indicator-cell" id="buy">${rec.buy}</div>
+                  <div class="indicator-cell" id="strongBuy">${rec.strongBuy}</div>
+                  <div class="indicator-cell" style="color: green;">
+                    <div style="line-height: 1;">Strong</div>
+                    <div style="line-height: 1;">Buy</div>
+                </div>
+              </div>
+          </div>   
+          <div style="margin:20px auto; text-align: center;">Recommendation Trends</div>
+        </div>
     `;
     summaryContent.style.display='block';
 }
@@ -154,7 +177,7 @@ document.getElementById('summaryTab').addEventListener('click', function() {
   if (quoteData) {
     // Display quote data (e.g., call a display function)
     // displayQuoteData(quoteData);
-    displaySummaryData(profileData, quoteData)
+    displaySummaryData(profileData, quoteData,recData)
   } else {
     // Quote data not available, fetch it again or display an error message
     console.error('Error: Quote data not available');

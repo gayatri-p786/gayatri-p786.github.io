@@ -36,9 +36,23 @@ def search_stock():
         quote_data = quote_response.json()
     except Exception as e:
         return jsonify({'error': f'Error fetching quote data from Finnhub API: {str(e)}'}), 500
+    
+    # Make a request to the Finnhub Quote API for recommendation data
+    rec_endpoint = f'https://finnhub.io/api/v1/stock/recommendation?symbol={stock_ticker}&token={finnhub_api_key}'
+    
+    try:
+        rec_response = requests.get(rec_endpoint)
+        rec_data = rec_response.json()
+        latest_data = max(rec_data, key=lambda x: x['period'])
+
+        # print("Latest Data:")
+        # print(latest_data)
+        # print(rec_data[0])
+    except Exception as e:
+        return jsonify({'error': f'Error fetching quote data from Finnhub API: {str(e)}'}), 500
 
     # Combine profile and quote data and return to the client
-    combined_data = {'profile': profile_data, 'quote': quote_data}
+    combined_data = {'profile': profile_data, 'quote': quote_data, 'recommendation':latest_data}
     return jsonify(combined_data)
 
 if __name__ == '__main__':

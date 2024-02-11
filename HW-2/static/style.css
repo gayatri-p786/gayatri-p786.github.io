@@ -151,6 +151,12 @@ button {
 
 .tab-content table td:first-child {
   font-weight: bold;
+  text-align: right;
+}
+
+.tab-content table td:last-child {
+  /* font-weight: bold; */
+  text-align: left;
 }
 
 .company-info {
@@ -164,3 +170,48 @@ button {
   margin-bottom: 20px;
 }
 
+#indicatorTable {
+  /* display: table; */
+  width: 100%;
+  /* display: inline-block; Ensure the table doesn't exceed the width of its container */
+  max-width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.indicator-row {
+  display: flex;
+}
+
+.indicator-cell {
+  display: table-cell;
+  padding: 10px 20px;
+  text-align: center;
+}
+
+#strongSell {
+  background-color: red;
+  color: white;
+  padding-top: 20px;
+}
+
+#sell {
+  background-color: #FF7F7F; /* Light red */
+  padding-top: 20px;
+}
+
+#hold {
+  background-color: #FFD700; /* Gold */
+  padding-top: 20px;
+}
+
+#buy {
+  background-color: #7FFF7F; /* Light green */
+  padding-top: 20px;
+}
+
+#strongBuy {
+  background-color: green;
+  color: white;
+  padding-top: 20px;
+}
