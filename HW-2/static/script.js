@@ -24,8 +24,13 @@ function searchStock() {
         displayErrorMessage('Error: No record has been found, please enter a valid symbol');
     } 
     else{
-      activateTab('companyTab', 'companyContent');
-      displayCompanyData(data);
+      result.style.display = 'block';
+      // displayCompanyData(data);
+      // Extract profile and quote data
+        profileData = data.profile;
+        quoteData = data.quote;
+        // Display company data
+        displayCompanyData(profileData);
     
       // console.log("in data")
       // document.getElementById('searchResult').innerHTML = JSON.stringify(data,null,2);
@@ -38,9 +43,10 @@ function searchStock() {
 
 function clearResult() {
   document.getElementById('stockTicker').value = '';
-  document.getElementById('searchResult').innerHTML = '';
+  // document.getElementById('result').innerHTML = '';
   errorSection.innerHTML = '';
   errorSection.style.display = 'none';
+  result.style.display='none';
 }
 
 
@@ -48,19 +54,25 @@ function clearResult() {
 // Function to activate tab and corresponding content
 function activateTab(tabId, contentId) {
   // Deactivate all tabs and hide content
+  
   document.querySelectorAll('.tab').forEach(tab => {
       tab.classList.remove('active');
   });
   document.querySelectorAll('.tab-content').forEach(content => {
       content.classList.remove('active');
+      if (content.id != contentId) {
+        content.style.display = 'none'; // Hide the content associated with contentId
+      }
   });
   // Activate clicked tab and show corresponding content
   document.getElementById(tabId).classList.add('active');
   document.getElementById(contentId).classList.add('active');
+  // contentId.style.display = 'block';
 }
 
   // Function to display company data
   function displayCompanyData(data) {
+    activateTab('companyTab', 'companyContent');
     const companyContent = document.getElementById('companyContent');
     companyContent.innerHTML = `
     <div class="company-info">
@@ -89,6 +101,75 @@ function activateTab(tabId, contentId) {
         </table>
       </div>
     `;
+    companyContent.style.display='block';
 }
 
+  // Function to display stock summary data
+  function displaySummaryData(profile, quo) {
+    activateTab('summaryTab', 'summaryContent');
+    const summaryContent = document.getElementById('summaryContent');
+    summaryContent.innerHTML = `
+    <div class="company-info">
+        <table>
+            <tr>
+                <td>Stock Ticker Symbol</td>
+                <td>${profile.ticker}</td>
+            </tr>
+            <tr>
+                <td>Trading Day</td>
+                <td>${quo.t}</td>
+            </tr>
+            <tr>
+                <td>Previous Closing Price</td>
+                <td>${quo.pc}</td>
+            </tr>
+            <tr>
+                <td>Opening Price</td>
+                <td>${quo.o}</td>
+            </tr>
+            <tr>
+                <td>High Price</td>
+                <td>${quo.h}</td>
+            </tr>
+            <tr>
+                <td>Low Price</td>
+                <td>${quo.l}</td>
+            </tr>
+            <tr>
+                <td>Change</td>
+                <td>${quo.d}</td>
+            </tr>
+            <tr>
+                <td>Change Percent</td>
+                <td>${quo.dp}</td>
+            </tr>
+        </table>
+      </div>
+    `;
+    summaryContent.style.display='block';
+}
 
+document.getElementById('summaryTab').addEventListener('click', function() {
+  // Check if quoteData is available
+  if (quoteData) {
+    // Display quote data (e.g., call a display function)
+    // displayQuoteData(quoteData);
+    displaySummaryData(profileData, quoteData)
+  } else {
+    // Quote data not available, fetch it again or display an error message
+    console.error('Error: Quote data not available');
+  }
+});
+
+
+document.getElementById('companyTab').addEventListener('click', function() {
+  // Check if quoteData is available
+  if (profileData) {
+    // Display quote data (e.g., call a display function)
+    // displayQuoteData(quoteData);
+    displayCompanyData(profileData)
+  } else {
+    // Quote data not available, fetch it again or display an error message
+    console.error('Error: Quote data not available');
+  }
+});

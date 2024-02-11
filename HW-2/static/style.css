@@ -100,7 +100,7 @@ button {
 }
 
 #result{
-  /* display:none; */
+  display:none;
   justify-content: center;
   
 }
