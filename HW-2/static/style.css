@@ -170,6 +170,11 @@ button {
   margin-bottom: 20px;
 }
 
+.company-info td img {
+  width: 20px; /* Adjust the size of the arrow */
+  height: 20px; /* Adjust the size of the arrow */
+}
+
 #indicatorTable {
   /* display: table; */
   width: 100%;

@@ -1,9 +1,9 @@
 // main.js
 
  // Add an event listener to the form
- document.getElementById('stockSearchForm').addEventListener('submit', function(event) {
+ document.getElementById('searchButton').addEventListener('click', function(event) {
   event.preventDefault(); // Prevent the default form submission
-  searchStock(); // Call your searchStock function
+  searchStock(); // Call the searchStock function
 });
 
 
@@ -17,8 +17,15 @@ function displayErrorMessage(message) {
 function searchStock() {
   var stockTicker = document.getElementById('stockTicker').value;
   fetch(`/search_stock?stock_ticker=${stockTicker}`,{method:'GET'})
-    .then(response => response.json())
-    .then(data => {
+    .then(response => {
+        if (!response.ok) {
+        // If response status is not OK (200), throw an error
+        displayErrorMessage('Error: No record has been found, please enter a valid symbol');
+        return 
+    }
+    // Parse JSON response
+    return response.json();
+  }).then(data => {
       if (Object.keys(data).length === 0) {
         // Empty JSON object, display error message
         displayErrorMessage('Error: No record has been found, please enter a valid symbol');
@@ -138,11 +145,11 @@ function activateTab(tabId, contentId) {
             </tr>
             <tr>
                 <td>Change</td>
-                <td>${quo.d}</td>
+                <td id="changeCell"></td>
             </tr>
             <tr>
                 <td>Change Percent</td>
-                <td>${quo.dp}</td>
+                <td id="changePercentCell"></td>
             </tr>
         </table>
         
@@ -169,6 +176,34 @@ function activateTab(tabId, contentId) {
           <div style="margin:20px auto; text-align: center;">Recommendation Trends</div>
         </div>
     `;
+          // Get references to the change and change percent cells
+      const changeCell = document.getElementById('changeCell');
+      const changePercentCell = document.getElementById('changePercentCell');
+
+      // Check if change is positive or negative
+      if (parseFloat(quo.d) > 0) {
+          // Change is positive, display positive arrow image
+          changeCell.innerHTML = `<span>${quo.d}<img src="/static/images/GreenArrowUp.png" alt="Positive Arrow" style="vertical-align: middle;"></span>`;
+      } else if (parseFloat(quo.d) < 0) {
+          // Change is negative, display negative arrow image
+          changeCell.innerHTML = `<span>${quo.d}<img src="/static/images/RedArrowDown.png" alt="Negative Arrow" style="vertical-align: middle;"></span>`;
+      } else {
+          // Change is zero, display text only
+          changeCell.textContent = quo.d;
+      }
+
+      // Check if change percent is positive or negative
+      if (parseFloat(quo.dp) > 0) {
+          // Change percent is positive, display positive arrow image
+          changePercentCell.innerHTML = `<span>${quo.dp}<img src="/static/images/GreenArrowUp.png" alt="Positive Arrow" style="vertical-align: middle;" ></span>`;
+      } else if (parseFloat(quo.dp) < 0) {
+          // Change percent is negative, display negative arrow image
+          changePercentCell.innerHTML = `<span>${quo.dp}<img src="/static/images/RedArrowDown.png" alt="Negative Arrow" style="vertical-align: middle;"></span>`;
+      } else {
+          // Change percent is zero, display text only
+          changePercentCell.textContent = quo.dp;
+      }
+
     summaryContent.style.display='block';
 }
 
