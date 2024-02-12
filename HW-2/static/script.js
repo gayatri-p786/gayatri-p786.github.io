@@ -183,10 +183,10 @@ function activateTab(tabId, contentId) {
       // Check if change is positive or negative
       if (parseFloat(quo.d) > 0) {
           // Change is positive, display positive arrow image
-          changeCell.innerHTML = `<span>${quo.d}<img src="/static/images/GreenArrowUp.png" alt="Positive Arrow" style="vertical-align: middle;"></span>`;
+          changeCell.innerHTML = `<span>${quo.d}<img src="/images/GreenArrowUp.png" alt="Positive Arrow" style="vertical-align: middle;"></span>`;
       } else if (parseFloat(quo.d) < 0) {
           // Change is negative, display negative arrow image
-          changeCell.innerHTML = `<span>${quo.d}<img src="/static/images/RedArrowDown.png" alt="Negative Arrow" style="vertical-align: middle;"></span>`;
+          changeCell.innerHTML = `<span>${quo.d}<img src="/images/RedArrowDown.png" alt="Negative Arrow" style="vertical-align: middle;"></span>`;
       } else {
           // Change is zero, display text only
           changeCell.textContent = quo.d;
@@ -195,10 +195,10 @@ function activateTab(tabId, contentId) {
       // Check if change percent is positive or negative
       if (parseFloat(quo.dp) > 0) {
           // Change percent is positive, display positive arrow image
-          changePercentCell.innerHTML = `<span>${quo.dp}<img src="/static/images/GreenArrowUp.png" alt="Positive Arrow" style="vertical-align: middle;" ></span>`;
+          changePercentCell.innerHTML = `<span>${quo.dp}<img src="/images/GreenArrowUp.png" alt="Positive Arrow" style="vertical-align: middle;" ></span>`;
       } else if (parseFloat(quo.dp) < 0) {
           // Change percent is negative, display negative arrow image
-          changePercentCell.innerHTML = `<span>${quo.dp}<img src="/static/images/RedArrowDown.png" alt="Negative Arrow" style="vertical-align: middle;"></span>`;
+          changePercentCell.innerHTML = `<span>${quo.dp}<img src="/images/RedArrowDown.png" alt="Negative Arrow" style="vertical-align: middle;"></span>`;
       } else {
           // Change percent is zero, display text only
           changePercentCell.textContent = quo.dp;
