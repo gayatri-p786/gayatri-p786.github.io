@@ -36,7 +36,8 @@ function searchStock() {
       // Extract profile and quote data
         profileData = data.profile;
         quoteData = data.quote;
-        recData = data.recommendation
+        recData = data.recommendation;
+        newsData = data.news;
         // Display company data
         displayCompanyData(profileData);
     
@@ -158,7 +159,7 @@ function activateTab(tabId, contentId) {
       <div>
           <div id="indicatorTable">
               <div class="indicator-row">
-                <div class="indicator-cell" style="color: red;">
+                <div class="indicator-cell" style="color: #ed2938;">
                     <div style="line-height: 1;">Strong</div>
                     <div style="line-height: 1;">Sell</div>
                 </div>
@@ -167,7 +168,7 @@ function activateTab(tabId, contentId) {
                   <div class="indicator-cell" id="hold">${rec.hold}</div>
                   <div class="indicator-cell" id="buy">${rec.buy}</div>
                   <div class="indicator-cell" id="strongBuy">${rec.strongBuy}</div>
-                  <div class="indicator-cell" style="color: green;">
+                  <div class="indicator-cell" style="color: #01ff7f;">
                     <div style="line-height: 1;">Strong</div>
                     <div style="line-height: 1;">Buy</div>
                 </div>
@@ -207,6 +208,51 @@ function activateTab(tabId, contentId) {
     summaryContent.style.display='block';
 }
 
+function displayLatestNews(newsData) {
+  activateTab('newsTab', 'newsContent');
+  const newsContainer = document.getElementById('newsContent');
+  newsContainer.innerHTML = ''; // Clear existing content
+
+  newsData.forEach(article => {
+    console.log(article.datetime)
+    const articleDate = new Date(article.datetime * 1000);
+
+        // Format the date using toLocaleDateString
+        const formattedDate = articleDate.toLocaleDateString('en-US', {
+          month: 'long',  
+          day: 'numeric',
+          year: 'numeric'
+        });
+      // Create card container
+      const cardHtml = `
+            <div class="news-card">
+                <div class="news-image-container">
+                    <img src="${article.image}" alt="News Image" class="news-image">
+                </div>
+                <div class="news-content">
+                    <h3>${article.headline}</h3>
+                    <p>${formattedDate}</p>
+                    <a href="${article.url}" target="_blank">See Original Post</a>
+                </div>
+            </div>
+        `;
+        newsContainer.innerHTML += cardHtml;
+  });
+  newsContent.style.display='block';
+}
+
+document.getElementById('newsTab').addEventListener('click', function() {
+  // Check if quoteData is available
+  if (newsData) {
+    // Display quote data (e.g., call a display function)
+    // displayQuoteData(quoteData);
+    displayLatestNews(newsData)
+  } else {
+    // Quote data not available, fetch it again or display an error message
+    console.error('Error: News data not available');
+  }
+});
+
 document.getElementById('summaryTab').addEventListener('click', function() {
   // Check if quoteData is available
   if (quoteData) {
@@ -228,6 +274,6 @@ document.getElementById('companyTab').addEventListener('click', function() {
     displayCompanyData(profileData)
   } else {
     // Quote data not available, fetch it again or display an error message
-    console.error('Error: Quote data not available');
+    console.error('Error: Profile data not available');
   }
 });
