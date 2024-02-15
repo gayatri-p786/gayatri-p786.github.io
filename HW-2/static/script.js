@@ -242,63 +242,107 @@ function displayLatestNews(newsData) {
   newsContent.style.display='block';
 }
 
-async function displayChart (chartData) {
+async function displayChart (chartData,ticker) {
   activateTab('chartsTab', 'chartsContent');
   const chartsContainer = document.getElementById('chartsContent');
   chartsContainer.innerHTML = ''; // Clear existing content
 
   const priceData = chartData.price;
-            const volumeData = chartData.volume;
+  const volumeData = chartData.volume;
 
-            // Create the chart
-            Highcharts.stockChart('chartsContent', {
-                rangeSelector: {
-                    selected: 1
-                },
-                title: {
-                    text: 'Stock Price and Volume'
-                },
-                yAxis: [{
-                    // Primary yAxis for price
-                    labels: {
-                        align: 'right',
-                        x: -3
-                    },
-                    title: {
-                        text: 'Stock Price'
-                    },
-                    opposite: false // Align on left side
-                }, {
-                    // Secondary yAxis for volume
-                    title: {
-                        text: 'Volume'
-                    },
-                    labels: {
-                        align: 'right',
-                        x: -3
-                    },
-                    opposite: true // Align on right side
-                }],
-                series: [{
-                    name: 'Stock Price',
-                    data: priceData,
-                    type: 'area',
-                    yAxis: 0, // Link to the first yAxis
-                    color: 'blue', // Color for the price series
-                    tooltip: {
-                        valueDecimals: 2 // Show two decimals in tooltip
-                    }
-                }, {
-                    name: 'Volume',
-                    data: volumeData,
-                    type: 'column',
-                    yAxis: 1, // Link to the second yAxis
-                    color: 'grey', // Color for the volume bars
-                    tooltip: {
-                        valueDecimals: 0 // Show integer values in tooltip
-                    }
-                }]
-            });
+  // Get today's date in YYYY-MM-DD format
+  const todayDate = new Date().toISOString().split('T')[0];
+
+  console.log(priceData,volumeData);
+  console.log(todayDate);
+
+  // Define custom colors
+  const areaColor = 'rgba(124, 181, 236, 0.5)'; // Light blue
+  const lineColor = 'rgb(124, 181, 236)';
+
+  Highcharts.stockChart('chartsContent', {
+    rangeSelector: {
+        selected: 1
+    },
+    title: {
+        text: `Stock Price ${ticker} (${todayDate})`
+    },
+    subtitle: {
+        text: '<a href="https://polygon.io/" target="_blank">Source: Polygon.io</a>'
+    },
+    xAxis: {
+        events: {
+            setExtremes: function(e) {
+                // Dynamically adjust pointWidth based on zoom level
+                const zoomLevel = e.max - e.min;
+                const pointWidth = zoomLevel > 90 * 24 * 3600 * 1000 ? 1 : // 3 months or more
+                                  zoomLevel > 30 * 24 * 3600 * 1000 ? 0.5 : // 1 month or more
+                                  zoomLevel > 7 * 24 * 3600 * 1000 ? 0.25 : // 7 days or more
+                                  zoomLevel > 2 * 24 * 3600 * 1000 ? 0.1 : // 2 days or more
+                                  0.05; // Less than 2 days
+                // Apply pointWidth to volume series
+                this.series[1].update({
+                    pointWidth: pointWidth
+                }, false);
+            }
+        }
+    },
+    yAxis: [{
+        // Primary yAxis for price
+        title: {
+            text: 'Stock Price'
+        },
+        labels: {
+            align: 'right',
+            x: -3
+        },
+        opposite: false // Align on left side
+    }, {
+        // Secondary yAxis for volume
+        title: {
+            text: 'Volume'
+        },
+        labels: {
+            align: 'right',
+            x: -3
+        },
+        opposite: true // Align on right side
+    }],
+    
+    series: [{
+        name: 'Stock Price',
+        data: priceData,
+        type: 'area',
+        yAxis: 0, // Link to the first yAxis
+        color: 'blue', // Color for the price series
+        tooltip: {
+            valueDecimals: 2 // Show two decimals in tooltip
+        }
+    }, {
+        name: 'Volume',
+        data: volumeData,
+        type: 'column',
+        yAxis: 1, // Link to the second yAxis
+        color: 'grey', // Color for the volume bars
+        tooltip: {
+            valueDecimals: 0 // Show integer values in tooltip
+        },
+        pointWidth: 0.25 // Initial pointWidth for volume bars
+    }],
+    fillColor: {
+      linearGradient: {
+          x1: 0,
+          y1: 0,
+          x2: 0,
+          y2: 1
+      },
+      stops: [
+          [0, Highcharts.color(areaColor)],
+          [1, Highcharts.color(areaColor).setOpacity(0).get('rgba')]
+      ]
+  },
+  color: lineColor
+});
 
   chartsContent.style.display='block';
 }
@@ -308,7 +352,7 @@ document.getElementById('chartsTab').addEventListener('click', function() {
   if (chartData) {
     // Display quote data (e.g., call a display function)
     // displayQuoteData(quoteData);
-    displayChart(chartData)
+    displayChart(chartData,document.getElementById('stockTicker').value)
     
   } else {
     // Quote data not available, fetch it again or display an error message
