@@ -39,10 +39,11 @@ def search_stock():
 
     # Make a request to the Finnhub News API for recommendation data
     latest_news=get_news_data(stock_ticker)
-
     # Combine profile and quote data and return to the client
+
+    charts=get_chart_data(stock_ticker)
     # print(profile_data,quote_data,latest_news)
-    combined_data = {'profile': profile_data, 'quote': quote_data, 'recommendation':latest_data, 'news':latest_news}
+    combined_data = {'profile': profile_data, 'quote': quote_data, 'recommendation':latest_data, 'news':latest_news, 'chart':charts}
     return jsonify(combined_data)
 
 def get_quote_data(stock_ticker):
@@ -99,7 +100,47 @@ def get_news_data(stock_ticker):
         
     except Exception as e:
         return jsonify({'error': f'Error fetching quote data from Finnhub API: {str(e)}'}), 500
-    
+
+# @app.route('/get_chart', methods=['GET'])
+def get_chart_data(stock_ticker):
+    polygon_api_key = 'g6094_mtCEzO0IDnhM81rnPP9Zio8AYV'
+    current_date = datetime.now()
+
+    # Calculate the date 30 days prior to the current date
+    prior_date = current_date - relativedelta(months=6, days=1)
+
+    # Format dates to YYYY-MM-DD format
+    current_date_str = current_date.strftime("%Y-%m-%d")
+    prior_date_str = prior_date.strftime("%Y-%m-%d")
+
+    chart_endpoint = f'https://api.polygon.io/v2/aggs/ticker/{stock_ticker}/range/1/day/{prior_date_str}/{current_date_str}?adjusted=true&sort=asc&limit=120&apiKey={polygon_api_key}'
+    # print(chart_endpoint)
+    try:
+        chart_response = requests.get(chart_endpoint)
+        chart_data = chart_response.json()
+        # Initialize arrays for data points
+        price_points = []
+        volume_points=[]
+
+        # Iterate through results array
+        for result in chart_data["results"]:
+            # Get date (timestamp) and close price
+            date = result["t"]  # Convert timestamp to seconds
+            close_price = result["c"]
+            vol= result["v"]
+            # Create data point
+            price_point = [date, close_price]
+            volume_point = [date, vol]
+            # Append data point to data points array
+            price_points.append(price_point)
+            volume_points.append(volume_point)
+        # print(chart_data)
+        
+        charts_data={"price":price_points,"volume":volume_points}
+        return charts_data
+    except Exception as e:
+        return jsonify({'error': f'Error fetching quote data from Finnhub API: {str(e)}'}), 500
+
 
 if __name__ == '__main__':
     # app.run(debug=True)

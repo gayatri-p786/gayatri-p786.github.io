@@ -38,6 +38,7 @@ function searchStock() {
         quoteData = data.quote;
         recData = data.recommendation;
         newsData = data.news;
+        chartData = data.chart;
         // Display company data
         displayCompanyData(profileData);
     
@@ -241,6 +242,80 @@ function displayLatestNews(newsData) {
   newsContent.style.display='block';
 }
 
+async function displayChart (chartData) {
+  activateTab('chartsTab', 'chartsContent');
+  const chartsContainer = document.getElementById('chartsContent');
+  chartsContainer.innerHTML = ''; // Clear existing content
+
+  const priceData = chartData.price;
+            const volumeData = chartData.volume;
+
+            // Create the chart
+            Highcharts.stockChart('chartsContent', {
+                rangeSelector: {
+                    selected: 1
+                },
+                title: {
+                    text: 'Stock Price and Volume'
+                },
+                yAxis: [{
+                    // Primary yAxis for price
+                    labels: {
+                        align: 'right',
+                        x: -3
+                    },
+                    title: {
+                        text: 'Stock Price'
+                    },
+                    opposite: false // Align on left side
+                }, {
+                    // Secondary yAxis for volume
+                    title: {
+                        text: 'Volume'
+                    },
+                    labels: {
+                        align: 'right',
+                        x: -3
+                    },
+                    opposite: true // Align on right side
+                }],
+                series: [{
+                    name: 'Stock Price',
+                    data: priceData,
+                    type: 'area',
+                    yAxis: 0, // Link to the first yAxis
+                    color: 'blue', // Color for the price series
+                    tooltip: {
+                        valueDecimals: 2 // Show two decimals in tooltip
+                    }
+                }, {
+                    name: 'Volume',
+                    data: volumeData,
+                    type: 'column',
+                    yAxis: 1, // Link to the second yAxis
+                    color: 'grey', // Color for the volume bars
+                    tooltip: {
+                        valueDecimals: 0 // Show integer values in tooltip
+                    }
+                }]
+            });
+
+  chartsContent.style.display='block';
+}
+
+document.getElementById('chartsTab').addEventListener('click', function() {
+  // Check if quoteData is available
+  if (chartData) {
+    // Display quote data (e.g., call a display function)
+    // displayQuoteData(quoteData);
+    displayChart(chartData)
+    
+  } else {
+    // Quote data not available, fetch it again or display an error message
+    console.error('Error: Chart data not available');
+  }
+});
+
 document.getElementById('newsTab').addEventListener('click', function() {
   // Check if quoteData is available
   if (newsData) {
@@ -277,3 +352,63 @@ document.getElementById('companyTab').addEventListener('click', function() {
     console.error('Error: Profile data not available');
   }
 });
+
+function createChart(series) {
+
+  Highcharts.stockChart('container', {
+
+      rangeSelector: {
+          selected: 4
+      },
+
+      yAxis: {
+          labels: {
+              format: '{#if (gt value 0)}+{/if}{value}%'
+          },
+          plotLines: [{
+              value: 0,
+              width: 2,
+              color: 'silver'
+          }]
+      },
+
+      plotOptions: {
+          series: {
+              compare: 'percent',
+              showInNavigator: true
+          }
+      },
+
+      tooltip: {
+          pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.change}%)<br/>',
+          valueDecimals: 2,
+          split: true
+      },
+
+      series
+  });
+
+}
+
+// (async () => {
+
+//   const names = ['MSFT', 'AAPL', 'GOOG'];
+
+//   /**
+//    * Create the chart when all data is loaded
+//    * @return {undefined}
+//    */
+
+
+//   const promises = names.map(name => new Promise(resolve => {
+//       (async () => {
+//           const data = await fetch(`/get_chart?stock_ticker=${stockTicker}`,{method:'GET'})
+//               .then(response => response.json());
+//           resolve({ name, data });
+//       })();
+//   }));
+
+//   const series = await Promise.all(promises);
+//   createChart(series);
+
+// })();
