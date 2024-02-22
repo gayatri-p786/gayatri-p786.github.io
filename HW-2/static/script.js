@@ -3,7 +3,14 @@
  // Add an event listener to the form
  document.getElementById('searchButton').addEventListener('click', function(event) {
   event.preventDefault(); // Prevent the default form submission
-  searchStock(); // Call the searchStock function
+  // searchStock(); // Call the searchStock function
+  if (document.getElementById('stockTicker').checkValidity()) {
+
+    searchStock(); // Call the searchStock function if input is valid
+} else {
+    // Input is invalid, show required input message
+    document.getElementById('stockTicker').reportValidity();
+}
 });
 
 
@@ -16,7 +23,7 @@ function displayErrorMessage(message) {
 
 function searchStock() {
   var stockTicker = document.getElementById('stockTicker').value;
-  fetch(`/search_stock?stock_ticker=${stockTicker}`,{method:'GET'})
+  fetch(`/search_stock?stock_ticker=${stockTicker.toUpperCase()}`,{method:'GET'})
     .then(response => {
         if (!response.ok) {
         // If response status is not OK (200), throw an error
@@ -28,9 +35,12 @@ function searchStock() {
   }).then(data => {
       if (Object.keys(data).length === 0) {
         // Empty JSON object, display error message
+        // clearResult();
         displayErrorMessage('Error: No record has been found, please enter a valid symbol');
+        document.getElementById('stockTicker').value = stockTicker;
     } 
     else{
+      clearResult();
       result.style.display = 'block';
       // displayCompanyData(data);
       // Extract profile and quote data
@@ -40,7 +50,10 @@ function searchStock() {
         newsData = data.news;
         chartData = data.chart;
         // Display company data
+        // clearResult();
         displayCompanyData(profileData);
+        // Update search bar with ticker symbol
+        document.getElementById('stockTicker').value = stockTicker;
     
       // console.log("in data")
       // document.getElementById('searchResult').innerHTML = JSON.stringify(data,null,2);
@@ -256,19 +269,59 @@ async function displayChart (chartData,ticker) {
   console.log(priceData,volumeData);
   console.log(todayDate);
 
-  // Define custom colors
-  const areaColor = 'rgba(124, 181, 236, 0.5)'; // Light blue
-  const lineColor = 'rgb(124, 181, 236)';
-
   Highcharts.stockChart('chartsContent', {
     rangeSelector: {
-        selected: 1
-    },
+      // Set default zoom level to 7 days
+      buttons: [
+          {
+              type: 'day',
+              count: 7,
+              text: '7d'
+          },
+          {
+              type: 'day',
+              count: 15,
+              text: '15d'
+          },
+          {
+              type: 'month',
+              count: 1,
+              text: '1m'
+          },
+          {
+              type: 'month',
+              count: 3,
+              text: '3m'
+          },
+          {
+            type: 'month',
+            count: 6,
+            text: '6m'
+        },
+          
+          
+      ],
+      selected: 0, 
+      inputEnabled: false
+  },
+  tooltip: {
+    // Customize the date format for the tooltip
+    dateTimeLabelFormats: {
+        millisecond: '%A, %e %b %Y', // For milliseconds
+        second: '%A, %e %b %Y',      // For seconds
+        minute: '%A, %e %b %Y',      // For minutes
+        hour: '%A, %e %b %Y',        // For hours
+        day: '%A, %e %b %Y',         // For days
+        week: '%A, %e %b %Y',        // For weeks
+        month: '%A, %e %b %Y',       // For months
+        year: '%A, %e %b %Y'         // For years
+    }
+},
     title: {
-        text: `Stock Price ${ticker} (${todayDate})`
+        text: `Stock Price ${ticker} ${todayDate}`
     },
     subtitle: {
-        text: '<a href="https://polygon.io/" target="_blank">Source: Polygon.io</a>'
+        text: '<a href="https://polygon.io/" target="_blank" style="color: blue; text-decoration: underline;">Source: Polygon.io</a>'
     },
     xAxis: {
         events: {
@@ -306,7 +359,7 @@ async function displayChart (chartData,ticker) {
             align: 'right',
             x: -3
         },
-        opposite: true // Align on right side
+        opposite: true, // Align on right side
     }],
     
     series: [{
@@ -314,34 +367,34 @@ async function displayChart (chartData,ticker) {
         data: priceData,
         type: 'area',
         yAxis: 0, // Link to the first yAxis
-        color: 'blue', // Color for the price series
+        color: 'rgba(124, 181, 236, 0.5)', // Color for the price series
         tooltip: {
             valueDecimals: 2 // Show two decimals in tooltip
-        }
+        },
+        fillColor: {
+          linearGradient: {
+            x1: 0,
+            y1: 0,
+            x2: 0,
+            y2: 1
+        },
+        stops: [
+            [0, Highcharts.getOptions().colors[0]],
+            [1, Highcharts.color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+        ]
+      },
     }, {
         name: 'Volume',
         data: volumeData,
         type: 'column',
         yAxis: 1, // Link to the second yAxis
-        color: 'grey', // Color for the volume bars
+        color: 'rgba(0, 0, 0, 0.8)', // Color for the volume bars
         tooltip: {
             valueDecimals: 0 // Show integer values in tooltip
         },
         pointWidth: 0.25 // Initial pointWidth for volume bars
     }],
-    fillColor: {
-      linearGradient: {
-          x1: 0,
-          y1: 0,
-          x2: 0,
-          y2: 1
-      },
-      stops: [
-          [0, Highcharts.color(areaColor)],
-          [1, Highcharts.color(areaColor).setOpacity(0).get('rgba')]
-      ]
-  },
-  color: lineColor
+    
 });
 
   chartsContent.style.display='block';

@@ -3,6 +3,7 @@ import requests
 from flask_cors import CORS
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
+# from projekt.wsgi import main as app
 
 
 app = Flask(__name__,static_url_path='')
@@ -107,14 +108,14 @@ def get_chart_data(stock_ticker):
     current_date = datetime.now()
 
     # Calculate the date 30 days prior to the current date
-    prior_date = current_date - relativedelta(months=6, days=1)
+    prior_date = current_date - relativedelta(months=6, days=8)
 
     # Format dates to YYYY-MM-DD format
     current_date_str = current_date.strftime("%Y-%m-%d")
     prior_date_str = prior_date.strftime("%Y-%m-%d")
 
-    chart_endpoint = f'https://api.polygon.io/v2/aggs/ticker/{stock_ticker}/range/1/day/{prior_date_str}/{current_date_str}?adjusted=true&sort=asc&limit=120&apiKey={polygon_api_key}'
-    # print(chart_endpoint)
+    chart_endpoint = f'https://api.polygon.io/v2/aggs/ticker/{stock_ticker}/range/1/day/{prior_date_str}/{current_date_str}?adjusted=true&sort=asc&apiKey={polygon_api_key}'
+    print(chart_endpoint)
     try:
         chart_response = requests.get(chart_endpoint)
         chart_data = chart_response.json()
@@ -144,4 +145,19 @@ def get_chart_data(stock_ticker):
 
 if __name__ == '__main__':
     # app.run(debug=True)
-    app.run(host="127.0.0.1", port=5000)
+    app.run(debug=False, host="127.0.0.1", port=5000)
+
+
+
+#Things to do:
+# 1. required field on empty search Done
+# 2. color gradient for charts
+# 3. zoom levels for charts
+# 4. sticker value stays when fetched data displayed
+##### DONE #########
+
+#Things to do Part 2:
+# 1. call clear display first even on search
+# 2. find stock even for lower case
+    ####### Done ######
+# 3. fix 6m zoom level
