@@ -1,0 +1,91 @@
+.navbar {
+    background-color: rgb(8, 45, 154);
+    color: #d3d3d3; /* Light grey text */
+}
+
+.navbar .nav-link {
+    color: #d3d3d3;
+}
+
+.navbar .nav-link:hover {
+    color: white;
+}
+
+.navbar .active {
+    border: 1px solid white;
+    border-radius: 5px;
+}
+
+.custom-container {
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+}
+
+.text-center {
+    text-align: center;
+  }
+
+  .heading {
+    padding: 40px;
+    font-family:'Times New Roman', Times, serif;
+    font-weight: 300; /* Adjust font weight as needed */
+  }
+
+
+  .search-bar-container {
+    width: 60%;
+    margin: 5em auto;
+    padding: 10px;
+    border: 2px solid rgb(8, 45, 154); /* Royal blue border */
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .search-bar-input {
+    flex: 1;
+    outline: none; /* Remove input field highlight on focus */
+    padding: 8px;
+    border-radius: 10px;
+  }
+  
+  .search-bar-button {
+    padding: 8px;
+    border: none !important;
+    cursor: pointer;
+    background-color: transparent !important; /* Set button background color to transparent */
+  }
+  
+  .search-bar-button:hover {
+    background-color: transparent; /* No change on hover */
+  }
+  
+  .search-bar-input:focus {
+    box-shadow: none !important; /* Remove box shadow on focus */
+  }
+
+  .search-bar-icons {
+    color: rgb(8, 45, 154); /* Royal blue color */
+  }
+  
+  
+
+  .footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: #c1c3c5; /* Grey background color */
+    padding: 10px;
+    text-align: center;
+    color: #000000; /* Black text color */
+  }
+  
+  .footer a {
+    color: #007bff; /* Link color */
+    text-decoration: none; /* Remove underline */
+  }
+  
+  .footer a:hover {
+    text-decoration: underline; /* Add underline on hover */
+  }
+  
