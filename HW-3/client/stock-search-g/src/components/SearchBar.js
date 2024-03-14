@@ -4,8 +4,9 @@ import { FaSearch, FaTimes } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import './styles.css'; // Import the CSS file
 
-const SearchBar = ({ onClear }) => {
-    const [ticker, setTicker] = useState('');
+const SearchBar = ({ onClear, initialTicker }) => {
+    // const [ticker, setTicker] = useState('');
+    const [ticker, setTicker] = useState(initialTicker || '');
     const [errorMessage, setErrorMessage] = useState('');
     const [message, setMessage] = useState('');
     const navigate = useNavigate();
