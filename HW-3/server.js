@@ -62,8 +62,8 @@ const fetchFinnhubData = async (stock_ticker) => {
             onemore.setDate(previousClose.getDate() - 1);
             const formattedPreviousClose = previousClose.toISOString().split('T')[0]; // yyyy-mm-dd format
             const formattedoneprior = onemore.toISOString().split('T')[0];
-            fromDate = formattedPreviousClose;
-            toDate = formattedoneprior; 
+            fromDate = formattedoneprior;
+            toDate = formattedPreviousClose; 
         }
         // console.log(fromDate,toDate);
 

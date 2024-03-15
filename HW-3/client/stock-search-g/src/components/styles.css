@@ -67,8 +67,6 @@
   .search-bar-icons {
     color: rgb(8, 45, 154); /* Royal blue color */
   }
-  
-  
 
   .footer {
     position: fixed;
@@ -78,8 +76,10 @@
     padding: 10px;
     text-align: center;
     color: #000000; /* Black text color */
-  }
-  
+    z-index: 999; /* Ensure footer remains below content */
+}
+
+ 
   .footer a {
     color: #007bff; /* Link color */
     text-decoration: none; /* Remove underline */
@@ -88,3 +88,35 @@
   .footer a:hover {
     text-decoration: underline; /* Add underline on hover */
   }
+
+  .content-container {
+    margin-bottom: 60px; /* Adjust as needed to create space between content and footer */
+    /* You can also use padding-bottom instead of margin-bottom */
+}
+
+@media (max-width: 767px) {
+  .flex-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+  }
+}
+
+/* styles.css */
+
+@media (max-width: 768px) {
+  /* For small devices, use default Bootstrap positioning */
+  .collapse-content {
+    position: static;
+  }
+}
+
+@media (min-width: 768px) {
+  /* For medium and large devices, align to the right */
+  .collapse-content {
+    position: absolute;
+    right: 0;
+  }
+}
+
+

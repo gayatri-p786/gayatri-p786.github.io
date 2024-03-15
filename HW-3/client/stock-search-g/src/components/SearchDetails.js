@@ -1,7 +1,7 @@
 import React, { useState }  from 'react';
 import { useLocation } from 'react-router-dom';
 import SearchBar from './SearchBar';
-import { BiCaretUp, BiCaretDown, BiStar } from 'react-icons/bi'; 
+import { BiCaretUp, BiCaretDown, BiStar, BiChevronLeft, BiChevronRight } from 'react-icons/bi'; 
 import HourlyPriceChart from './HourlyPriceChart';
 import './styles.css'; // Import the CSS file
 
@@ -44,13 +44,39 @@ function SearchDetails() {
         }
     };
 
+    const tabs = ['summary', 'topNews', 'charts', 'insights']; // Define all tabs
+    const [scrollPosition, setScrollPosition] = useState(0);
+
+    const scrollTabs = (direction) => {
+        const tabsContainer = document.querySelector('.nav-tabs');
+        const tabsList = tabsContainer.querySelectorAll('.nav-item');
+        const tabWidth = tabsList[0].clientWidth;
+        const tabsToShow = Math.floor(tabsContainer.clientWidth / tabWidth);
+        const tabsCount = tabsList.length;
+
+        let newPosition;
+        if (direction === 'right') {
+            newPosition = Math.min(scrollPosition + 1, tabsCount - tabsToShow);
+        } else {
+            newPosition = Math.max(scrollPosition - 1, 0);
+        }
+
+        setScrollPosition(newPosition);
+        tabsContainer.scrollTo({ left: newPosition * tabWidth, behavior: 'smooth' });
+    };
+
     return (
         <div className="container">
+            <div className="text-center heading">
+                <h1>Stock Search</h1>
+            </div>
+
             <SearchBar initialTicker={data.profileData.ticker} />
+
             {data && (
-            <div>
+            <div className='content-container'>
                 <div className="row mt-4 justify-content-center">
-                    <div className="col-md-4 text-center">
+                    <div className="col-4 text-center">
                         <div className="company-info">
                             <h2>
                                 {data.profileData.ticker}<BiStar /> 
@@ -60,10 +86,10 @@ function SearchDetails() {
                             <button className="btn btn-success">Buy</button>
                         </div>
                     </div>
-                    <div className="col-md-4 text-center">
+                    <div className="col-4 text-center">
                         <img src={data.profileData.logo} alt="Company Logo" className="img-fluid" />
                     </div>
-                    <div className="col-md-4 text-center">
+                    <div className="col-4 text-center">
                         <p className={data.latestPriceData.d > 0 ? 'text-success' : 'text-danger'} style={{ fontSize: '24px', fontWeight: 'bold' }}>
                             {data.latestPriceData.c}
                         </p>
@@ -82,29 +108,31 @@ function SearchDetails() {
                     </div>
                 </div>
                 <div className="mt-4">
-                        <ul className="nav nav-tabs justify-content-between">
-                            <li className="nav-item">
-                                <button className={`nav-link ${activeTab === 'summary' ? 'active-tab' : 'inactive-tab'}`} onClick={() => setActiveTab('summary')}>Summary</button>
-                            </li>
-                            <li className="nav-item">
-                                <button className={`nav-link ${activeTab === 'topNews' ? 'active-tab' : 'inactive-tab'}`} onClick={() => setActiveTab('topNews')}>Top News</button>
-                            </li>
-                            <li className="nav-item">
-                                <button className={`nav-link ${activeTab === 'charts' ? 'active-tab' : 'inactive-tab'}`} onClick={() => setActiveTab('charts')}>Charts</button>
-                            </li>
-                            <li className="nav-item">
-                                <button className={`nav-link ${activeTab === 'insights' ? 'active-tab' : 'inactive-tab'}`} onClick={() => setActiveTab('insights')}>Insights</button>
-                            </li>
-                        </ul>
+                    {/* <div className='mt-4 d-md-block'> */}
+                        <div className="mt-4 flex-container">
+                            <button className="btn btn-light d-md-none" onClick={() => scrollTabs('left')}><BiChevronLeft /></button>
+                            <div className="overflow-auto">
+                                <ul className="nav nav-tabs justify-content-between">
+                                    {tabs.map((tab, index) => (
+                                        <li key={tab} className={`nav-item ${index < scrollPosition || index >= scrollPosition + 3 ? 'd-none d-md-block' : ''}`}>
+                                            {/* Hide the tabs based on scroll position */}
+                                            <button className={`nav-link ${activeTab === tab ? 'active-tab' : 'inactive-tab'}`} onClick={() => setActiveTab(tab)}>{tab.charAt(0).toUpperCase() + tab.slice(1)}</button>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                            <button className="btn btn-light d-md-none" onClick={() => scrollTabs('right')}><BiChevronRight /></button>
+                        </div>
+                    {/* </div> */}
                         <div className="tab-content">
                             <div className={`tab-pane fade ${activeTab === 'summary' ? 'show active' : ''}`}>
                                 <div className="row">
                                     {/* First column */}
                                     <div className="col-md-6">
-                                        <p><strong>High Price:</strong> {data.latestPriceData.h}</p>
-                                        <p><strong>Low Price:</strong> {data.latestPriceData.l}</p>
-                                        <p><strong>Open Price:</strong> {data.latestPriceData.o}</p>
-                                        <p><strong>Prev Price:</strong> {data.latestPriceData.pc}</p>
+                                        <p className="text-center text-md-left"><strong>High Price:</strong> {data.latestPriceData.h}</p>
+                                        <p className="text-center text-md-left"><strong>Low Price:</strong> {data.latestPriceData.l}</p>
+                                        <p className="text-center text-md-left"><strong>Open Price:</strong> {data.latestPriceData.o}</p>
+                                        <p className="text-center text-md-left"><strong>Prev Price:</strong> {data.latestPriceData.pc}</p>
                                         <h4 style={{ textAlign: 'center', textDecoration: 'underline' }}>About the Company</h4><br></br>
                                         <p style={{ textAlign: 'center' }}><strong>IPO Start Date:</strong> {data.profileData.ipo}</p>
                                         <p style={{ textAlign: 'center' }}><strong>Industry:</strong> {data.profileData.finnhubIndustry}</p>
@@ -137,7 +165,7 @@ function SearchDetails() {
                                 {/* Insights Tab Content */}
                             </div>
                         </div>
-                    </div>
+                </div>
             </div>
             
             )}
