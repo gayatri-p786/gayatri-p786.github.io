@@ -44,6 +44,29 @@ const fetchFinnhubData = async (stock_ticker) => {
         // Format the date (optional)
         const sixformattedDate = sixMonthsEightDaysAgo.toISOString().split('T')[0];
 
+        const currentHour = currentDate.getHours();
+        const isWeekday = currentDate.getDay() >= 1 && currentDate.getDay() <= 5; // Monday to Friday
+
+        let fromDate, toDate;
+        if (isWeekday && currentHour >= 9 && currentHour < 16) { // Market is open
+            const yesterday = new Date(currentDate);
+            yesterday.setDate(yesterday.getDate() - 1);
+            const formattedYesterday = yesterday.toISOString().split('T')[0]; // yyyy-mm-dd format
+            fromDate = formattedYesterday;
+            toDate = currentDate.toISOString().split('T')[0]; // Today's date
+        } else { // Market is closed
+            const previousClose = new Date(currentDate);
+            previousClose.setDate(previousClose.getDate() - 1);
+            previousClose.setHours(16, 0, 0, 0); // Set time to market close (4:00 pm EST)
+            const onemore = new Date(currentDate);
+            onemore.setDate(previousClose.getDate() - 1);
+            const formattedPreviousClose = previousClose.toISOString().split('T')[0]; // yyyy-mm-dd format
+            const formattedoneprior = onemore.toISOString().split('T')[0];
+            fromDate = formattedPreviousClose;
+            toDate = formattedoneprior; 
+        }
+        // console.log(fromDate,toDate);
+
 
         const profile_endpoint = `https://finnhub.io/api/v1/stock/profile2?symbol=${stock_ticker}&token=${finnhub_api_key}`;
         const historical_endpoint = `https://api.polygon.io/v2/aggs/ticker/${stock_ticker}/range/1/day/${sixformattedDate}/${formattedCurrentDate}?adjusted=true&sort=asc&apiKey=${polygon_api_key}`;
@@ -53,7 +76,8 @@ const fetchFinnhubData = async (stock_ticker) => {
         const sentiment_endpoint = `https://finnhub.io/api/v1/stock/insider-sentiment?symbol=${stock_ticker}&from=2022-01-01&token=${finnhub_api_key}`;
         const peers_endpoint = `https://finnhub.io/api/v1/stock/peers?symbol=${stock_ticker}&token=${finnhub_api_key}`;
         const earnings_endpoint = `https://finnhub.io/api/v1/stock/earnings?symbol=${stock_ticker}&token=${finnhub_api_key}`;
-        
+        const polygon_endpoint = `https://api.polygon.io/v2/aggs/ticker/${stock_ticker}/range/1/hour/${fromDate}/${toDate}?adjusted=true&sort=asc&apiKey=${polygon_api_key}`;
+        // console.log(polygon_endpoint);
         
         const profileResponse = await axios.get(profile_endpoint);
         const historicalResponse = await axios.get(historical_endpoint);
@@ -63,6 +87,7 @@ const fetchFinnhubData = async (stock_ticker) => {
         const sentimentResponse = await axios.get(sentiment_endpoint);
         const peersResponse = await axios.get(peers_endpoint);
         const earningsResponse = await axios.get(earnings_endpoint);
+        const polygonResponse = await axios.get(polygon_endpoint);
         // Fetch data from additional endpoints
         
         const profileData = handleNullValues(profileResponse.data);
@@ -73,9 +98,10 @@ const fetchFinnhubData = async (stock_ticker) => {
         const sentimentData = handleNullValues(sentimentResponse.data);
         const peersData = handleNullValues(peersResponse.data);
         const earningsData = handleNullValues(earningsResponse.data);
+        const polygonData = handleNullValues(polygonResponse.data);
         // Handle data from additional endpoints
         
-        return { profileData, historicalData, latestPriceData, newsData, recommendationData, sentimentData, peersData, earningsData };
+        return { profileData, historicalData, latestPriceData, newsData, recommendationData, sentimentData, peersData, earningsData, polygonData };
     } catch (error) {
         console.error('Error:', error);
         throw new Error('Failed to fetch data from Finnhub API');

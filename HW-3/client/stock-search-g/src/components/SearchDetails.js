@@ -121,8 +121,9 @@ function SearchDetails() {
                                     {/* Second column */}
                                     <div className="col-md-6">
                                         {/* {JSON.stringify(data.historicalData,null,2)} */}
-                                        <HourlyPriceChart historicalData={data.historicalData} isMarketOpen={isMarketOpen()} />
-                                        
+                                        {/* <p>{data.fromDate},{data.toDate}</p> */}
+                                        <HourlyPriceChart chartData={data.polygonData} isGreen={data.latestPriceData.d > 0 ? 1 : 0}/>
+
                                     </div>
                                 </div>
                             </div>
