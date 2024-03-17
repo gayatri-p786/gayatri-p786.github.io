@@ -4,6 +4,35 @@ const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+
+
+const { MongoClient, ServerApiVersion } = require('mongodb');
+const uri = "mongodb+srv://patilgayatri086:EttCUjuvfbSdDta2@cluster0.grxcm5a.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+
+// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+const client = new MongoClient(uri, {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
+  }
+});
+
+async function run() {
+  try {
+    // Connect the client to the server	(optional starting in v4.7)
+    await client.connect();
+    // Send a ping to confirm a successful connection
+    await client.db("admin").command({ ping: 1 });
+    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+  } finally {
+    // Ensures that the client will close when you finish/error
+    await client.close();
+  }
+}
+run().catch(console.dir);
+
+
 app.use(cors());
 const polygon_api_key = 'g6094_mtCEzO0IDnhM81rnPP9Zio8AYV';
 const finnhub_api_key = 'cmuu051r01qru65i12s0cmuu051r01qru65i12sg';
@@ -35,7 +64,7 @@ const fetchFinnhubData = async (stock_ticker) => {
 
         // Subtract 6 months
         const sixMonthsAgo = new Date(currentDate);
-        sixMonthsAgo.setMonth(currentDate.getMonth() - 6);
+        sixMonthsAgo.setFullYear(currentDate.getFullYear() - 2);
 
         // Subtract 8 days
         const sixMonthsEightDaysAgo = new Date(sixMonthsAgo);
@@ -77,7 +106,7 @@ const fetchFinnhubData = async (stock_ticker) => {
         const peers_endpoint = `https://finnhub.io/api/v1/stock/peers?symbol=${stock_ticker}&token=${finnhub_api_key}`;
         const earnings_endpoint = `https://finnhub.io/api/v1/stock/earnings?symbol=${stock_ticker}&token=${finnhub_api_key}`;
         const polygon_endpoint = `https://api.polygon.io/v2/aggs/ticker/${stock_ticker}/range/1/hour/${fromDate}/${toDate}?adjusted=true&sort=asc&apiKey=${polygon_api_key}`;
-        // console.log(polygon_endpoint);
+        console.log(latestPrice_endpoint);
         
         const profileResponse = await axios.get(profile_endpoint);
         const historicalResponse = await axios.get(historical_endpoint);
@@ -100,6 +129,7 @@ const fetchFinnhubData = async (stock_ticker) => {
         const earningsData = handleNullValues(earningsResponse.data);
         const polygonData = handleNullValues(polygonResponse.data);
         // Handle data from additional endpoints
+        console.log(latestPriceData);
         
         return { profileData, historicalData, latestPriceData, newsData, recommendationData, sentimentData, peersData, earningsData, polygonData };
     } catch (error) {

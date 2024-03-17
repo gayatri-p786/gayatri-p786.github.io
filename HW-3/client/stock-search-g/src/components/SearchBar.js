@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useRef  } from 'react';
 import { Form, FormControl, Button, Alert, Dropdown, Spinner } from 'react-bootstrap'; // Import Alert from react-bootstrap for displaying messages
 import { FaSearch, FaTimes } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import Autocomplete from '@mui/material/Autocomplete'; // Import Autocomplete from Material-UI
+import CircularProgress from '@mui/material/CircularProgress';
+import TextField from '@mui/material/TextField'; // Import TextField from Material-UI
 import './styles.css'; // Import the CSS file
 
 const SearchBar = ({ onClear, initialTicker }) => {
-    // const [ticker, setTicker] = useState('');
     const [ticker, setTicker] = useState(initialTicker || '');
     const [errorMessage, setErrorMessage] = useState('');
     const [suggestions, setSuggestions] = useState([]); 
@@ -50,6 +52,8 @@ const SearchBar = ({ onClear, initialTicker }) => {
     };
 
     const handleInputChange = async (inputValue) => {
+        // const lowercaseValue = inputValue.toLowerCase();
+        // setTicker(lowercaseValue);
         setTicker(inputValue);
         try {
             setLoading(true);
@@ -58,7 +62,7 @@ const SearchBar = ({ onClear, initialTicker }) => {
             if (!response.data.result) {
                 throw new Error('No results found');
             }
-            const filteredSuggestions = response.data.result.filter(suggestion => suggestion.type === 'Common Stock');
+            const filteredSuggestions = response.data.result.filter(suggestion => suggestion.type === 'Common Stock' && !suggestion.description.includes('.') && !suggestion.symbol.includes('.'));
             // console.log(filteredSuggestions);
             setSuggestions(filteredSuggestions); // Update suggestions state with autocomplete results
             console.log(suggestions.length);
@@ -73,44 +77,51 @@ const SearchBar = ({ onClear, initialTicker }) => {
     return (
         <div className='position-relative'>
             <div className="search-bar-container">
-            <FormControl
-                    type="text"
-                    placeholder="Enter Stock Ticker Symbol"
-                    className="search-bar-input"
-                    value={ticker}
-                    onChange={(e) => handleInputChange(e.target.value)} // Call handleInputChange to fetch autocomplete suggestions
-                    onKeyPress={handleKeyPress}
-                    style={{ border: 'none' }}
+                <Autocomplete
+                    open={Boolean(suggestions.length) || loading}
+                    onClose={() => setSuggestions([])}
+                    options={suggestions}
+                    getOptionLabel={(option) => `${option.symbol} | ${option.description}`.toString()} // Format the option label
+                    loading={loading}
+                    loadingText={<CircularProgress color="primary" />}
+                    inputValue={ticker}
+                    onInputChange={(e, value) => handleInputChange(value)}
+                    onChange={(e, value) => handleSelectSuggestion(value)}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                            handleSearch(e.target.value);
+                        }
+                    }}
+                    renderInput={(params) => (
+                        <TextField 
+            {...params} 
+            sx={{
+                "& .MuiInputBase-root": {
+                    width: "calc(100% - 20px)", // Set the width to cover 100% of the form container
+                    "&:hover": {
+                        borderColor: "transparent", // Remove border on hover
+                    },
+                    "&.Mui-focused": {
+                        borderColor: "transparent", // Remove border when focused
+                    },
+                },
+                "& .MuiAutocomplete-popupIndicator": {
+                    display: "none", // Hide the dropdown arrow
+                },
+            }} 
+        />
+                    )}
                 />
-                <Button className="search-bar-button" onClick={handleSearch}>
+                <Button type="button" className="search-bar-button" onClick={() => handleSearch()}>
                     <FaSearch className="search-bar-icons" />
                 </Button>
                 <Button className="search-bar-button" onClick={handleClear}>
                     <FaTimes className="search-bar-icons" />
                 </Button>
-                {suggestions.length > 0 && (
-                    <Dropdown.Menu show={true} className="autocomplete-dropdown">
-                        {loading ? (
-                            <Spinner animation="border" variant="primary" />
-                        ) : (
-                            suggestions.map((suggestion) => (
-                                <Dropdown.Item
-                                    key={suggestion.symbol}
-                                    onClick={() => handleSelectSuggestion(suggestion.symbol)}
-                                >
-                                    <div className="autocomplete-dropdown-item">
-                                        {suggestion.symbol} | {suggestion.description}
-                                    </div>
-                                </Dropdown.Item>
-                            ))
-                        )}
-                    </Dropdown.Menu>
-            )}
+                
             </div>
             {errorMessage && <Alert variant="danger">{errorMessage}</Alert>} {/* Display error message */}
-            {/* {message && <Alert variant="success">{message}</Alert>} Display success message */}
-            {/* Render autocomplete dropdown if suggestions exist */}
-            
+           
         </div>
     );
 };

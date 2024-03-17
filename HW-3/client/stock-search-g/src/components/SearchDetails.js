@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import SearchBar from './SearchBar';
 import { BiCaretUp, BiCaretDown, BiStar, BiChevronLeft, BiChevronRight } from 'react-icons/bi'; 
 import HourlyPriceChart from './HourlyPriceChart';
+import ChartsTab from './chartsTab';
 import './styles.css'; // Import the CSS file
 
 function SearchDetails() {
@@ -32,6 +33,7 @@ function SearchDetails() {
 
      // State to manage active tab
     const [activeTab, setActiveTab] = useState('summary');
+    
 
     const renderStatusArrow = () => {
         const change = data.latestPriceData.d;
@@ -159,7 +161,10 @@ function SearchDetails() {
                                 {/* Top News Tab Content */}
                             </div>
                             <div className={`tab-pane fade ${activeTab === 'charts' ? 'show active' : ''}`}>
-                                {/* Charts Tab Content */}
+                                {/* <p>{data.historicalData.results}</p> */}
+                                
+                                <ChartsTab historicalData={data.historicalData} latestPriceData={data.latestPriceData}/>
+
                             </div>
                             <div className={`tab-pane fade ${activeTab === 'insights' ? 'show active' : ''}`}>
                                 {/* Insights Tab Content */}
