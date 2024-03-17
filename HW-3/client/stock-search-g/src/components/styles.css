@@ -124,3 +124,30 @@
     margin-right: 30px;
   }
 }
+
+
+
+.autocomplete-dropdown {
+  position: absolute;
+  padding: 1em !important;
+  width: calc(50% + 2px);; /* Adjust width as needed */
+  max-height: 200px; /* Adjust max-height as needed */
+  overflow-y: auto; /* Enable vertical scrolling */
+  top: calc(70% + 2px);
+  z-index: 1000;
+  border-radius: 5px; /* Add border radius for rounded corners */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Add box shadow for card-like effect */
+  background-color: #ffffff; /* Set background color */
+}
+
+.autocomplete-dropdown-item {
+  padding: 1em !important;
+  width: calc(60% - 20px);
+  text-overflow: ellipsis;
+  word-wrap: break-word; 
+}
+
+.dropdown-menu.show .dropdown-item.active, .dropdown-item:active {
+  --bs-dropdown-link-active-bg: transparent !important;
+}
+

@@ -18,18 +18,21 @@ const ChartsTab = ({ historicalData, latestPriceData }) => {
         // console.log(historicalData);
         // console.log(latestPriceData);
 
-        if (historicalData && historicalData.results && latestPriceData) {
-            const groupingUnits = [
-                ['week', [1]],
-                ['month', [1, 2, 3, 4, 6]]
-            ];
-            const ohlc = [
-                new Date(latestPriceData.t).getTime(), // Timestamp
-                latestPriceData.o, // Open
-                latestPriceData.h, // High
-                latestPriceData.l, // Low
-                latestPriceData.c // Close
-            ];
+        if (historicalData) {
+            const groupingUnits = [[
+                'week',                         // unit name
+                [1]                             // allowed multiples
+            ], [
+                'month',
+                [1, 2, 3, 4, 6]
+            ]];
+            const ohlc = historicalData.results.map(data => ([
+                new Date(data.t).getTime(), // Timestamp
+                data.o,
+                data.h,
+                data.l,
+                data.c 
+            ]));
             
             const volume = historicalData.results.map(data => ([
                 new Date(data.t).getTime(), // Timestamp
@@ -90,6 +93,8 @@ const ChartsTab = ({ historicalData, latestPriceData }) => {
                 series: [{
                     type: 'candlestick',
                     name: 'OHLC',
+                    id: 'Ticker',
+                    zIndex: 2,
                     data: ohlc
                 }, {
                     type: 'column',
@@ -99,7 +104,7 @@ const ChartsTab = ({ historicalData, latestPriceData }) => {
                     yAxis: 1
                 }, {
                     type: 'vbp',
-                    linkedTo: 'volume',
+                    linkedTo: 'Ticker',
                     params: {
                         volumeSeriesID: 'volume'
                     },
@@ -111,7 +116,7 @@ const ChartsTab = ({ historicalData, latestPriceData }) => {
                     }
                 }, {
                     type: 'sma',
-                    linkedTo: ':previous',
+                    linkedTo: 'Ticker',
                     zIndex: 1,
                     marker: {
                         enabled: false
