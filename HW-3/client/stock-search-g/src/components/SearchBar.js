@@ -3,9 +3,6 @@ import { Form, FormControl, Button, Alert, Dropdown, Spinner } from 'react-boots
 import { FaSearch, FaTimes } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import Autocomplete from '@mui/material/Autocomplete'; // Import Autocomplete from Material-UI
-import CircularProgress from '@mui/material/CircularProgress';
-import TextField from '@mui/material/TextField'; // Import TextField from Material-UI
 import './styles.css'; // Import the CSS file
 
 const SearchBar = ({ initialTicker }) => {

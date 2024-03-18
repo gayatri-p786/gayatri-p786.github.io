@@ -5,6 +5,7 @@ import { BiCaretUp, BiCaretDown, BiStar, BiChevronLeft, BiChevronRight } from 'r
 import HourlyPriceChart from './HourlyPriceChart';
 import ChartsTab from './chartsTab';
 import './styles.css'; // Import the CSS file
+import axios from 'axios';
 
 function SearchDetails() {
     const location = useLocation();
@@ -33,6 +34,12 @@ function SearchDetails() {
 
      // State to manage active tab
     const [activeTab, setActiveTab] = useState('summary');
+    const [starClicked, setStarClicked] = useState(false); 
+
+    const handleStarClick = () => {
+        setStarClicked(!starClicked); // Toggle the state
+        addToWatchlist();
+    };
     
 
     const renderStatusArrow = () => {
@@ -67,6 +74,33 @@ function SearchDetails() {
         tabsContainer.scrollTo({ left: newPosition * tabWidth, behavior: 'smooth' });
     };
 
+
+    // Function to handle adding a stock to the watchlist
+    const addToWatchlist = async () => {
+        const watchlistStock = {
+            symbol: data.profileData.ticker,
+            companyName: data.profileData.name,
+            stockPrice: data.latestPriceData.c,
+            stockChange: data.latestPriceData.d,
+        };
+        try {
+            // Make a POST request to the server to add the stock to the watchlist
+            const response = await axios.post(`http://${window.location.hostname}:5000/api/user/addstockwatch`, { stock: watchlistStock });
+
+            // Check if the request was successful
+            if (response.data.success) {
+                console.log('Stock added to watchlist successfully');
+                // Optionally, you can update the UI or show a success message
+            } else {
+                console.error('Failed to add stock to watchlist');
+                // Optionally, you can show an error message to the user
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            // Handle any errors from the request
+        }
+    };
+
     return (
         <div className="container">
             <div className="text-center heading">
@@ -80,8 +114,10 @@ function SearchDetails() {
                 <div className="row mt-4 justify-content-center">
                     <div className="col-4 text-center">
                         <div className="company-info">
-                            <h2>
-                                {data.profileData.ticker}<BiStar /> 
+                            <h2>{data.profileData.ticker}
+                                <button className={`star-button ${starClicked ? 'star-yellow' : ''}`} onClick={handleStarClick}>
+                                    <BiStar />
+                                </button>
                             </h2>
                             <h3>{data.profileData.name}</h3>
                             <p>{data.profileData.exchange}</p>
