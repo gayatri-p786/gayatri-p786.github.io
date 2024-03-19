@@ -22,6 +22,8 @@ function SearchDetails() {
     const [money, setMoney] = useState([]);
     const [showAlert, setShowAlert] = useState(false);
     const [watchlist, setWatchlist] = useState([]);
+    const [showSellButton, setShowSellButton] = useState(false);
+    const [alertMessage, setAlertMessage] = useState('');
 
     const currentTime = new Date();
     const pstOptions = { timeZone: 'America/Los_Angeles' }; // Specify the PST timezone
@@ -46,6 +48,7 @@ function SearchDetails() {
                 const portfolio = response.data;
                 const hasStock = portfolio.portfolio.some(item => item.symbol === ticker);
                 setHasStock(hasStock);
+                setShowSellButton(hasStock);
                 setMoney(portfolio.money);
             } catch (error) {
                 console.error('Error fetching user portfolio:', error);
@@ -164,15 +167,20 @@ function SearchDetails() {
         const stockSymbol = data.profileData.ticker;
         const isStockInWatchlist = watchlist.some(item => item.symbol === stockSymbol);
         if (!isStockInWatchlist) {
+            setAlertMessage('Stock added to Watchlist successfully!');
             addToWatchlist();
         } else {
             removeFromWatchlist(stockSymbol);
+            setAlertMessage('Stock removed from Watchlist successfully!');
         }
     };
 
     // Function to handle buy button click
     const handleBuyClick = () => {
         setShowBuyModal(true);
+        setShowAlert(true);
+        setShowSellButton(true);
+        setAlertMessage('Stock bought successfully!');
     };
 
     // Function to handle buy modal close
@@ -237,7 +245,7 @@ function SearchDetails() {
 
             {showAlert && starClicked && (
                 <Alert variant="success" className='text-center'>
-                    Stock added to watchlist!
+                    {alertMessage}
                 </Alert>
             )}
 
@@ -264,7 +272,7 @@ function SearchDetails() {
                             <h3>{data.profileData.name}</h3>
                             <p>{data.profileData.exchange}</p>
                             <button className="btn btn-success" onClick={handleBuyClick}>Buy</button>
-                            {hasStock && <button className="btn btn-danger" onClick={handleSell}>Sell</button>}
+                            {showSellButton && <button className="btn btn-danger" onClick={handleSell}>Sell</button>}
                             <BuyModal
                                 show={showBuyModal}
                                 onHide={handleCloseBuyModal}
