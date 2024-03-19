@@ -1,4 +1,4 @@
-import React, { useState }  from 'react';
+import React, { useState, useEffect }  from 'react';
 import { useLocation } from 'react-router-dom';
 import SearchBar from './SearchBar';
 import { BiCaretUp, BiCaretDown, BiStar, BiChevronLeft, BiChevronRight } from 'react-icons/bi'; 
@@ -6,6 +6,7 @@ import HourlyPriceChart from './HourlyPriceChart';
 import ChartsTab from './chartsTab';
 import './styles.css'; // Import the CSS file
 import axios from 'axios';
+import BuyModal from './BuyModal';
 
 function SearchDetails() {
     const location = useLocation();
@@ -13,6 +14,26 @@ function SearchDetails() {
     
     // const { profileData, historicalData, latestPriceData, newsData, recommendationData, sentimentData, peersData, earningsData } = data;
     const ticker = data.profileData.ticker;
+    const [hasStock, setHasStock] = useState(false);
+    const [showBuyModal, setShowBuyModal] = useState(false);
+    const [money, setMoney] = useState([]);
+
+    useEffect(() => {
+        // Fetch user's portfolio from MongoDB
+        const fetchPortfolio = async () => {
+            try {
+                const response = await axios.get(`http://${window.location.hostname}:5000/api/user/portfolio`);
+                const portfolio = response.data;
+                const hasStock = portfolio.portfolio.some(item => item.symbol === ticker);
+                setHasStock(hasStock);
+                setMoney(portfolio.money);
+            } catch (error) {
+                console.error('Error fetching user portfolio:', error);
+            }
+        };
+
+        fetchPortfolio();
+    }, [ticker]);
 
     // Function to check if the market is open based on timestamp
     const isMarketOpen = (timestamp) => {
@@ -39,6 +60,27 @@ function SearchDetails() {
     const handleStarClick = () => {
         setStarClicked(!starClicked); // Toggle the state
         addToWatchlist();
+    };
+
+    // Function to handle buy button click
+    const handleBuyClick = () => {
+        setShowBuyModal(true);
+    };
+
+    // Function to handle buy modal close
+    const handleCloseBuyModal = () => {
+        setShowBuyModal(false);
+    };
+
+    // Function to handle buy action
+    const handleBuy = (ticker, quantity) => {
+        // Implement buy functionality
+        console.log(`Buying ${quantity} shares of ${ticker}`);
+        setShowBuyModal(false);
+    };
+
+    const handleSell = () => {
+        // Implement sell functionality
     };
     
 
@@ -121,7 +163,17 @@ function SearchDetails() {
                             </h2>
                             <h3>{data.profileData.name}</h3>
                             <p>{data.profileData.exchange}</p>
-                            <button className="btn btn-success">Buy</button>
+                            <button className="btn btn-success" onClick={handleBuyClick}>Buy</button>
+                            {hasStock && <button className="btn btn-danger" onClick={handleSell}>Sell</button>}
+                            <BuyModal
+                                show={showBuyModal}
+                                onHide={handleCloseBuyModal}
+                                ticker={ticker}
+                                currentPrice={data.latestPriceData.c}
+                                moneyInWallet={money}
+                                onBuy={handleBuy}
+                                handleCloseBuyModal={handleCloseBuyModal}
+                            />
                         </div>
                     </div>
                     <div className="col-4 text-center">

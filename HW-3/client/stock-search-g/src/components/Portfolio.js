@@ -19,6 +19,7 @@ const Portfolio = () => {
                   // console.log(response.data);
                   setPortfolio(data.portfolio);
                   setMoney(data.money);
+                  console.log(portfolio);
                 }
                 if (portfolio.length==0){
                   setErrorMessage("Currently you don't have any stock in your portfolio");

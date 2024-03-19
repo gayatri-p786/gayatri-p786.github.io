@@ -152,6 +152,38 @@ app.get('/api/user/portfolio', async (req, res) => {
     }
 });
 
+app.post('/api/user/money/update', async (req, res) => {
+    try {
+        const { money } = req.body; // New money value
+        
+        // Assuming only one user in the database
+        const db = client.db('StockProfiles');
+        const usersCollection = db.collection('favorites');
+        const user = await usersCollection.findOne({});
+
+        if (!user) {
+            res.status(404).json({ error: 'User not found' });
+            return;
+        }
+
+        // Update the money in the user's wallet
+        const result = await usersCollection.updateOne(
+            {},
+            { $set: { 'wallet.money': money } }
+        );
+
+        if (result.modifiedCount === 1) {
+            res.status(200).json({ message: 'Money in wallet updated successfully' });
+        } else {
+            res.status(500).json({ error: 'Failed to update money in wallet' });
+        }
+    } catch (error) {
+        console.error('Error updating money in wallet:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+
 // API endpoint to update user's watchlist
 app.post('/api/user/addstockwatch', async (req, res) => {
     try {
@@ -211,6 +243,48 @@ app.post('/api/user/removestockwatch', async (req, res) => {
         console.error('Error removing stock from watchlist:', error);
         res.status(500).json({ error: 'Internal server error' });
     } 
+});
+
+// Update portfolio route
+app.post('/api/user/portfolio/update', async (req, res) => {
+    try {
+        const { portfolio } = req.body;
+
+        const db = client.db('StockProfiles');
+        const usersCollection = db.collection('favorites');
+
+        // Assuming only one user, so updating the portfolio directly
+        const result = await usersCollection.updateOne(
+            {}, // Update for all users
+            { $set: { portfolio } }
+        );
+
+        res.json({ success: true, message: 'Portfolio updated successfully' });
+    } catch (error) {
+        console.error('Error updating portfolio:', error);
+        res.status(500).json({ error: 'Failed to update portfolio' });
+    }
+});
+
+// Insert portfolio route
+app.post('/api/user/portfolio/insert', async (req, res) => {
+    try {
+        const { stock } = req.body;
+
+        const db = client.db('StockProfiles');
+        const usersCollection = db.collection('favorites');
+
+        // Assuming only one user, so inserting the new stock directly
+        const result = await usersCollection.updateOne(
+            {}, // Update for all users
+            { $push: { portfolio: stock } }
+        );
+
+        res.json({ success: true, message: 'Stock added to portfolio successfully' });
+    } catch (error) {
+        console.error('Error inserting stock to portfolio:', error);
+        res.status(500).json({ error: 'Failed to add stock to portfolio' });
+    }
 });
 
 
