@@ -2,11 +2,14 @@ import React, { useState, useEffect }  from 'react';
 import { useLocation } from 'react-router-dom';
 import SearchBar from './SearchBar';
 import { BiCaretUp, BiCaretDown, BiStar, BiChevronLeft, BiChevronRight } from 'react-icons/bi'; 
+import { AiFillStar} from 'react-icons/ai';
 import HourlyPriceChart from './HourlyPriceChart';
 import ChartsTab from './chartsTab';
 import './styles.css'; // Import the CSS file
 import axios from 'axios';
 import BuyModal from './BuyModal';
+import { Alert } from 'react-bootstrap'; // Import Alert from react-bootstrap for displaying messages
+
 
 function SearchDetails() {
     const location = useLocation();
@@ -17,6 +20,23 @@ function SearchDetails() {
     const [hasStock, setHasStock] = useState(false);
     const [showBuyModal, setShowBuyModal] = useState(false);
     const [money, setMoney] = useState([]);
+    const [showAlert, setShowAlert] = useState(false);
+    const [watchlist, setWatchlist] = useState([]);
+
+    const currentTime = new Date();
+    const pstOptions = { timeZone: 'America/Los_Angeles' }; // Specify the PST timezone
+    const pstTimeString = currentTime.toLocaleString('en-US', {
+        ...pstOptions,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+      });
+      const formattedDate = pstTimeString.replace(/\//g, '-'); // Replace slashes with dashes
+
+
 
     useEffect(() => {
         // Fetch user's portfolio from MongoDB
@@ -35,17 +55,97 @@ function SearchDetails() {
         fetchPortfolio();
     }, [ticker]);
 
-    // Function to check if the market is open based on timestamp
-    const isMarketOpen = (timestamp) => {
-        // Convert timestamp to milliseconds
-        const milliseconds = timestamp * 1000;
-        // Get the current time in milliseconds
-        const currentTime = new Date().getTime();
-        // Calculate the difference in minutes
-        const diffMinutes = (currentTime - milliseconds) / (1000 * 60);
-        // Market is open if less than 5 minutes have elapsed from the timestamp
-        return diffMinutes <= 5;
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const response = await fetch(`http://${window.location.hostname}:5000/api/user/watchlist`);
+                const data = await response.json();
+                if (data) {
+                    setWatchlist(data.watchlist);
+                    if (watchlist.length != 0) {
+                        // setErrorMessage("Currently you don't have any stock in your watchlist");
+                    
+                    // Check if the symbol exists in the watchlist
+                    const hasSymbol = data.watchlist.some(item => item.symbol === ticker);
+                    // Set starClicked state based on whether the symbol exists in the watchlist
+                    setStarClicked(hasSymbol);
+                    }else{
+                        setStarClicked(false);
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching watchlist:', error);
+            } 
+        };
+    
+        fetchUserData();
+    }, []);
+    
+    const addToWatchlist = async () => {
+        const watchlistStock = {
+            symbol: data.profileData.ticker,
+            companyName: data.profileData.name,
+            stockPrice: data.latestPriceData.c,
+            stockChange: data.latestPriceData.d,
+        };
+        try {
+            const response = await axios.post(`http://${window.location.hostname}:5000/api/user/addstockwatch`, { stock: watchlistStock });
+            if (response.data.success) {
+                console.log('Stock added to watchlist successfully');
+                // Optionally, you can update the UI or show a success message
+            } else {
+                console.error('Failed to add stock to watchlist');
+                // Optionally, you can show an error message to the user
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            // Handle any errors from the request
+        }
     };
+
+    const removeFromWatchlist = async (symbol) => {
+        try {
+            const response = await axios.post(`http://${window.location.hostname}:5000/api/user/removestockwatch`, { symbol });
+            if (response.data.success) {
+                console.log('Stock removed from watchlist successfully');
+                setWatchlist(watchlist.filter(item => item.symbol !== symbol));
+                // Optionally, you can update the UI or show a success message
+            } else {
+                console.error('Failed to remove stock from watchlist');
+                // Optionally, you can show an error message to the user
+            }
+        } catch (error) {
+            console.error('Error removing stock from watchlist:', error);
+        }
+    };
+
+    // Function to check if the market is open based on timestamp
+    const isMarketOpen = () => {
+        const now = new Date();
+        const utcTime = now.getTime() + (now.getTimezoneOffset() * 60000); // Convert current time to UTC
+        const estTime = new Date(utcTime + (3600000 * -5)); // Convert UTC time to EST
+    
+        const dayOfWeek = estTime.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+        const hours = estTime.getHours();
+        const minutes = estTime.getMinutes();
+    
+        // Check if it's a weekday (Monday to Friday)
+        if (dayOfWeek >= 1 && dayOfWeek <= 5) {
+            // Check if the time is within market hours (9:30 am to 4:00 pm EST)
+            const marketOpenTime = new Date(estTime);
+            marketOpenTime.setHours(9, 30, 0); // 9:30 am EST
+            const marketCloseTime = new Date(estTime);
+            marketCloseTime.setHours(16, 0, 0); // 4:00 pm EST
+            console.log(marketOpenTime,marketCloseTime,estTime);
+    
+            return estTime >= marketOpenTime && estTime <= marketCloseTime;
+        }
+    
+        // Return false for weekends
+        return false;
+    };
+    
+    
 
     // Function to format timestamp to yyyy-mm-dd hh:mm:ss format
     const formatTimestamp = (timestamp) => {
@@ -58,8 +158,16 @@ function SearchDetails() {
     const [starClicked, setStarClicked] = useState(false); 
 
     const handleStarClick = () => {
-        setStarClicked(!starClicked); // Toggle the state
-        addToWatchlist();
+        setStarClicked(!starClicked);
+        setShowAlert(true); // Show the alert
+        setTimeout(() => setShowAlert(false), 3000);  // Toggle the state
+        const stockSymbol = data.profileData.ticker;
+        const isStockInWatchlist = watchlist.some(item => item.symbol === stockSymbol);
+        if (!isStockInWatchlist) {
+            addToWatchlist();
+        } else {
+            removeFromWatchlist(stockSymbol);
+        }
     };
 
     // Function to handle buy button click
@@ -117,31 +225,7 @@ function SearchDetails() {
     };
 
 
-    // Function to handle adding a stock to the watchlist
-    const addToWatchlist = async () => {
-        const watchlistStock = {
-            symbol: data.profileData.ticker,
-            companyName: data.profileData.name,
-            stockPrice: data.latestPriceData.c,
-            stockChange: data.latestPriceData.d,
-        };
-        try {
-            // Make a POST request to the server to add the stock to the watchlist
-            const response = await axios.post(`http://${window.location.hostname}:5000/api/user/addstockwatch`, { stock: watchlistStock });
-
-            // Check if the request was successful
-            if (response.data.success) {
-                console.log('Stock added to watchlist successfully');
-                // Optionally, you can update the UI or show a success message
-            } else {
-                console.error('Failed to add stock to watchlist');
-                // Optionally, you can show an error message to the user
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            // Handle any errors from the request
-        }
-    };
+   
 
     return (
         <div className="container">
@@ -149,18 +233,34 @@ function SearchDetails() {
                 <h1>Stock Search</h1>
             </div>
 
-            <SearchBar initialTicker={data.profileData.ticker} />
+            <SearchBar initialTicker={data.profileData.ticker} dropdown={false} />
+
+            {showAlert && starClicked && (
+                <Alert variant="success" className='text-center'>
+                    Stock added to watchlist!
+                </Alert>
+            )}
 
             {data && (
             <div className='content-container'>
                 <div className="row mt-4 justify-content-center">
                     <div className="col-4 text-center">
                         <div className="company-info">
-                            <h2>{data.profileData.ticker}
-                                <button className={`star-button ${starClicked ? 'star-yellow' : ''}`} onClick={handleStarClick}>
-                                    <BiStar />
+                            <h2>
+                                {data.profileData.ticker}
+                                <button 
+                                    className={`star-button`} 
+                                    onClick={handleStarClick}
+                                    style={{
+                                        border: 'none',
+                                        background: 'none',
+                                        cursor: 'pointer',
+                                    }}
+                                >
+                                    <AiFillStar style={{ fill: starClicked ? 'yellow' : 'black', color: starClicked ? 'yellow' : 'black' }} />
                                 </button>
                             </h2>
+
                             <h3>{data.profileData.name}</h3>
                             <p>{data.profileData.exchange}</p>
                             <button className="btn btn-success" onClick={handleBuyClick}>Buy</button>
@@ -187,13 +287,15 @@ function SearchDetails() {
                             {renderStatusArrow()} {data.latestPriceData.d} ({data.latestPriceData.dp}%)
                         </p>
                         
-                        <p>{formatTimestamp(data.latestPriceData.t)}</p>
+                        <p>{formattedDate}</p>
                     </div>
                 </div>
                 <div className="row justify-content-center">
                     <div className="col-md-4 text-center">
                         <div style={{ fontWeight: 'bold', color: isMarketOpen() ? 'green' : 'red' }}>
-                            <span>{isMarketOpen() ? 'Market Open on ' : 'Market Closed on '}{formatTimestamp(data.latestPriceData.t)}</span>
+                            <span>
+                                {isMarketOpen() ? `Market is open on ${formattedDate}` : `Market closed on ${formatTimestamp(data.latestPriceData.t)}`}
+                            </span>
                         </div>
                     </div>
                 </div>

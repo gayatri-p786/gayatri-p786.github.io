@@ -7,7 +7,7 @@ function Home() {
     return (
       <div className="text-center heading">
         <h1>Stock Search</h1>
-        <SearchBar />
+        <SearchBar dropdownstate={true} />
         {/* Other content */}
       </div>
     );

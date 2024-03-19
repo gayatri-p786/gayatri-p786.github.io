@@ -5,14 +5,16 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './styles.css'; // Import the CSS file
 
-const SearchBar = ({ initialTicker }) => {
+const SearchBar = ({ initialTicker, dropdownstate }) => {
     const [ticker, setTicker] = useState(initialTicker || '');
     const [errorMessage, setErrorMessage] = useState('');
     const [suggestions, setSuggestions] = useState([]); 
     const [loading, setLoading] = useState(true);
+    const [dropdown, setDropdown] = useState(dropdownstate && true);
     const navigate = useNavigate();
 
     const handleSearch = async () => {
+        setDropdown(false);
         try {
             // Perform the HTTP request to your Node.js backend
             
@@ -44,6 +46,7 @@ const SearchBar = ({ initialTicker }) => {
 
     const handleClear = () => {
         setTicker('');
+        setDropdown(false);
         navigate('/search/home'); 
     };
 
@@ -54,8 +57,9 @@ const SearchBar = ({ initialTicker }) => {
     };
 
     const handleSelectSuggestion = (selectedSuggestion) => {
-        setTicker(selectedSuggestion.symbol); 
+        setTicker(selectedSuggestion); 
         setSuggestions([]); 
+        setDropdown(false);
         handleSearch();
     };
 
@@ -102,8 +106,8 @@ const SearchBar = ({ initialTicker }) => {
                 <Button className="search-bar-button" onClick={handleClear}>
                     <FaTimes className="search-bar-icons" />
                 </Button>
-                {suggestions.length > 0 && (
-                    <Dropdown.Menu show={true} className="autocomplete-dropdown">
+                {ticker.length > 0 && (
+                    <Dropdown.Menu show={dropdown} className="autocomplete-dropdown">
                         {loading ? (
                             <Spinner animation="border" variant="primary" />
                         ) : (
