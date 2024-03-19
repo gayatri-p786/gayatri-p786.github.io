@@ -53,41 +53,45 @@ const fetchFinnhubData = async (stock_ticker) => {
         const sixformattedDate = sixMonthsEightDaysAgo.toISOString().split('T')[0];
 
         // const currentDate = new Date();
-        const currentHour = currentDate.getHours();
+        
         const utcTime = currentDate.getTime() + (currentDate.getTimezoneOffset() * 60000); // Convert current time to UTC
-        const estTime = new Date(utcTime + (3600000 * -5)); // Convert UTC time to EST
+        const estTime = new Date(utcTime + (3600000 * -4)); // Convert UTC time to EST
+        const currentHour = estTime.getHours();
 
         const isWeekday = estTime.getDay() >= 1 && estTime.getDay() <= 5; // Monday to Friday
 
         let fromDate, toDate;
-        if (isWeekday && currentHour >= 9 && currentHour < 16) { // Market is open
+        if (isWeekday && currentHour >= 9 && currentHour < 16) { 
+            console.log("open");// Market is open
             const yesterday = new Date(estTime);
             yesterday.setDate(yesterday.getDate() - 1);
             const formattedYesterday = yesterday.toISOString().split('T')[0]; // yyyy-mm-dd format
             fromDate = formattedYesterday;
             toDate = estTime.toISOString().split('T')[0]; // Today's date
         } else { // Market is closed
+            console.log("closed");
             const currentHour = estTime.getHours();
             if (currentHour >= 16) { // Market closed after 4:00 pm EST
                 // Set fromDate to one day before current date
-                const oneDayBeforeCurrent = new Date(estTime);
-                oneDayBeforeCurrent.setDate(oneDayBeforeCurrent.getDate() - 1);
-                const formattedOneDayBeforeCurrent = oneDayBeforeCurrent.toISOString().split('T')[0];
-        
-                // Set toDate to current date
-                const formattedCurrent = estTime.toISOString().split('T')[0];
-        
-                fromDate = formattedOneDayBeforeCurrent;
-                toDate = formattedCurrent;
+                console.log("closed today");
+                const yesterday = new Date(estTime);
+                const today = new Date(estTime);
+                yesterday.setDate(yesterday.getDate() - 2);
+                today.setDate(today.getDate() - 1);
+                const formattedYesterday = yesterday.toISOString().split('T')[0]; // yyyy-mm-dd format
+                fromDate = formattedYesterday;
+                toDate = today.toISOString().split('T')[0];
+                console.log(formattedYesterday, today);
             } else { // Market closed before 4:00 pm EST
                 // Set fromDate to two days before current date
+                console.log("closed yesterday");
                 const twoDaysBeforeCurrent = new Date(estTime);
-                twoDaysBeforeCurrent.setDate(twoDaysBeforeCurrent.getDate() - 2);
+                twoDaysBeforeCurrent.setDate(twoDaysBeforeCurrent.getDate() - 3);
                 const formattedTwoDaysBeforeCurrent = twoDaysBeforeCurrent.toISOString().split('T')[0];
         
                 // Set toDate to one day before current date
                 const oneDayBeforeCurrent = new Date(estTime);
-                oneDayBeforeCurrent.setDate(oneDayBeforeCurrent.getDate() - 1);
+                oneDayBeforeCurrent.setDate(oneDayBeforeCurrent.getDate() - 2);
                 const formattedOneDayBeforeCurrent = oneDayBeforeCurrent.toISOString().split('T')[0];
         
                 fromDate = formattedTwoDaysBeforeCurrent;
@@ -107,7 +111,7 @@ const fetchFinnhubData = async (stock_ticker) => {
         const peers_endpoint = `https://finnhub.io/api/v1/stock/peers?symbol=${stock_ticker}&token=${finnhub_api_key}`;
         const earnings_endpoint = `https://finnhub.io/api/v1/stock/earnings?symbol=${stock_ticker}&token=${finnhub_api_key}`;
         const polygon_endpoint = `https://api.polygon.io/v2/aggs/ticker/${stock_ticker}/range/1/hour/${fromDate}/${toDate}?adjusted=true&sort=asc&apiKey=${polygon_api_key}`;
-        // console.log(latestPrice_endpoint);
+        console.log(polygon_endpoint);
         
         const profileResponse = await axios.get(profile_endpoint);
         const historicalResponse = await axios.get(historical_endpoint);

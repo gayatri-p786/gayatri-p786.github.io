@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FaTimes } from 'react-icons/fa';
-import { Alert, Spinner, Card, Button } from 'react-bootstrap'; 
+import { Alert, Spinner, Card, Button} from 'react-bootstrap'; 
+import {BiCaretUp, BiCaretDown, } from 'react-icons/bi';
 import { useNavigate } from 'react-router-dom';
 
 const Watchlist = () => {
@@ -74,36 +75,54 @@ const Watchlist = () => {
       }
   };
 
+  const renderStatusArrow = (stockChange) => {
+    const change = stockChange;
+    if (change > 0) {
+        return <BiCaretUp className="text-success" />; // Up arrow
+    } else if (change < 0) {
+        return <BiCaretDown className="text-danger" />; // Down arrow
+    } else {
+        return null; // No change
+    }
+};
+
     return (
-        <div>
-          <h1>Watchlist</h1>
-            {loading ? (
-                <Spinner animation="border" variant="primary" />
-            ) : (
-                <div>
-                    {watchlist.length === 0 ? (
-                        <Alert variant="warning">{errorMessage}</Alert>
+        <div className="d-flex justify-content-center mt-5">
+            <div style={{ width: '70%' }}>
+                <h1 className="mb-4">My Watchlist</h1>
+                {loading ? (
+                    <Spinner animation="border" variant="primary" />
+                ) : (
+                    <div>
+                        {watchlist.length === 0 ? (
+                            <Alert variant="warning" className="text-center">{errorMessage}</Alert>
                         ) : (
-                          <div>
-                            {watchlist.map((item, index) => (
-                                <Card key={index} onClick={() => handleSearch(item.symbol)}>
-                                    <Card.Body>
-                                        <Button variant="light" onClick={() => removeFromWatchlist(item.symbol)}>
-                                            <FaTimes style={{ color: 'grey' }} /> {/* Customize cross button color */}
-                                        </Button>
-                                        <Card.Title>{item.symbol}</Card.Title>
-                                        <Card.Subtitle className="mb-2 text-muted">{item.companyName}</Card.Subtitle>
-                                        <Card.Text>
-                                            Price: {item.stockPrice}<br />
-                                            Change: {item.stockChange}
-                                        </Card.Text>
-                                    </Card.Body>
-                                </Card>
-                            ))}
-                        </div>
-                    )}
-                </div>
-            )}
+                            <div>
+                                {watchlist.map((item, index) => (
+                                    <Card key={index} className="mb-3 position-relative">
+                                        <Button variant="light" onClick={() => removeFromWatchlist(item.symbol)} className="remove-button position-absolute" style={{ top: '0', left: '0' }}>
+                                            <FaTimes style={{ color: 'grey' }} />
+                                        </Button><br></br>
+                                        <Card.Body onClick={() => handleSearch(item.symbol)} style={{ cursor: 'pointer' }}>
+                                            <div className="d-flex justify-content-between">
+                                                <div style={{ flex: '1' }}>
+                                                    <Card.Title>{item.symbol}</Card.Title>
+                                                    <Card.Subtitle className="mb-2 text-muted" style={{ fontSize: '0.9rem' }}>{item.companyName}</Card.Subtitle>
+                                                </div>
+                                                <div style={{ flex: '1', color: item.stockChange >= 0 ? 'green' : 'red', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'flex-start' }}>
+                                                    <Card.Title>{item.stockPrice}</Card.Title>
+                                                    <Card.Subtitle className="mb-2" style={{ fontSize: '0.9rem' }}>{renderStatusArrow(item.stockChange)} {item.stockChange} ({item.stockdp}%)</Card.Subtitle>
+                                                </div>
+                                            </div>
+
+                                        </Card.Body>
+                                    </Card>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                )}
+            </div>
         </div>
     );
 };

@@ -100,6 +100,7 @@ function SearchDetails() {
             companyName: data.profileData.name,
             stockPrice: data.latestPriceData.c,
             stockChange: data.latestPriceData.d,
+            stockdp: data.latestPriceData.dp
         };
         try {
             const response = await axios.post(`http://${window.location.hostname}:5000/api/user/addstockwatch`, { stock: watchlistStock });
@@ -177,11 +178,11 @@ function SearchDetails() {
         const stockSymbol = data.profileData.ticker;
         const isStockInWatchlist = watchlist.some(item => item.symbol === stockSymbol);
         if (!isStockInWatchlist) {
-            setAlertMessage('Stock added to Watchlist successfully!');
+            setAlertMessage(`${ticker} added to Watchlist successfully!`);
             addToWatchlist();
         } else {
             removeFromWatchlist(stockSymbol);
-            setAlertMessage('Stock removed from Watchlist successfully!');
+            setAlertMessage(`${ticker} removed from Watchlist successfully!`);
         }
     };
 
@@ -190,7 +191,7 @@ function SearchDetails() {
         setShowBuyModal(true);
         setShowAlert(true);
         setShowSellButton(true);
-        setAlertMessage('Stock bought successfully!');
+        setAlertMessage(`${ticker} bought successfully!`);
     };
 
     // Function to handle buy modal close
@@ -208,7 +209,7 @@ function SearchDetails() {
     const handleSellClick = () => {
         setShowSellModal(true);
         setShowAlert(true);
-        setAlertMessage('Stock bousoldght successfully!');
+        setAlertMessage(`${ticker} sold successfully!`);
     };
 
     const handleSell = (ticker, sellQuantity) => {
