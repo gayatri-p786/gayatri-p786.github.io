@@ -1,31 +1,36 @@
 import React, { useState } from 'react';
-import { Modal, Button, Form} from 'react-bootstrap';
+import { Modal, Button, Form } from 'react-bootstrap';
 import axios from 'axios';
 
-const BuyModal = ({ show, ticker, currentPrice, moneyInWallet, onHide, handleCloseBuyModal }) => {
+function SellModal({ show, ticker, currentPrice, moneyInWallet, existingQuantity, onHide, handleCloseSellModal }) {
     const [quantity, setQuantity] = useState(1);
     const [errorMessage, setErrorMessage] = useState('');
     const [total, setTotal] = useState(0);
 
-    const handleBuy = async () => {
+    const handleSell = async () => {
+        console.log('inside sell');
+        // Validate sell quantity
         try {
             // Fetch user's portfolio data
             const response = await axios.get(`http://${window.location.hostname}:5000/api/user/portfolio`);
             const userData = response.data;
             let upin_response = 300;
+            console.log(userData);
     
             // Check if the ticker already exists in the user's portfolio
             const existingStock = userData.portfolio.find(stock => stock.symbol === ticker);
+            console.log(existingStock);
+            
     
-            if (existingStock) {
+            if (existingStock && parseInt(quantity)<=existingQuantity) {
                 // If the stock already exists, update the quantity, total, and average cost per share
                 const updatedPortfolio = userData.portfolio.map(stock => {
                     if (stock.symbol === ticker) {
                         return {
                             ...stock,
-                            quantity: stock.quantity + parseInt(quantity),
-                            total: stock.total + parseFloat(total),
-                            averageCostPerShare: (stock.total + parseFloat(total)) / (stock.quantity + parseInt(quantity))
+                            quantity: stock.quantity - parseInt(quantity),
+                            total: stock.total - parseFloat(total),
+                            averageCostPerShare: (stock.total - parseFloat(total)) / (stock.quantity - parseInt(quantity))
                         };
                     }
                     return stock;
@@ -37,24 +42,14 @@ const BuyModal = ({ show, ticker, currentPrice, moneyInWallet, onHide, handleClo
                 upin_response = await axios.post(`http://${window.location.hostname}:5000/api/user/portfolio/update`, {
                     portfolio: updatedPortfolio
                 });
-            } else {
-                // If the stock does not exist, add a new record to the portfolio
-                const newStock = {
-                    symbol: ticker,
-                    quantity: parseInt(quantity),
-                    total: parseFloat(total),
-                    averageCostPerShare: parseFloat(total) / parseInt(quantity)
-                };
-    
-                console.log(newStock);
-                // Update the portfolio data in the backend
-                upin_response = await axios.post(`http://${window.location.hostname}:5000/api/user/portfolio/insert`, {
-                    stock: newStock
-                });
+                setErrorMessage('');
+            } else{
+                setErrorMessage('You cannot sell the stocks that you don\'t have');
             }
+
             if (upin_response.status === 200) {
                 // Update the money in wallet based on the current money and total cost
-                const newMoneyInWallet = moneyInWallet - parseFloat(total);
+                const newMoneyInWallet = moneyInWallet + parseFloat(total);
                 
                 // Update the money in wallet using another backend endpoint
                 const updateMoneyResponse = await axios.post(`http://${window.location.hostname}:5000/api/user/money/update`, { money: newMoneyInWallet });
@@ -68,37 +63,32 @@ const BuyModal = ({ show, ticker, currentPrice, moneyInWallet, onHide, handleClo
                     // Handle the failure scenario
                 }
             } else {
-                console.error('Failed to buy stock');
+                console.error('Failed to sell stock');
                 // Handle the failure scenario
             }
     
             // Close the modal after successful buy
-            handleCloseBuyModal();
+            handleCloseSellModal();
         } catch (error) {
-            console.error('Error buying stock:', error);
-            setErrorMessage('Failed to buy stock. Please try again.');
+            console.error('Error selling stock:', error);
+            setErrorMessage('Failed to sell stock. Please try again.');
         }
     };
-    
-    const isBuyDisabled = () => {
-        return quantity < 1 || quantity === '' || total > moneyInWallet;
+
+    const isSellDisabled = () => {
+        return quantity < 1 || quantity === '' || quantity > existingQuantity;
     };
 
     const handleQuantityChange = (e) => {
         const newQuantity = parseInt(e.target.value);
         setQuantity(newQuantity);
-        if (newQuantity >= 1) {
+        if (newQuantity >= 1 && newQuantity<=existingQuantity) {
             const newTotal = newQuantity * currentPrice;
-            if (newTotal <= moneyInWallet) {
-                setTotal(newTotal);
-                setErrorMessage('');
-            } else {
-                setTotal(0);
-                setErrorMessage("Not enough money in wallet!");
-            }
+            setTotal(newTotal);
+            setErrorMessage('');
         } else {
             setTotal(0);
-            setErrorMessage('');
+            setErrorMessage('You cannot Sell Stocks you don\'t have');
         }
     };
 
@@ -125,10 +115,10 @@ const BuyModal = ({ show, ticker, currentPrice, moneyInWallet, onHide, handleClo
                 <div style={{ float: 'left' }}>
                     <Form.Label><strong>Total:</strong> ${total}</Form.Label>
                 </div>
-                <Button variant="success" onClick={handleBuy} disabled={isBuyDisabled()}>Buy</Button>
+                <Button variant="success" onClick={handleSell} disabled={isSellDisabled()}>Sell</Button>
             </Modal.Footer>
         </Modal>
     );
-};
+}
 
-export default BuyModal;
+export default SellModal;

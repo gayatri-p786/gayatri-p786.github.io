@@ -8,6 +8,7 @@ import ChartsTab from './chartsTab';
 import './styles.css'; // Import the CSS file
 import axios from 'axios';
 import BuyModal from './BuyModal';
+import SellModal from './SellModal';
 import { Alert } from 'react-bootstrap'; // Import Alert from react-bootstrap for displaying messages
 
 
@@ -18,7 +19,9 @@ function SearchDetails() {
     // const { profileData, historicalData, latestPriceData, newsData, recommendationData, sentimentData, peersData, earningsData } = data;
     const ticker = data.profileData.ticker;
     const [hasStock, setHasStock] = useState(false);
+    const [existQuantity, setExistQuantity] = useState(0);
     const [showBuyModal, setShowBuyModal] = useState(false);
+    const [showSellModal, setShowSellModal] = useState(false);
     const [money, setMoney] = useState([]);
     const [showAlert, setShowAlert] = useState(false);
     const [watchlist, setWatchlist] = useState([]);
@@ -50,6 +53,13 @@ function SearchDetails() {
                 setHasStock(hasStock);
                 setShowSellButton(hasStock);
                 setMoney(portfolio.money);
+                const stock = portfolio.portfolio.find(item => item.symbol === ticker);
+                if (stock) {
+                    setExistQuantity(stock.quantity);
+                } else {
+                    // If the stock doesn't exist in the portfolio, set quantity to 0
+                    setExistQuantity(0);
+                }
             } catch (error) {
                 console.error('Error fetching user portfolio:', error);
             }
@@ -139,7 +149,7 @@ function SearchDetails() {
             marketOpenTime.setHours(9, 30, 0); // 9:30 am EST
             const marketCloseTime = new Date(estTime);
             marketCloseTime.setHours(16, 0, 0); // 4:00 pm EST
-            console.log(marketOpenTime,marketCloseTime,estTime);
+            // console.log(marketOpenTime,marketCloseTime,estTime);
     
             return estTime >= marketOpenTime && estTime <= marketCloseTime;
         }
@@ -195,8 +205,20 @@ function SearchDetails() {
         setShowBuyModal(false);
     };
 
-    const handleSell = () => {
+    const handleSellClick = () => {
+        setShowSellModal(true);
+        setShowAlert(true);
+        setAlertMessage('Stock bousoldght successfully!');
+    };
+
+    const handleSell = (ticker, sellQuantity) => {
         // Implement sell functionality
+        console.log(`Selling ${sellQuantity} shares of ${ticker}`);
+        setShowSellModal(false);
+    };
+
+    const handleCloseSellModal = () => {
+        setShowSellModal(false);
     };
     
 
@@ -272,7 +294,7 @@ function SearchDetails() {
                             <h3>{data.profileData.name}</h3>
                             <p>{data.profileData.exchange}</p>
                             <button className="btn btn-success" onClick={handleBuyClick}>Buy</button>
-                            {showSellButton && <button className="btn btn-danger" onClick={handleSell}>Sell</button>}
+                            {showSellButton && <button className="btn btn-danger" onClick={handleSellClick}>Sell</button>}
                             <BuyModal
                                 show={showBuyModal}
                                 onHide={handleCloseBuyModal}
@@ -281,6 +303,16 @@ function SearchDetails() {
                                 moneyInWallet={money}
                                 onBuy={handleBuy}
                                 handleCloseBuyModal={handleCloseBuyModal}
+                            />
+                            <SellModal
+                                show={showSellModal}
+                                onHide={handleCloseSellModal}
+                                ticker={ticker}
+                                onSell={handleSell}
+                                existingQuantity={existQuantity}
+                                currentPrice={data.latestPriceData.c}
+                                moneyInWallet={money}
+                                handleCloseSellModal={handleCloseSellModal}
                             />
                         </div>
                     </div>
