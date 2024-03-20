@@ -332,6 +332,24 @@ app.get('/api/data', async (req, res) => {
     }
 });
 
+// Define a route to fetch the current price
+app.post('/api/current-prices', async (req, res) => {
+    const symbols = req.body.symbols; // Assuming symbols is an array of stock symbols
+    try {
+        const promises = symbols.map(async symbol => {
+            const response = await axios.get(`https://finnhub.io/api/v1/quote?symbol=${symbol}&token=${finnhub_api_key}`);
+            return { [symbol]: response.data }; // Assuming 'c' is the key for current price in the API response
+        });
+        const results = await Promise.all(promises);
+        const currentPrices = Object.assign({}, ...results);
+        res.json(currentPrices);
+    } catch (error) {
+        console.error('Error fetching current prices:', error);
+        res.status(500).json({ error: 'Failed to fetch current prices' });
+    }
+});
+
+
 const client = new MongoClient(uri, {   useNewUrlParser: true, useUnifiedTopology: true });
 async function run() {
     const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -353,7 +371,7 @@ async function run() {
                     $set: {
                         watchlist: [],
                         portfolio: [],
-                        wallet: { money: 25000 }
+                        wallet: { money: parseFloat(25000.00) }
                     }
                 }
             );

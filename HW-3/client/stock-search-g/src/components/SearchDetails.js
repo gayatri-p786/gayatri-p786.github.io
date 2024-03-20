@@ -123,6 +123,7 @@ function SearchDetails() {
             if (response.data.success) {
                 console.log('Stock removed from watchlist successfully');
                 setWatchlist(watchlist.filter(item => item.symbol !== symbol));
+                setAlertMessage(`${symbol} removed from Watchlist succesfully`);
                 // Optionally, you can update the UI or show a success message
             } else {
                 console.error('Failed to remove stock from watchlist');
@@ -171,20 +172,33 @@ function SearchDetails() {
     const [activeTab, setActiveTab] = useState('summary');
     const [starClicked, setStarClicked] = useState(false); 
 
-    const handleStarClick = () => {
-        setStarClicked(!starClicked);
-        setShowAlert(true); // Show the alert
-        setTimeout(() => setShowAlert(false), 3000);  // Toggle the state
+    useEffect(() => {
         const stockSymbol = data.profileData.ticker;
         const isStockInWatchlist = watchlist.some(item => item.symbol === stockSymbol);
-        if (!isStockInWatchlist) {
+        setStarClicked(isStockInWatchlist);
+    }, [watchlist]);
+    
+
+    const handleStarClick = () => {
+        setStarClicked(prevStarClicked => !prevStarClicked); // Toggle the starClicked state
+        setShowAlert(true); // Show the alert
+        setTimeout(() => setShowAlert(false), 3000); // Toggle the state
+    };
+    
+    useEffect(() => {
+        const stockSymbol = data.profileData.ticker;
+        const isStockInWatchlist = watchlist.some(item => item.symbol === stockSymbol);
+        if (starClicked) {
             setAlertMessage(`${ticker} added to Watchlist successfully!`);
             addToWatchlist();
         } else {
-            removeFromWatchlist(stockSymbol);
-            setAlertMessage(`${ticker} removed from Watchlist successfully!`);
+            if (isStockInWatchlist) {
+                setAlertMessage(`${ticker} removed from Watchlist successfully!`);
+                removeFromWatchlist(stockSymbol);
+            }
         }
-    };
+    }, [starClicked]);
+    
 
     // Function to handle buy button click
     const handleBuyClick = () => {
@@ -300,6 +314,7 @@ function SearchDetails() {
                                 show={showBuyModal}
                                 onHide={handleCloseBuyModal}
                                 ticker={ticker}
+                                company={data.profileData.name}
                                 currentPrice={data.latestPriceData.c}
                                 moneyInWallet={money}
                                 onBuy={handleBuy}

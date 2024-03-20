@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Modal, Button, Form} from 'react-bootstrap';
 import axios from 'axios';
 
-const BuyModal = ({ show, ticker, currentPrice, moneyInWallet, onHide, handleCloseBuyModal }) => {
+const BuyModal = ({ show, ticker, company, currentPrice, moneyInWallet, onHide, handleCloseBuyModal }) => {
     const [quantity, setQuantity] = useState(1);
     const [errorMessage, setErrorMessage] = useState('');
     const [total, setTotal] = useState(0);
@@ -41,6 +41,7 @@ const BuyModal = ({ show, ticker, currentPrice, moneyInWallet, onHide, handleClo
                 // If the stock does not exist, add a new record to the portfolio
                 const newStock = {
                     symbol: ticker,
+                    company: company,
                     quantity: parseInt(quantity),
                     total: parseFloat(total),
                     averageCostPerShare: parseFloat(total) / parseInt(quantity)
@@ -54,7 +55,7 @@ const BuyModal = ({ show, ticker, currentPrice, moneyInWallet, onHide, handleClo
             }
             if (upin_response.status === 200) {
                 // Update the money in wallet based on the current money and total cost
-                const newMoneyInWallet = moneyInWallet - parseFloat(total);
+                const newMoneyInWallet = parseFloat(moneyInWallet - parseFloat(total));
                 
                 // Update the money in wallet using another backend endpoint
                 const updateMoneyResponse = await axios.post(`http://${window.location.hostname}:5000/api/user/money/update`, { money: newMoneyInWallet });

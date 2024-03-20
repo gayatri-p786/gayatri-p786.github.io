@@ -49,7 +49,7 @@ function SellModal({ show, ticker, currentPrice, moneyInWallet, existingQuantity
 
             if (upin_response.status === 200) {
                 // Update the money in wallet based on the current money and total cost
-                const newMoneyInWallet = moneyInWallet + parseFloat(total);
+                const newMoneyInWallet = parseFloat(moneyInWallet + parseFloat(total));
                 
                 // Update the money in wallet using another backend endpoint
                 const updateMoneyResponse = await axios.post(`http://${window.location.hostname}:5000/api/user/money/update`, { money: newMoneyInWallet });
