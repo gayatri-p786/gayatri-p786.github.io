@@ -20,9 +20,30 @@ function SellModal({ show, ticker, currentPrice, moneyInWallet, existingQuantity
             // Check if the ticker already exists in the user's portfolio
             const existingStock = userData.portfolio.find(stock => stock.symbol === ticker);
             console.log(existingStock);
-            
+            const newquant=existingQuantity-parseInt(quantity);
+            if (newquant<=0){
+                const remove_response=await axios.post(`http://${window.location.hostname}:5000/api/user/portfolio/remove?ticker=${ticker}`);
+                // console.log(remove_response);
+                if (remove_response.status===200){
+                    console.log("Removed STock from Portfolio");
+
+                }else{
+                    console.log("Could NOT remove stock");
+                }
+                const newMoneyInWallet = parseFloat(moneyInWallet + parseFloat(total));
+                
+                // Update the money in wallet using another backend endpoint
+                const updateMoneyResponse = await axios.post(`http://${window.location.hostname}:5000/api/user/money/update`, { money: newMoneyInWallet });
     
-            if (existingStock && parseInt(quantity)<=existingQuantity) {
+                if (updateMoneyResponse.status === 200) {
+                    // Money in wallet updated successfully
+                    // Perform any additional actions, such as closing the modal
+                    // handleClose();
+                } else {
+                    console.error('Failed to update money in wallet');
+                    // Handle the failure scenario
+                }
+            }else if (existingStock && parseInt(quantity)<=existingQuantity) {
                 // If the stock already exists, update the quantity, total, and average cost per share
                 const updatedPortfolio = userData.portfolio.map(stock => {
                     if (stock.symbol === ticker) {

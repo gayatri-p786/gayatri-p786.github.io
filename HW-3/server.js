@@ -134,7 +134,7 @@ const fetchFinnhubData = async (stock_ticker) => {
         const earningsData = handleNullValues(earningsResponse.data);
         const polygonData = handleNullValues(polygonResponse.data);
         // Handle data from additional endpoints
-        // console.log(latestPriceData);
+        console.log(profileData);
         
         return { profileData, historicalData, latestPriceData, newsData, recommendationData, sentimentData, peersData, earningsData, polygonData };
     } catch (error) {
@@ -310,6 +310,32 @@ app.post('/api/user/portfolio/insert', async (req, res) => {
     } catch (error) {
         console.error('Error inserting stock to portfolio:', error);
         res.status(500).json({ error: 'Failed to add stock to portfolio' });
+    }
+});
+
+
+app.post('/api/user/portfolio/remove', async (req, res) => {
+    try {
+        console.log("inside remove symbol");
+        let symbol = req.query.ticker;
+        const db = client.db('StockProfiles');
+        const usersCollection = db.collection('favorites');
+        console.log(symbol);
+        // Update the portfolio array within the user object to remove the specified stock
+        const result = await usersCollection.updateOne(
+            { /* Add your user identifier here, such as user ID or username */ },
+            { $pull: { portfolio: { symbol } } }
+        );
+        console.log(result);
+
+        if (result.modifiedCount === 1) {
+            res.status(200).json({ success: true, message: 'Stock removed from favorites successfully' });
+        } else {
+            res.status(404).json({ success: false, message: 'Stock not found in favorites' });
+        }
+    } catch (error) {
+        console.error('Error removing stock from favorites:', error);
+        res.status(500).json({ success: false, message: 'Failed to remove stock from favorites' });
     }
 });
 

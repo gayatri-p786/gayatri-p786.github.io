@@ -15,7 +15,7 @@ import { Alert } from 'react-bootstrap'; // Import Alert from react-bootstrap fo
 function SearchDetails() {
     const location = useLocation();
     const data = location.state?.data; // Get the data passed from the server
-    
+    console.log(data);
     // const { profileData, historicalData, latestPriceData, newsData, recommendationData, sentimentData, peersData, earningsData } = data;
     const ticker = data.profileData.ticker;
     const [hasStock, setHasStock] = useState(false);

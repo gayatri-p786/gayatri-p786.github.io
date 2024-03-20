@@ -8,6 +8,7 @@ const Portfolio = () => {
     const [portfolio, setPortfolio] = useState([]);
     const [money, setMoney] = useState(0);
     const [loading, setLoading] = useState(true);
+    const [priceLoading, setPriceLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState('');
     const [currentPrices, setCurrentPrices] = useState({});
     const [showBuyModal, setShowBuyModal] = useState(false);
@@ -26,12 +27,18 @@ const Portfolio = () => {
                     setMoney(data.money);
                 }
                 if (data.portfolio.length === 0) {
+                    setPriceLoading(false);
                     setErrorMessage("Currently you don't have any stock in your portfolio");
                 }
             } catch (error) {
                 console.error('Error fetching portfolio:', error);
             } finally {
-                setLoading(false);
+                // Check if current prices are fetched
+                if (Object.keys(currentPrices).length === 0 && portfolio.length > 0) {
+                    setLoading(true);
+                } else {
+                    setLoading(false);
+                }
             }
         };
 
@@ -40,25 +47,22 @@ const Portfolio = () => {
     }, []);
 
     useEffect(() => {
-        const fetchCurrentPrices = async () => {
-            try {
-                setLoading(true);
+        if (portfolio.length > 0) {
+            const fetchCurrentPrices = async () => {
+                setPriceLoading(true);
                 try {
                     const symbols = portfolio.map(item => item.symbol);
                     const response = await axios.post(`http://${window.location.hostname}:5000/api/current-prices`, { symbols });
                     setCurrentPrices(response.data);
                 } catch (error) {
                     console.error('Error fetching current prices:', error);
+                } finally {
+                    setPriceLoading(false);
                 }
-            } catch (error) {
-                console.error('Error fetching current prices:', error);
-            }finally{
-                setLoading(false);
-            }
-        };
-
-        fetchCurrentPrices();
-        
+            };
+    
+            fetchCurrentPrices();
+        }
     }, [portfolio]);
 
     // Function to calculate the change and market value for each stock
@@ -79,7 +83,7 @@ const Portfolio = () => {
             return { change: 0, marketValue: 0 };
         }
 
-        const change = stock.averageCostPerShare - currentPrice.c;
+        const change = currentPrice.c - stock.averageCostPerShare;
         const marketValue = stock.quantity * currentPrice.c;
         // console.log(change,marketValue);
         
@@ -143,7 +147,7 @@ const Portfolio = () => {
                         Stock sold successfully!
                     </Alert>
                 )}
-                {loading ? (
+                {loading || priceLoading ? (
                     <Spinner animation="border" variant="primary" />
                 ) : (
                     <div>
@@ -162,7 +166,7 @@ const Portfolio = () => {
                                                 <div className="col-sm-6">
                                                     <p><strong>Quantity:</strong> {stock.quantity}</p>
                                                     <p><strong>Avg Cost / Share:</strong> ${stock.averageCostPerShare}</p>
-                                                    <p><strong>Total Cost:</strong> ${stock.total.toFixed(2)}</p>
+                                                    <p><strong>Total Cost:</strong> ${stock.total}</p>
                                                 </div>
                                                 <div className="col-sm-6">
                                                     <p style={{ color: stock.change > 0 ? 'green' : (calculateStockData(stock).change < 0 ? 'red' : 'black') }}>
@@ -184,7 +188,7 @@ const Portfolio = () => {
                                             onHide={handleCloseBuyModal}
                                             ticker={stock.symbol}
                                             company={stock.company}
-                                            currentPrice={currentPrices[stock.symbol]?.c}
+                                            currentPrice={currentPrices[stock.symbol].c}
                                             moneyInWallet={money}
                                             onBuy={handleBuy}
                                         />
@@ -194,7 +198,7 @@ const Portfolio = () => {
                                             ticker={stock.symbol}
                                             onSell={handleSell}
                                             existingQuantity={stock.quantity}
-                                            currentPrice={currentPrices[stock.symbol]?.c}
+                                            currentPrice={currentPrices[stock.symbol].c}
                                             moneyInWallet={money}
                                         />
                                     </Card>
