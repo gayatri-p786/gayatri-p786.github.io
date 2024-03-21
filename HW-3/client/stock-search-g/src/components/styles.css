@@ -1,109 +1,107 @@
 .navbar {
-    background-color: rgb(8, 45, 154);
-    color: #d3d3d3; /* Light grey text */
+  background-color: rgb(8, 45, 154);
+  color: #d3d3d3; /* Light grey text */
 }
 
 .navbar .nav-link {
-    color: #d3d3d3;
+  color: #d3d3d3;
 }
 
 .navbar .nav-link:hover {
-    color: white;
+  color: white;
 }
 
 .navbar .active {
-    border: 1px solid white;
-    border-radius: 5px;
+  border: 1px solid white;
+  border-radius: 5px;
 }
 
 .MuiAutocomplete-root.MuiAutocomplete-hasPopupIcon.css-1h51icj-MuiAutocomplete-root {
   width: 100%;
-  border:none !important;
+  border: none !important;
 }
 
 .custom-container {
-    margin-right: 0 !important;
-    margin-left: 0 !important;
+  margin-right: 0 !important;
+  margin-left: 0 !important;
 }
 
 .text-center {
-    text-align: center;
-  }
-
-  .heading {
-    padding: 40px;
-    font-family:'Times New Roman', Times, serif;
-    font-weight: 300; /* Adjust font weight as needed */
-  }
-
-
-  .search-bar-container {
-    width: 60%;
-    margin: 5em auto;
-    padding: 10px;
-    border: 2px solid rgb(8, 45, 154); /* Royal blue border */
-    border-radius: 10px;
-    display: flex;
-    justify-content: space-between;
-  }
-  
-  .search-bar-input {
-    flex: 1;
-    outline: none; /* Remove input field highlight on focus */
-    padding: 8px;
-    border-radius: 10px;
-  }
-  
-  .search-bar-button {
-    padding: 8px;
-    border: none !important;
-    cursor: pointer;
-    background-color: transparent !important; /* Set button background color to transparent */
-  }
-  
-  .search-bar-button:hover {
-    background-color: transparent; /* No change on hover */
-  }
-  
-  .search-bar-input:focus {
-    box-shadow: none !important; /* Remove box shadow on focus */
-  }
-
-  .search-bar-icons {
-    color: rgb(8, 45, 154); /* Royal blue color */
-  }
-
-  .footer {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    background-color: #c1c3c5; /* Grey background color */
-    padding: 10px;
-    text-align: center;
-    color: #000000; /* Black text color */
-    z-index: 999; /* Ensure footer remains below content */
+  text-align: center;
 }
 
- 
-  .footer a {
-    color: #007bff; /* Link color */
-    text-decoration: none; /* Remove underline */
-  }
-  
-  .footer a:hover {
-    text-decoration: underline; /* Add underline on hover */
-  }
+.heading {
+  padding: 40px;
+  font-family: "Times New Roman", Times, serif;
+  font-weight: 300; /* Adjust font weight as needed */
+}
 
-  .content-container {
-    margin-bottom: 60px; /* Adjust as needed to create space between content and footer */
-    /* You can also use padding-bottom instead of margin-bottom */
+.search-bar-container {
+  width: 60%;
+  margin: 5em auto;
+  padding: 10px;
+  border: 2px solid rgb(8, 45, 154); /* Royal blue border */
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.search-bar-input {
+  flex: 1;
+  outline: none; /* Remove input field highlight on focus */
+  padding: 8px;
+  border-radius: 10px;
+}
+
+.search-bar-button {
+  padding: 8px;
+  border: none !important;
+  cursor: pointer;
+  background-color: transparent !important; /* Set button background color to transparent */
+}
+
+.search-bar-button:hover {
+  background-color: transparent; /* No change on hover */
+}
+
+.search-bar-input:focus {
+  box-shadow: none !important; /* Remove box shadow on focus */
+}
+
+.search-bar-icons {
+  color: rgb(8, 45, 154); /* Royal blue color */
+}
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: #c1c3c5; /* Grey background color */
+  padding: 10px;
+  text-align: center;
+  color: #000000; /* Black text color */
+  z-index: 999; /* Ensure footer remains below content */
+}
+
+.footer a {
+  color: #007bff; /* Link color */
+  text-decoration: none; /* Remove underline */
+}
+
+.footer a:hover {
+  text-decoration: underline; /* Add underline on hover */
+}
+
+.content-container {
+  margin-bottom: 60px; /* Adjust as needed to create space between content and footer */
+  /* You can also use padding-bottom instead of margin-bottom */
 }
 
 @media (max-width: 767px) {
   .flex-container {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 }
 
@@ -125,12 +123,10 @@
   }
 }
 
-
-
 .autocomplete-dropdown {
   position: absolute;
   padding: 1em !important;
-  width: calc(50% + 2px);; /* Adjust width as needed */
+  width: calc(50% + 2px); /* Adjust width as needed */
   max-height: 200px; /* Adjust max-height as needed */
   overflow-y: auto; /* Enable vertical scrolling */
   top: calc(70% + 2px);
@@ -144,10 +140,14 @@
   padding: 1em !important;
   width: calc(60% - 20px);
   text-overflow: ellipsis;
-  word-wrap: break-word; 
+  word-wrap: break-word;
 }
 
-.dropdown-menu.show .dropdown-item.active, .dropdown-item:active {
+.company-logo-container {
+  max-height: 50px; /* Adjust the maximum height as needed */
+}
+
+.dropdown-menu.show .dropdown-item.active,
+.dropdown-item:active {
   --bs-dropdown-link-active-bg: transparent !important;
 }
-

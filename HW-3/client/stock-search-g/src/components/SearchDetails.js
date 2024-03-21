@@ -9,6 +9,7 @@ import './styles.css'; // Import the CSS file
 import axios from 'axios';
 import BuyModal from './BuyModal';
 import SellModal from './SellModal';
+import InsightsTab from './InsightsTab';
 import { Alert } from 'react-bootstrap'; // Import Alert from react-bootstrap for displaying messages
 
 
@@ -362,7 +363,9 @@ function SearchDetails() {
                         </div>
                     </div>
                     <div className="col-4 text-center">
-                        <img src={data.profileData.logo} alt="Company Logo" className="img-fluid" />
+                        <div className="company-logo-container">
+                            <img src={data.profileData.logo} alt="Company Logo" height="100px" />
+                        </div>
                     </div>
                     <div className="col-4 text-center">
                         <p className={data.latestPriceData.d > 0 ? 'text-success' : 'text-danger'} style={{ fontSize: '24px', fontWeight: 'bold' }}>
@@ -442,7 +445,7 @@ function SearchDetails() {
 
                             </div>
                             <div className={`tab-pane fade ${activeTab === 'insights' ? 'show active' : ''}`}>
-                                {/* Insights Tab Content */}
+                                <InsightsTab sentimentData={data.sentimentData} earningData={data.earningsData} ticker={ticker} recommendationData={data.recommendationData} />
                             </div>
                         </div>
                 </div>
