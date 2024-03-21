@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import axios from 'axios';
 
-function SellModal({ show, ticker, currentPrice, moneyInWallet, existingQuantity, onHide, handleCloseSellModal }) {
+function SellModal({ show, ticker, currentPrice, moneyInWallet, existingQuantity, onHide, handleCloseSellModal, handleSellSuccess }) {
     const [quantity, setQuantity] = useState(1);
     const [errorMessage, setErrorMessage] = useState('');
     const [total, setTotal] = useState(0);
@@ -89,6 +89,7 @@ function SellModal({ show, ticker, currentPrice, moneyInWallet, existingQuantity
             }
     
             // Close the modal after successful buy
+            handleSellSuccess();
             handleCloseSellModal();
         } catch (error) {
             console.error('Error selling stock:', error);

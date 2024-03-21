@@ -97,6 +97,7 @@ const Watchlist = () => {
         <div className="d-flex justify-content-center mt-5">
             <div style={{ width: '70%' }}>
                 <h1 className="mb-4">My Watchlist</h1>
+                
                 {loading ? (
                     <Spinner animation="border" variant="primary" />
                 ) : (

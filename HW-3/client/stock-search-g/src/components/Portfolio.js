@@ -6,42 +6,45 @@ import SellModal from './SellModal';
 
 const Portfolio = () => {
     const [portfolio, setPortfolio] = useState([]);
+    const [reloadportfolio, setReloadPortfolio] = useState(false);
     const [money, setMoney] = useState(0);
     const [loading, setLoading] = useState(true);
     const [priceLoading, setPriceLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState('');
+    const [bmessage, setBmessage] = useState('');
+    const [smessage, setSmessage] = useState('');
     const [currentPrices, setCurrentPrices] = useState({});
     const [showBuyModal, setShowBuyModal] = useState(false);
     const [showSellModal, setShowSellModal] = useState(false);
     const [buySuccess, setBuySuccess] = useState(false);
     const [sellSuccess, setSellSuccess] = useState(false);
 
-    useEffect(() => {
-        const fetchPortfolio = async () => {
-            try {
-                const response = await fetch(`http://${window.location.hostname}:5000/api/user/portfolio`);
-                const data = await response.json();
-                console.log("port data", data);
-                if (data) {
-                    setPortfolio(data.portfolio);
-                    setMoney(data.money);
-                }
-                if (data.portfolio.length === 0) {
-                    setPriceLoading(false);
-                    setErrorMessage("Currently you don't have any stock in your portfolio");
-                }
-            } catch (error) {
-                console.error('Error fetching portfolio:', error);
-            } finally {
-                // Check if current prices are fetched
-                if (Object.keys(currentPrices).length === 0 && portfolio.length > 0) {
-                    setLoading(true);
-                } else {
-                    setLoading(false);
-                }
+    const fetchPortfolio = async () => {
+        try {
+            const response = await fetch(`http://${window.location.hostname}:5000/api/user/portfolio`);
+            const data = await response.json();
+            console.log("port data", data);
+            if (data) {
+                setPortfolio(data.portfolio);
+                setMoney(data.money);
             }
-        };
+            if (data.portfolio.length === 0) {
+                setPriceLoading(false);
+                setErrorMessage("Currently you don't have any stock in your portfolio");
+            }
+        } catch (error) {
+            console.error('Error fetching portfolio:', error);
+        } finally {
+            // Check if current prices are fetched
+            if (Object.keys(currentPrices).length === 0 && portfolio.length > 0) {
+                setLoading(true);
+            } else {
+                setLoading(false);
+            }
+        }
+    };
 
+    useEffect(() => {
         fetchPortfolio();
         
     }, []);
@@ -64,6 +67,26 @@ const Portfolio = () => {
             fetchCurrentPrices();
         }
     }, [portfolio]);
+
+    // useEffect(() => {
+    //     // Logic to fetch portfolio data goes here
+    //     // This useEffect will run whenever reloadPortfolio changes
+    //     fetchPortfolio();
+    // }, [reloadPortfolio]);
+
+    useEffect(() => {
+        // This useEffect hook reloads the portfolio data when buy or sell is successful
+        if (buySuccess || sellSuccess) {
+            fetchPortfolio(); // Reload the portfolio data
+            // Reset buySuccess and sellSuccess after 3 seconds
+            const timer = setTimeout(() => {
+                setBuySuccess(false);
+                setSellSuccess(false);
+            }, 3000);
+            // Cleanup function to clear the timer
+            return () => clearTimeout(timer);
+        }
+    }, [reloadportfolio]);
 
     // Function to calculate the change and market value for each stock
     // Function to calculate the change and market value for each stock
@@ -90,31 +113,6 @@ const Portfolio = () => {
         return { change:change, mv:marketValue };
     };
 
-    
-    const handleBuy = async (quantity) => {
-        try {
-            // Perform buy operation here
-            // Update money and portfolio states accordingly
-            setBuySuccess(true);
-            // Close the buy modal
-            setShowBuyModal(false);
-        } catch (error) {
-            console.error('Error buying stock:', error);
-        }
-    };
-
-    const handleSell = async (quantity) => {
-        try {
-            // Perform sell operation here
-            // Update money and portfolio states accordingly
-            setSellSuccess(true);
-            // Close the sell modal
-            setShowSellModal(false);
-        } catch (error) {
-            console.error('Error selling stock:', error);
-        }
-    };
-
     const handleCloseBuyModal = () => {
         setShowBuyModal(false);
     };
@@ -123,12 +121,36 @@ const Portfolio = () => {
         setShowSellModal(false);
     };
 
-    const openBuyModal = (stock) => {
+    const openBuyModal = () => {
         setShowBuyModal(true);
     };
 
-    const openSellModal = (stock) => {
+    const openSellModal = () => {
         setShowSellModal(true);
+    };
+
+    const handleSuccessfulBuy = (ticker) => {
+        
+        setBmessage(`${ticker} bought succesfully`);
+        setBuySuccess(true);
+        setTimeout(() => {
+            setBuySuccess(false);
+        }, 3000);
+        setReloadPortfolio(prevState => !prevState);
+        setReloadPortfolio(true);
+        
+        
+    };
+
+    const handleSuccessfulSell = (ticker) => {
+        setSmessage(`${ticker} sold succesfully`);
+        setSellSuccess(true);
+        setTimeout(() => {
+            setSellSuccess(false);
+        }, 3000);
+        setReloadPortfolio(prevState => !prevState);
+        setReloadPortfolio(true);
+        
     };
 
 
@@ -139,12 +161,12 @@ const Portfolio = () => {
                 <h2 className="mb-4">Money in Wallet: ${money}</h2>
                 {buySuccess && (
                     <Alert variant="success" className="text-center">
-                        Stock bought successfully!
+                        {bmessage}
                     </Alert>
                 )}
                 {sellSuccess && (
                     <Alert variant="danger" className="text-center">
-                        Stock sold successfully!
+                        {smessage}
                     </Alert>
                 )}
                 {loading || priceLoading ? (
@@ -190,16 +212,18 @@ const Portfolio = () => {
                                             company={stock.company}
                                             currentPrice={currentPrices[stock.symbol].c}
                                             moneyInWallet={money}
-                                            onBuy={handleBuy}
+                                            handleCloseBuyModal={handleCloseBuyModal}
+                                            handleBuySuccess={handleSuccessfulBuy(stock.symbol)}
                                         />
                                         <SellModal
                                             show={showSellModal}
                                             onHide={handleCloseSellModal}
                                             ticker={stock.symbol}
-                                            onSell={handleSell}
                                             existingQuantity={stock.quantity}
                                             currentPrice={currentPrices[stock.symbol].c}
                                             moneyInWallet={money}
+                                            handleCloseSellModal={handleCloseSellModal}
+                                            handleSellSuccess={handleSuccessfulSell(stock.symbol)}
                                         />
                                     </Card>
                                     
@@ -208,6 +232,7 @@ const Portfolio = () => {
                         )}
                     </div>
                 )}
+                
             </div>
             
         </div>

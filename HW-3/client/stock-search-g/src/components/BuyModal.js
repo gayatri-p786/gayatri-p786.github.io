@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Modal, Button, Form} from 'react-bootstrap';
 import axios from 'axios';
 
-const BuyModal = ({ show, ticker, company, currentPrice, moneyInWallet, onHide, handleCloseBuyModal }) => {
+const BuyModal = ({ show, ticker, company, currentPrice, moneyInWallet, onHide, handleCloseBuyModal, handleBuySuccess }) => {
     const [quantity, setQuantity] = useState(1);
     const [errorMessage, setErrorMessage] = useState('');
     const [total, setTotal] = useState(0);
@@ -72,7 +72,7 @@ const BuyModal = ({ show, ticker, company, currentPrice, moneyInWallet, onHide, 
                 console.error('Failed to buy stock');
                 // Handle the failure scenario
             }
-    
+            handleBuySuccess();
             // Close the modal after successful buy
             handleCloseBuyModal();
         } catch (error) {

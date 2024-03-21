@@ -27,6 +27,8 @@ function SearchDetails() {
     const [watchlist, setWatchlist] = useState([]);
     const [showSellButton, setShowSellButton] = useState(false);
     const [alertMessage, setAlertMessage] = useState('');
+    const [buySuccess, setBuySuccess] = useState(false);
+    const [sellSuccess, setSellSuccess] = useState(false);
 
     const currentTime = new Date();
     const pstOptions = { timeZone: 'America/Los_Angeles' }; // Specify the PST timezone
@@ -235,6 +237,22 @@ function SearchDetails() {
     const handleCloseSellModal = () => {
         setShowSellModal(false);
     };
+
+    const handleSuccessfulBuy = () => {
+        setBuySuccess(true);
+        setTimeout(() => {
+            setBuySuccess(false);
+        }, 3000);
+        // setReloadPortfolio(prevState => !prevState);
+    };
+
+    const handleSuccessfulSell = () => {
+        setSellSuccess(true);
+        setTimeout(() => {
+            setSellSuccess(false);
+        }, 3000);
+        // setReloadPortfolio(prevState => !prevState);
+    };
     
 
     const renderStatusArrow = () => {
@@ -286,6 +304,17 @@ function SearchDetails() {
                 </Alert>
             )}
 
+                {buySuccess && (
+                    <Alert variant="success" className="text-center">
+                        {ticker} bought successfully!
+                    </Alert>
+                )}
+                {sellSuccess && (
+                    <Alert variant="danger" className="text-center">
+                        {ticker} sold successfully!
+                    </Alert>
+                )}
+
             {data && (
             <div className='content-container'>
                 <div className="row mt-4 justify-content-center">
@@ -311,25 +340,25 @@ function SearchDetails() {
                             <button className="btn btn-success" onClick={handleBuyClick}>Buy</button>
                             {showSellButton && <button className="btn btn-danger" onClick={handleSellClick}>Sell</button>}
                             <BuyModal
-                                show={showBuyModal}
-                                onHide={handleCloseBuyModal}
-                                ticker={ticker}
-                                company={data.profileData.name}
-                                currentPrice={data.latestPriceData.c}
-                                moneyInWallet={money}
-                                onBuy={handleBuy}
-                                handleCloseBuyModal={handleCloseBuyModal}
-                            />
-                            <SellModal
-                                show={showSellModal}
-                                onHide={handleCloseSellModal}
-                                ticker={ticker}
-                                onSell={handleSell}
-                                existingQuantity={existQuantity}
-                                currentPrice={data.latestPriceData.c}
-                                moneyInWallet={money}
-                                handleCloseSellModal={handleCloseSellModal}
-                            />
+                                            show={showBuyModal}
+                                            onHide={handleCloseBuyModal}
+                                            ticker={ticker}
+                                            company={data.profileData.name}
+                                            currentPrice={data.latestPriceData.c}
+                                            moneyInWallet={money}
+                                            handleCloseBuyModal={handleCloseBuyModal}
+                                            handleBuySuccess={handleSuccessfulBuy}
+                                        />
+                                        <SellModal
+                                            show={showSellModal}
+                                            onHide={handleCloseSellModal}
+                                            ticker={ticker}
+                                            existingQuantity={existQuantity}
+                                            currentPrice={data.latestPriceData.c}
+                                            moneyInWallet={money}
+                                            handleCloseSellModal={handleCloseSellModal}
+                                            handleSellSuccess={handleSuccessfulSell}
+                                        />
                         </div>
                     </div>
                     <div className="col-4 text-center">
