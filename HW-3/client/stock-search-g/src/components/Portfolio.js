@@ -213,7 +213,7 @@ const Portfolio = () => {
                                             currentPrice={currentPrices[stock.symbol].c}
                                             moneyInWallet={money}
                                             handleCloseBuyModal={handleCloseBuyModal}
-                                            handleBuySuccess={handleSuccessfulBuy(stock.symbol)}
+                                            handleBuySuccess={() => handleSuccessfulBuy(stock.symbol)}
                                         />
                                         <SellModal
                                             show={showSellModal}
@@ -223,7 +223,7 @@ const Portfolio = () => {
                                             currentPrice={currentPrices[stock.symbol].c}
                                             moneyInWallet={money}
                                             handleCloseSellModal={handleCloseSellModal}
-                                            handleSellSuccess={handleSuccessfulSell(stock.symbol)}
+                                            handleSellSuccess={() => handleSuccessfulSell(stock.symbol)} 
                                         />
                                     </Card>
                                     
