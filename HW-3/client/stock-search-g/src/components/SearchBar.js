@@ -2,10 +2,13 @@ import React, { useState, useRef  } from 'react';
 import { Form, FormControl, Button, Alert, Dropdown, Spinner } from 'react-bootstrap'; // Import Alert from react-bootstrap for displaying messages
 import { FaSearch, FaTimes } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { setSearchSymbol } from '../actions/searchActions';
 import axios from 'axios';
 import './styles.css'; // Import the CSS file
 
 const SearchBar = ({ initialTicker, dropdownstate }) => {
+    const dispatch = useDispatch();
     const [ticker, setTicker] = useState(initialTicker || '');
     const [errorMessage, setErrorMessage] = useState('');
     const [suggestions, setSuggestions] = useState([]); 
@@ -15,6 +18,7 @@ const SearchBar = ({ initialTicker, dropdownstate }) => {
 
     const handleSearch = async () => {
         setDropdown(false);
+        // dispatch(setSearchSymbol(ticker));
         try {
             // Perform the HTTP request to your Node.js backend
             
@@ -30,6 +34,7 @@ const SearchBar = ({ initialTicker, dropdownstate }) => {
             if (emptyData) {
                 throw new Error(`No ${emptyData[0]} data found.`);
             }
+            dispatch(setSearchSymbol(ticker, data)); 
             navigate(`/search/${ticker}`, { state: { data } });
             
             // If request is successful, display the message
@@ -47,6 +52,7 @@ const SearchBar = ({ initialTicker, dropdownstate }) => {
     const handleClear = () => {
         setTicker('');
         setDropdown(false);
+        dispatch(setSearchSymbol('', {})); 
         navigate('/search/home'); 
     };
 

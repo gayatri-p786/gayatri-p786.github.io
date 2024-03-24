@@ -59,18 +59,7 @@ const RecommendationChart = ({ recommendationData }) => {
                 }
             }
         },
-        // legend: {
-        //     align: 'left',
-        //     x: 70,
-        //     verticalAlign: 'bottom',
-        //     y: 70,
-        //     floating: true,
-        //     backgroundColor: Highcharts.defaultOptions.legend.backgroundColor || 'white',
-        //     borderColor: '#CCC',
-        //     borderWidth: 1,
-        //     shadow: false,
-        //     color: 'black'
-        // },
+        // 
         legend: {
             align: 'center',
             verticalAlign: 'bottom',

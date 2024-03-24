@@ -4,17 +4,25 @@ import SearchBar from './SearchBar';
 import { BiCaretUp, BiCaretDown, BiStar, BiChevronLeft, BiChevronRight } from 'react-icons/bi'; 
 import { AiFillStar} from 'react-icons/ai';
 import HourlyPriceChart from './HourlyPriceChart';
-import ChartsTab from './chartsTab';
+import TabCharts from './TabCharts';
 import './styles.css'; // Import the CSS file
 import axios from 'axios';
 import BuyModal from './BuyModal';
 import SellModal from './SellModal';
 import InsightsTab from './InsightsTab';
+import TopNewsTab from './TopNews';
 import { Alert } from 'react-bootstrap'; // Import Alert from react-bootstrap for displaying messages
+import ChartsTab from './chartsTab';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { setSearchSymbol } from '../actions/searchActions';
 
 
 function SearchDetails() {
     const location = useLocation();
+    const dispatch = useDispatch();
+    const [errorMessage, setErrorMessage] = useState('');
+    const navigate = useNavigate();
     const data = location.state?.data; // Get the data passed from the server
     console.log(data);
     // const { profileData, historicalData, latestPriceData, newsData, recommendationData, sentimentData, peersData, earningsData } = data;
@@ -44,7 +52,21 @@ function SearchDetails() {
       });
       const formattedDate = pstTimeString.replace(/\//g, '-'); // Replace slashes with dashes
 
-
+      const handleSymbolClick = async (symbol) => {
+        try {
+            const response = await fetch(`http://${window.location.hostname}:5000/api/data?ticker=${symbol}`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch data');
+            }
+            const data = await response.json();
+            dispatch(setSearchSymbol(symbol, data));
+            navigate(`/search/${symbol}`, { state: { data } });
+        } catch (error) {
+            console.error('Error:', error);
+            setErrorMessage('No data found. Please enter a valid ticker.');
+        }
+    };
+    
 
     useEffect(() => {
         // Fetch user's portfolio from MongoDB
@@ -298,6 +320,7 @@ function SearchDetails() {
             </div>
 
             <SearchBar initialTicker={data.profileData.ticker} dropdown={false} />
+            {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
 
             {showAlert && starClicked && (
                 <Alert variant="success" className='text-center'>
@@ -382,7 +405,7 @@ function SearchDetails() {
                     <div className="col-md-4 text-center">
                         <div style={{ fontWeight: 'bold', color: isMarketOpen() ? 'green' : 'red' }}>
                             <span>
-                                {isMarketOpen() ? `Market is open on ${formattedDate}` : `Market closed on ${formatTimestamp(data.latestPriceData.t)}`}
+                                {isMarketOpen() ? `Market is open` : `Market closed on ${formatTimestamp(data.latestPriceData.t *1000)}`}
                             </span>
                         </div>
                     </div>
@@ -421,10 +444,12 @@ function SearchDetails() {
                                         <div style={{ textAlign: 'center', maxHeight: '200px', overflowY: 'scroll' }}>
                                             {data.peersData.map((peer, index) => (
                                                 <span key={index}>
-                                                    <a href={`/search/${peer}`}>{peer}</a>{index !== data.peersData.length - 1 ? ', ' : ''}
+                                                    <a href="#" onClick={() => handleSymbolClick(peer)}>{peer}</a>
+                                                    {index !== data.peersData.length - 1 ? ', ' : ''}
                                                 </span>
                                             ))}
                                         </div>
+
                                     </div>
                                     {/* Second column */}
                                     <div className="col-md-6">
@@ -437,6 +462,8 @@ function SearchDetails() {
                             </div>
                             <div className={`tab-pane fade ${activeTab === 'topNews' ? 'show active' : ''}`}>
                                 {/* Top News Tab Content */}
+                                <TopNewsTab newsData={data.newsData}/>
+
                             </div>
                             <div className={`tab-pane fade ${activeTab === 'charts' ? 'show active' : ''}`}>
                                 {/* <p>{data.historicalData.results}</p> */}
