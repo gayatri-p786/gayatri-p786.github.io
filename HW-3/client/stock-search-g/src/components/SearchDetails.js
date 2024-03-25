@@ -15,7 +15,7 @@ import { Alert } from 'react-bootstrap'; // Import Alert from react-bootstrap fo
 import ChartsTab from './chartsTab';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { setSearchSymbol } from '../actions/searchActions';
+import { setSearchSymbol, updateLatestPriceData } from '../actions/searchActions';
 
 
 function SearchDetails() {
@@ -23,10 +23,23 @@ function SearchDetails() {
     const dispatch = useDispatch();
     const [errorMessage, setErrorMessage] = useState('');
     const navigate = useNavigate();
-    const data = location.state?.data; // Get the data passed from the server
-    console.log(data);
+
+    const ticker = location.state?.ticker;
+    const data = useSelector(state => state.search.searchData);
+    // console.log("ticker in details", ticker);
+    // console.log("data in details",data);
+    // const latestPriceData = data?.latestpricedata;
+
+    // const ticker = location.state?.ticker;
+    // const data = useSelector(state => state.search.searchData);
+    // const [latestPriceData, setData] = useState(data[ticker].latestPriceData);
+    // const [previousData, setPreviousData] = useState(null); // Get the data passed from the server
+    // const [data.latestPriceData, setdata.latestPriceData] = useState(latestPriceData || previousData);
+    // console.log("data",data);
+    // console.log("latestPrice",latestPriceData);
+    // console.log("display",data.latestPriceData,"previous",previousData);
     // const { profileData, historicalData, latestPriceData, newsData, recommendationData, sentimentData, peersData, earningsData } = data;
-    const ticker = data.profileData.ticker;
+    
     const [hasStock, setHasStock] = useState(false);
     const [existQuantity, setExistQuantity] = useState(0);
     const [showBuyModal, setShowBuyModal] = useState(false);
@@ -209,6 +222,60 @@ function SearchDetails() {
         setShowAlert(true); // Show the alert
         setTimeout(() => setShowAlert(false), 3000); // Toggle the state
     };
+
+    
+
+    // useEffect(() => {
+    //     const interval = setInterval(async () => {
+    //         // if (isMarketOpen()) {
+    //             try {
+    //                 const response = await axios.get(`http://${window.location.hostname}:5000/api/profiledata`);
+    //                 const responseData = response.data;
+    //                 setPreviousData(data.latestPriceData); // Set the current data as previous data
+    //                 setData(responseData.data);
+    //                 dispatch(updateLatestPriceData(responseData.data.latestPriceData)); // Set new data
+    //             } catch (error) {
+    //                 console.error('Error fetching data:', error);
+    //                 setErrorMessage('Failed to fetch data');
+    //             }
+    //             // try {
+    //             //     const response = await axios.get(`http://${window.location.hostname}:5000/api/profiledata?ticker=${data.profileData.ticker}`);
+    //             //     console.log("15 second response",response);
+    //             //     if (response.status !=200) {
+    //             //         throw new Error('Failed to fetch data');
+    //             //     }
+    //             //     const newData = response.data.data;
+    //             //     setData(prevData => ({ ...prevData, profileData: newData.profileData }));
+    //             // } catch (error) {
+    //             //     console.error('Error fetching updated data:', error);
+    //             //     setErrorMessage('Failed to fetch updated data');
+    //             // }
+    //         // }
+    //     }, 15000); // Fetch data every 15 seconds
+
+    //     return () => clearInterval(interval); // Cleanup the interval on component unmount
+    // }, []);
+
+    // useEffect(() => {
+    //     setdata.latestPriceData(latestPriceData || previousData); // Update data.latestPriceData whenever data or previousData changes
+    // }, [latestPriceData, previousData]);
+
+    useEffect(() => {
+        const interval = setInterval(async () => {
+            if (isMarketOpen()) {
+            try {
+                const response = await axios.get(`http://${window.location.hostname}:5000/api/profiledata?ticker=${ticker}`);
+                const responseData = response.data;
+                dispatch(updateLatestPriceData(ticker, responseData.data)); // Update latest price data in Redux store
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                setErrorMessage('Failed to fetch data');
+            }
+        }
+        }, 15000); // Fetch data every 15 seconds
+
+        return () => clearInterval(interval); // Cleanup the interval on component unmount
+    }, [dispatch, ticker]);
     
     useEffect(() => {
         const stockSymbol = data.profileData.ticker;
@@ -311,35 +378,12 @@ function SearchDetails() {
     };
 
 
-   
+    const renderContent = () => {
+        if (!data) {
+            return <Alert variant="danger">{errorMessage}</Alert>;
+        }
 
-    return (
-        <div className="container">
-            <div className="text-center heading">
-                <h1>Stock Search</h1>
-            </div>
-
-            <SearchBar initialTicker={data.profileData.ticker} dropdown={false} />
-            {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
-
-            {showAlert && starClicked && (
-                <Alert variant="success" className='text-center'>
-                    {alertMessage}
-                </Alert>
-            )}
-
-                {buySuccess && (
-                    <Alert variant="success" className="text-center">
-                        {ticker} bought successfully!
-                    </Alert>
-                )}
-                {sellSuccess && (
-                    <Alert variant="danger" className="text-center">
-                        {ticker} sold successfully!
-                    </Alert>
-                )}
-
-            {data && (
+        return (
             <div className='content-container'>
                 <div className="row mt-4 justify-content-center">
                     <div className="col-4 text-center">
@@ -405,7 +449,7 @@ function SearchDetails() {
                     <div className="col-md-4 text-center">
                         <div style={{ fontWeight: 'bold', color: isMarketOpen() ? 'green' : 'red' }}>
                             <span>
-                                {isMarketOpen() ? `Market is open` : `Market closed on ${formatTimestamp(data.latestPriceData.t *1000)}`}
+                                {isMarketOpen() ? `Market is open` : `Market closed on ${formatTimestamp(data.latestPriceData.t)}`}
                             </span>
                         </div>
                     </div>
@@ -478,7 +522,43 @@ function SearchDetails() {
                 </div>
             </div>
             
+        );
+    };
+
+
+   
+
+    return (
+        <div className="container">
+            <div className="text-center heading">
+                <h1>Stock Search</h1>
+            </div>
+
+            <SearchBar initialTicker={data.profileData.ticker} dropdown={false} />
+            {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
+
+            {showAlert && starClicked && (
+                <Alert variant="success" className='text-center'>
+                    {alertMessage}
+                </Alert>
             )}
+
+                {buySuccess && (
+                    <Alert variant="success" className="text-center">
+                        {ticker} bought successfully!
+                    </Alert>
+                )}
+                {sellSuccess && (
+                    <Alert variant="danger" className="text-center">
+                        {ticker} sold successfully!
+                    </Alert>
+                )}
+
+                {renderContent()}
+
+            {/* {data && (
+            
+            )} */}
         </div>
     );
 }

@@ -14,7 +14,7 @@ const InsightsTab = ({ sentimentData, earningData, recommendationData, ticker })
         let positiveChange = 0;
         let negativeChange = 0;
 
-        console.log("earn",earningData);
+        // console.log("earn",earningData);
 
         sentimentData.data.forEach(sentiment => {
             totalMspr += sentiment.mspr;

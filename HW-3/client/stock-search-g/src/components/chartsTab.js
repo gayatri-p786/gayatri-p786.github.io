@@ -39,8 +39,8 @@ const ChartsTab = ({ historicalData, latestPriceData }) => {
                 data.v // Volume
             ]));
 
-            console.log('Volume data:', volume);
-            console.log('OHLC data:', ohlc);
+            // console.log('Volume data:', volume);
+            // console.log('OHLC data:', ohlc);
 
             Highcharts.stockChart('chartcontainer', {
                 rangeSelector: {

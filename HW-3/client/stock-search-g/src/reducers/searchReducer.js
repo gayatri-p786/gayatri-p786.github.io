@@ -1,4 +1,4 @@
-import { SET_SEARCH_SYMBOL } from '../actions/searchActions';
+import { SET_SEARCH_SYMBOL, UPDATE_LATEST_PRICE_DATA } from '../actions/searchActions';
 
 const initialState = {
     searchSymbol: '',
@@ -11,11 +11,19 @@ const searchReducer = (state = initialState, action) => {
             return {
                 ...state,
                 searchSymbol: action.payload.symbol,
-                searchData: {
-                    ...state.searchData,
-                    [action.payload.symbol]: action.payload.data
-                }
+                searchData: action.payload.data
             };
+        
+        case UPDATE_LATEST_PRICE_DATA:
+            const { ticker, latestPriceData } = action.payload;
+            return {
+                ...state,
+                searchData: {
+                        ...state.searchData,
+                        latestPriceData: latestPriceData,
+                    },
+            };
+
         default:
             return state;
     }

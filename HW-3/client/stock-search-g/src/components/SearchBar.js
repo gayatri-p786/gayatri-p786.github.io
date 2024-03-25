@@ -35,7 +35,7 @@ const SearchBar = ({ initialTicker, dropdownstate }) => {
                 throw new Error(`No ${emptyData[0]} data found.`);
             }
             dispatch(setSearchSymbol(ticker, data)); 
-            navigate(`/search/${ticker}`, { state: { data } });
+            navigate(`/search/${ticker}`, { state: { ticker } });
             
             // If request is successful, display the message
             // setMessage(data.message);
