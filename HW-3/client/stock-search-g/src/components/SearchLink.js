@@ -25,7 +25,7 @@ const SearchLink = ({ location }) => {
     };
 
     return (
-        <Nav.Link onClick={handleSearchLinkClick} className={location.pathname === '/search/home' ? 'active' : ''}>Search</Nav.Link>
+        <Nav.Link onClick={handleSearchLinkClick} className={location.pathname.startsWith('/search/') ? 'active' : ''}>Search</Nav.Link>
     );
 };
 

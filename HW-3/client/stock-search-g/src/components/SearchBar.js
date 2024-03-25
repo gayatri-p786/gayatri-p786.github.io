@@ -1,4 +1,4 @@
-import React, { useState, useRef  } from 'react';
+import React, { useState, useEffect  } from 'react';
 import { Form, FormControl, Button, Alert, Dropdown, Spinner } from 'react-bootstrap'; // Import Alert from react-bootstrap for displaying messages
 import { FaSearch, FaTimes } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
@@ -10,13 +10,26 @@ import './styles.css'; // Import the CSS file
 const SearchBar = ({ dropdownstate }) => {
     const dispatch = useDispatch();
     // const initialTicker = useSelector(state => state.search.searchSymbol);
-    // const [ticker, setTicker] = useState(initialTicker || '');
-    const ticker = useSelector(state => state.search.searchSymbol);
+    // console.log("my ticker",initialTicker);
+    const searchSymbol = useSelector(state => state.search.searchSymbol);
+    const [ticker, setTicker] = useState(searchSymbol||'');
+    console.log("tickers",ticker);
     const [errorMessage, setErrorMessage] = useState('');
     const [suggestions, setSuggestions] = useState([]); 
     const [loading, setLoading] = useState(true);
     const [dropdown, setDropdown] = useState(dropdownstate && true);
     const navigate = useNavigate();
+
+    // useEffect(() => {
+    //     if (initialTicker) {
+    //         setTicker(initialTicker.searchSymbol);
+    //     }
+    // }, [initialTicker]);
+
+    useEffect(() => {
+        // Update ticker state when searchSymbol changes
+        setTicker(searchSymbol || '');
+    }, [searchSymbol]);
 
     const handleSearch = async () => {
         setDropdown(false);
@@ -52,7 +65,7 @@ const SearchBar = ({ dropdownstate }) => {
     };
 
     const handleClear = () => {
-        // setTicker('');
+        setTicker('');
         setDropdown(false);
         dispatch(setSearchSymbol('', {})); 
         navigate('/search/home'); 
@@ -65,7 +78,7 @@ const SearchBar = ({ dropdownstate }) => {
     };
 
     const handleSelectSuggestion = (selectedSuggestion) => {
-        // setTicker(selectedSuggestion); 
+        setTicker(selectedSuggestion); 
         setSuggestions([]); 
         setDropdown(false);
         handleSearch();
@@ -74,7 +87,7 @@ const SearchBar = ({ dropdownstate }) => {
     const handleInputChange = async (inputValue) => {
         // const lowercaseValue = inputValue.toLowerCase();
         // setTicker(lowercaseValue);
-        // setTicker(inputValue);
+        setTicker(inputValue);
         setLoading(true);
         try {
             
