@@ -17,8 +17,8 @@ const SearchLink = ({ location }) => {
     const handleSearchLinkClick = () => {
         
         console.log("in search",ticker,searchData);
-        if (ticker && searchData[ticker]) {
-            navigate(`/search/${ticker}`, { state: { data: searchData[ticker] } });
+        if (ticker && searchData) {
+            navigate(`/search/${ticker}`, { state: { data: searchData } });
         } else {
             navigate("/search/home");
         }

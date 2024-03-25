@@ -24,8 +24,11 @@ function SearchDetails() {
     const [errorMessage, setErrorMessage] = useState('');
     const navigate = useNavigate();
 
-    const ticker = location.state?.ticker;
+    const ticker = location.state?.symbol
     const data = useSelector(state => state.search.searchData);
+
+    console.log("new ticker",ticker);
+
     // console.log("ticker in details", ticker);
     // console.log("data in details",data);
     // const latestPriceData = data?.latestpricedata;
@@ -73,7 +76,11 @@ function SearchDetails() {
             }
             const data = await response.json();
             dispatch(setSearchSymbol(symbol, data));
-            navigate(`/search/${symbol}`, { state: { data } });
+            // await new Promise((resolve, reject) => {
+            //     dispatch(setSearchSymbol(symbol, data));
+            //     resolve(); // Resolve the promise after dispatch completes
+            // });
+            navigate(`/search/${symbol}`, { state: { symbol } });
         } catch (error) {
             console.error('Error:', error);
             setErrorMessage('No data found. Please enter a valid ticker.');
@@ -391,6 +398,27 @@ function SearchDetails() {
         }
 
         return (
+            <div>
+                <SearchBar initialTicker={ticker} dropdown={false} />
+            {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
+
+            {showAlert && starClicked && (
+                <Alert variant="success" className='text-center'>
+                    {alertMessage}
+                </Alert>
+            )}
+
+                {buySuccess && (
+                    <Alert variant="success" className="text-center">
+                        {data.profileData.ticker} bought successfully!
+                    </Alert>
+                )}
+                {sellSuccess && (
+                    <Alert variant="danger" className="text-center">
+                        {data.profileData.ticker} sold successfully!
+                    </Alert>
+                )}
+                
             <div className='content-container'>
                 <div className="row mt-4 justify-content-center">
                     <div className="col-4 text-center">
@@ -413,11 +441,11 @@ function SearchDetails() {
                             <h3>{data.profileData.name}</h3>
                             <p>{data.profileData.exchange}</p>
                             <button className="btn btn-success" onClick={handleBuyClick}>Buy</button>
-                            {showSellButton && <button className="btn btn-danger" onClick={handleSellClick}>Sell</button>}
+                            {showSellButton && <button className="btn btn-danger" onClick={handleSellClick} style={{marginLeft:"0.5em"}}>Sell</button>}
                             <BuyModal
                                             show={showBuyModal}
                                             onHide={handleCloseBuyModal}
-                                            ticker={ticker}
+                                            ticker={data.profileData.ticker}
                                             company={data.profileData.name}
                                             currentPrice={data.latestPriceData.c}
                                             moneyInWallet={money}
@@ -427,7 +455,7 @@ function SearchDetails() {
                                         <SellModal
                                             show={showSellModal}
                                             onHide={handleCloseSellModal}
-                                            ticker={ticker}
+                                            ticker={data.profileData.ticker}
                                             existingQuantity={existQuantity}
                                             currentPrice={data.latestPriceData.c}
                                             moneyInWallet={money}
@@ -523,10 +551,11 @@ function SearchDetails() {
 
                             </div>
                             <div className={`tab-pane fade ${activeTab === 'insights' ? 'show active' : ''}`}>
-                                <InsightsTab sentimentData={data.sentimentData} earningData={data.earningsData} ticker={ticker} recommendationData={data.recommendationData} />
+                                <InsightsTab sentimentData={data.sentimentData} earningData={data.earningsData} ticker={data.profileData.ticker} recommendationData={data.recommendationData} />
                             </div>
                         </div>
                 </div>
+            </div>
             </div>
             
         );
@@ -541,26 +570,7 @@ function SearchDetails() {
                 <h1>Stock Search</h1>
             </div>
 
-            <SearchBar initialTicker={data.profileData.ticker} dropdown={false} />
-            {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
-
-            {showAlert && starClicked && (
-                <Alert variant="success" className='text-center'>
-                    {alertMessage}
-                </Alert>
-            )}
-
-                {buySuccess && (
-                    <Alert variant="success" className="text-center">
-                        {ticker} bought successfully!
-                    </Alert>
-                )}
-                {sellSuccess && (
-                    <Alert variant="danger" className="text-center">
-                        {ticker} sold successfully!
-                    </Alert>
-                )}
-
+            
                 {renderContent()}
 
             {/* {data && (

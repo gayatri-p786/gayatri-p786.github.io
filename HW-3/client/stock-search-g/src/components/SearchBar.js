@@ -7,9 +7,11 @@ import { setSearchSymbol } from '../actions/searchActions';
 import axios from 'axios';
 import './styles.css'; // Import the CSS file
 
-const SearchBar = ({ initialTicker, dropdownstate }) => {
+const SearchBar = ({ dropdownstate }) => {
     const dispatch = useDispatch();
-    const [ticker, setTicker] = useState(initialTicker || '');
+    // const initialTicker = useSelector(state => state.search.searchSymbol);
+    // const [ticker, setTicker] = useState(initialTicker || '');
+    const ticker = useSelector(state => state.search.searchSymbol);
     const [errorMessage, setErrorMessage] = useState('');
     const [suggestions, setSuggestions] = useState([]); 
     const [loading, setLoading] = useState(true);
@@ -50,7 +52,7 @@ const SearchBar = ({ initialTicker, dropdownstate }) => {
     };
 
     const handleClear = () => {
-        setTicker('');
+        // setTicker('');
         setDropdown(false);
         dispatch(setSearchSymbol('', {})); 
         navigate('/search/home'); 
@@ -63,7 +65,7 @@ const SearchBar = ({ initialTicker, dropdownstate }) => {
     };
 
     const handleSelectSuggestion = (selectedSuggestion) => {
-        setTicker(selectedSuggestion); 
+        // setTicker(selectedSuggestion); 
         setSuggestions([]); 
         setDropdown(false);
         handleSearch();
@@ -72,7 +74,7 @@ const SearchBar = ({ initialTicker, dropdownstate }) => {
     const handleInputChange = async (inputValue) => {
         // const lowercaseValue = inputValue.toLowerCase();
         // setTicker(lowercaseValue);
-        setTicker(inputValue);
+        // setTicker(inputValue);
         setLoading(true);
         try {
             
