@@ -37,6 +37,8 @@ export default App;
 
 
 // To be Done:
-// responsive
+// responsive (done)
 // watchlist to search/ticker redirection
-// portfolio buy sell issue
+// portfolio buy sell issue (Done)
+// spinner for dataLoading in SearchBar in mobile view not showing
+

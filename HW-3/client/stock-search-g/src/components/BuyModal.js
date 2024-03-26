@@ -116,7 +116,7 @@ const BuyModal = ({ show, ticker, company, currentPrice, moneyInWallet, onHide, 
                     <Form.Group className="flex-grow-1">
                         <Form.Label><strong>Quantity:</strong></Form.Label>
                         <Form.Control type="number" value={quantity} onChange={handleQuantityChange} 
-                        min="1" 
+                        min="0" 
                         required  />
                     </Form.Group>
                 </div>

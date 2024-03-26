@@ -40,14 +40,15 @@ const SearchBar = ({ resetS, dropdownstate }) => {
         setTicker(searchSymbol || '');
     }, [searchSymbol]);
 
-    const handleSearch = async () => {
+    const handleSearch = async (searchticker = ticker) => {
+        console.log("in handlesearch");
         setDropdown(false);
         setdataLoading(true);
         // dispatch(setSearchSymbol(ticker));
         try {
             // Perform the HTTP request to your Node.js backend
             
-            const response = await fetch(`http://${window.location.hostname}:5000/api/data?ticker=${ticker}`);
+            const response = await fetch(`http://${window.location.hostname}:5000/api/data?ticker=${searchticker}`);
             // console.log(`http://${window.location.hostname}:5000/api/data/${ticker}`);
             if (!response.ok) {
                 throw new Error('Failed to fetch data');
@@ -59,9 +60,9 @@ const SearchBar = ({ resetS, dropdownstate }) => {
             if (emptyData) {
                 throw new Error(`No ${emptyData[0]} data found.`);
             }
-            dispatch(setSearchSymbol(ticker, data)); 
+            dispatch(setSearchSymbol(searchticker, data)); 
             setdataLoading(false);
-            navigate(`/search/${ticker}`, { state: { ticker } });
+            navigate(`/search/${searchticker}`, { state: { searchticker } });
             
             // If request is successful, display the message
             // setMessage(data.message);
@@ -92,11 +93,13 @@ const SearchBar = ({ resetS, dropdownstate }) => {
         }
     };
 
-    const handleSelectSuggestion = (selectedSuggestion) => {
+    const handleSelectSuggestion = async (selectedSuggestion) => {
         setTicker(selectedSuggestion); 
+        // await new Promise(resolve => setTicker(selectedSuggestion, resolve)); 
+        console.log("selected ticker",ticker,selectedSuggestion);
         setSuggestions([]); 
         setDropdown(false);
-        handleSearch();
+        handleSearch(selectedSuggestion);
     };
 
     const handleInputChange = async (inputValue) => {

@@ -43,10 +43,10 @@ const shareOnFacebook = (url) => {
                     <div key={index} className="col-md-6 mb-3">
                         <div className="card bg-light" onClick={() => handleOpenModal(news)} style={{ cursor: 'pointer', padding: "20px" }}>
                             <div className="row no-gutters">
-                                <div className="col-4">
+                                <div className="col-md-12 col-lg-4 mb-3 mb-lg-0">
                                     <img src={news.image} className="card-img" alt={news.headline} height="100px" />
                                 </div>
-                                <div className="col-8">
+                                <div className="col-md-12 col-lg-8">
                                     <div className="card-body">
                                         <h5 className="card-title">{news.headline}</h5>
                                     </div>

@@ -95,7 +95,8 @@ const Watchlist = () => {
 
     return (
         <div className="d-flex justify-content-center mt-5">
-            <div style={{ width: '70%' }}>
+            <div className="container" style={{ width: '100%', maxWidth: '900px' }}>
+            {/* <div style={{ width: '70%' }}> */}
                 <h1 className="mb-4">My Watchlist</h1>
                 
                 {loading ? (

@@ -398,8 +398,20 @@ function SearchDetails() {
 
                             <h3>{data.profileData.name}</h3>
                             <p>{data.profileData.exchange}</p>
-                            <button className="btn btn-success" onClick={handleBuyClick}>Buy</button>
-                            {showSellButton && <button className="btn btn-danger" onClick={handleSellClick} style={{marginLeft:"0.5em"}}>Sell</button>}
+                            <div className="row">
+                                <div className="col">
+                                    <button className="btn btn-success mr-4" onClick={handleBuyClick}>Buy</button>
+                                    {showSellButton && <button className="btn btn-danger" onClick={handleSellClick}>Sell</button>} 
+                                    
+                            
+                                </div>
+                                {/* {showSellButton && 
+                                <div className="col">
+                                    <button className="btn btn-danger" onClick={handleSellClick}>Sell</button>
+                                </div>} */}
+                            </div>
+                            {/* <button className="btn btn-success" onClick={handleBuyClick}>Buy</button>
+                            {showSellButton && <button className="btn btn-danger" onClick={handleSellClick} style={{marginLeft:"0.5em"}}>Sell</button>} */}
                             <BuyModal
                                             show={showBuyModal}
                                             onHide={handleCloseBuyModal}

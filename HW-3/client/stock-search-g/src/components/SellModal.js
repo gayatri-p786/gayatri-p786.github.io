@@ -86,13 +86,15 @@ function SellModal({ show, ticker, currentPrice, moneyInWallet, existingQuantity
                     // Handle the failure scenario
                 }
                 setErrorMessage('');
+                handleSellSuccess();
+            handleCloseSellModal();
             } else{
                 setErrorMessage('You cannot sell the stocks that you don\'t have');
+                handleCloseSellModal();
             }
 
             // Close the modal after successful buy
-            handleSellSuccess();
-            handleCloseSellModal();
+            
         } catch (error) {
             console.error('Error selling stock:', error);
             setErrorMessage('Failed to sell stock. Please try again.');
@@ -128,7 +130,7 @@ function SellModal({ show, ticker, currentPrice, moneyInWallet, existingQuantity
                     <Form.Group className="flex-grow-1">
                         <Form.Label><strong>Quantity:</strong></Form.Label>
                         <Form.Control type="number" value={quantity} onChange={handleQuantityChange} 
-                        min="1" 
+                        min="0" 
                         required  />
                     </Form.Group>
                 </div>

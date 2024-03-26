@@ -151,12 +151,12 @@ app.get('/api/profiledata', async (req, res) => {
 
         const latestPrice_endpoint = `https://finnhub.io/api/v1/quote?symbol=${stock_ticker}&token=${finnhub_api_key}`;
         
-        // console.log("endpoint",latestPrice_endpoint);
+        console.log("endpoint",latestPrice_endpoint);
         const profileResponse = await axios.get(latestPrice_endpoint);
         // console.log("responsedata",profileResponse.data)
 
         const data = handleNullValues(profileResponse.data);;
-        // console.log("15second data",data);
+        console.log("15second data",data);
         res.json({data: data});
         
     } catch (error) {

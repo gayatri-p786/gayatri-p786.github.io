@@ -184,7 +184,7 @@ const Portfolio = () => {
         <div className="d-flex justify-content-center mt-5">
             <div style={{ width: '70%' }}>
                 <h1 className="mb-4">My Portfolio</h1>
-                <h2 className="mb-4">Money in Wallet: ${money}</h2>
+                <h3 className="mb-4">Money in Wallet: ${money}</h3>
                 {buySuccess && (
                     <Alert variant="success" className="text-center">
                         {bmessage}
@@ -205,25 +205,27 @@ const Portfolio = () => {
                             <div>
                                 {portfolio.map((stock, index) => (
                                     <Card key={index} className="mb-3">
-                                        <Card.Header>
-                                            <h1 className="mb-0">{stock.symbol}</h1>
-                                            <Card.Subtitle className="mb-2 text-muted">{stock.company}</Card.Subtitle>
+                                        <Card.Header className="d-flex justify-content-between align-items-center">
+                                            <div className="w-100">
+                                                <h1 className="mb-0  d-m-block d-xs-inline-block">{stock.symbol}</h1>
+                                                <Card.Subtitle className="mb-2 text-muted  d-m-block d-xs-inline-block">{stock.company}</Card.Subtitle>
+                                            </div>
                                         </Card.Header>
-                                        <Card.Body>
+                                        <Card.Body className="p-xs-1 p-sm-1">
                                             <div className="row">
                                                 <div className="col-sm-6">
-                                                    <p><strong>Quantity:</strong> {stock.quantity}</p>
-                                                    <p><strong>Avg Cost / Share:</strong> ${stock.averageCostPerShare}</p>
-                                                    <p><strong>Total Cost:</strong> ${stock.total}</p>
+                                                    <p className="mb-0"><strong>Quantity:</strong> {stock.quantity.toFixed(2)}</p>
+                                                    <p className="mb-0"><strong>Avg Cost / Share:</strong> ${stock.averageCostPerShare.toFixed(2)}</p>
+                                                    <p className="mb-0"><strong>Total Cost:</strong> ${stock.total.toFixed(2)}</p>
                                                 </div>
                                                 <div className="col-sm-6">
-                                                    <p style={{ color: stock.change > 0 ? 'green' : (calculateStockData(stock).change < 0 ? 'red' : 'black') }}>
-                                                        <strong>Change:</strong> ${calculateStockData(stock).change}
+                                                    <p className="mb-0" style={{ color: stock.change > 0 ? 'green' : (calculateStockData(stock).change < 0 ? 'red' : 'black') }}>
+                                                        <strong>Change:</strong> ${calculateStockData(stock).change.toFixed(2)}
                                                     </p>
-                                                    <p style={{ color: stock.change > 0 ? 'green' : (calculateStockData(stock).change < 0 ? 'red' : 'black') }}>
-                                                        <strong>Current Price:</strong> ${currentPrices[stock.symbol].c}
+                                                    <p className="mb-0" style={{ color: stock.change > 0 ? 'green' : (calculateStockData(stock).change < 0 ? 'red' : 'black') }}>
+                                                        <strong>Current Price:</strong> ${currentPrices[stock.symbol].c.toFixed(2)}
                                                     </p>
-                                                    <p><strong>Market Value:</strong> ${calculateStockData(stock).mv}</p>
+                                                    <p className="mb-0"><strong>Market Value:</strong> ${calculateStockData(stock).mv.toFixed(2)}</p>
                                                 </div>
                                             </div>
                                         </Card.Body>

@@ -97,22 +97,6 @@
   /* You can also use padding-bottom instead of margin-bottom */
 }
 
-@media (max-width: 767px) {
-  .flex-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-}
-
-/* styles.css */
-
-@media (max-width: 768px) {
-  /* For small devices, use default Bootstrap positioning */
-  .collapse-content {
-    position: static;
-  }
-}
 
 @media (min-width: 768px) {
   /* For medium and large devices, align to the right */
@@ -150,4 +134,46 @@
 .dropdown-menu.show .dropdown-item.active,
 .dropdown-item:active {
   --bs-dropdown-link-active-bg: transparent !important;
+}
+
+.mx-auto {
+  width: 100%; /* Set width to 100% for small devices */
+  max-width: 50%; /* Remove max-width */
+}
+
+
+
+@media (max-width: 768px) {
+  .flex-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .collapse-content {
+    position: static;
+  }
+  .search-bar-container {
+    width:100%;
+  }
+  .autocomplete-dropdown {
+    position: absolute;
+    padding: 0.5em !important;
+    width: 80% ;/* Adjust width as needed */
+    max-height: 200px; /* Adjust max-height as needed */
+    overflow-y: auto; /* Enable vertical scrolling */
+    top: calc(70% + 2px);
+    z-index: 1000;
+    font-size: 0.8em !important;
+  }
+  
+  .autocomplete-dropdown-item {
+    padding: 1em !important;
+    width: calc(80% - 20px);
+    text-overflow: ellipsis;
+    word-wrap: break-word;
+  }
+  .mx-auto {
+    width: 100%; /* Set width to 100% for small devices */
+    max-width: none; /* Remove max-width */
+}
 }

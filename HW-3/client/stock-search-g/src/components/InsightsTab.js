@@ -49,7 +49,7 @@ const InsightsTab = ({ sentimentData, earningData, recommendationData, ticker })
         <div>
             <div className='text-center' style={{ paddingTop: '20px', paddingBottom: '20px' }}>
                 <h3>Insider Sentiments</h3>
-                <div className='mx-auto' style={{width: '50%'}}>
+                <div className='mx-auto'>
                 <table className="table">
                     <thead>
                         <tr>
