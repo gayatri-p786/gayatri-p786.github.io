@@ -7,7 +7,7 @@ import { setSearchSymbol } from '../actions/searchActions';
 import axios from 'axios';
 import './styles.css'; // Import the CSS file
 
-const SearchBar = ({ dropdownstate }) => {
+const SearchBar = ({ resetS, dropdownstate }) => {
     const dispatch = useDispatch();
     // const initialTicker = useSelector(state => state.search.searchSymbol);
     // console.log("my ticker",initialTicker);
@@ -17,14 +17,23 @@ const SearchBar = ({ dropdownstate }) => {
     const [errorMessage, setErrorMessage] = useState('');
     const [suggestions, setSuggestions] = useState([]); 
     const [loading, setLoading] = useState(true);
+    const [dataLoading, setdataLoading] = useState(false);
+    const [resetSearch, setResetSearch] = useState(false);
     const [dropdown, setDropdown] = useState(dropdownstate && true);
     const navigate = useNavigate();
 
-    // useEffect(() => {
-    //     if (initialTicker) {
-    //         setTicker(initialTicker.searchSymbol);
-    //     }
-    // }, [initialTicker]);
+
+    useEffect(() => {
+        if (resetSearch) {
+            // Reset the state when resetSearch prop changes
+            setTicker('');
+            setErrorMessage('');
+            setSuggestions([]);
+            setdataLoading(false);
+            setLoading(true);
+            setDropdown(true);
+        }
+    }, [resetSearch]);
 
     useEffect(() => {
         // Update ticker state when searchSymbol changes
@@ -33,6 +42,7 @@ const SearchBar = ({ dropdownstate }) => {
 
     const handleSearch = async () => {
         setDropdown(false);
+        setdataLoading(true);
         // dispatch(setSearchSymbol(ticker));
         try {
             // Perform the HTTP request to your Node.js backend
@@ -50,6 +60,7 @@ const SearchBar = ({ dropdownstate }) => {
                 throw new Error(`No ${emptyData[0]} data found.`);
             }
             dispatch(setSearchSymbol(ticker, data)); 
+            setdataLoading(false);
             navigate(`/search/${ticker}`, { state: { ticker } });
             
             // If request is successful, display the message
@@ -61,14 +72,18 @@ const SearchBar = ({ dropdownstate }) => {
         }finally {
             // Clear the suggestions
             setSuggestions([]);
+            setdataLoading(false);
         }
     };
 
     const handleClear = () => {
         setTicker('');
+        setErrorMessage('');
         setDropdown(false);
+        setResetSearch(true);
         dispatch(setSearchSymbol('', {})); 
         navigate('/search/home'); 
+        
     };
 
     const handleKeyPress = (e) => {
@@ -148,7 +163,11 @@ const SearchBar = ({ dropdownstate }) => {
                 
             </div>
             {errorMessage && <Alert variant="danger">{errorMessage}</Alert>} {/* Display error message */}
-           
+            {dataLoading ? (
+                        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+                           <Spinner animation="border" variant="primary" />
+                       </div>
+                        ): null}
         </div>
     );
 };

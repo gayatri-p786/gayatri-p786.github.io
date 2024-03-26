@@ -134,7 +134,7 @@ const fetchFinnhubData = async (stock_ticker) => {
         const earningsData = handleNullValues(earningsResponse.data);
         const polygonData = handleNullValues(polygonResponse.data);
         // Handle data from additional endpoints
-        // console.log(profileData);
+        console.log(stock_ticker,profileData);
         
         return { profileData, historicalData, latestPriceData, newsData, recommendationData, sentimentData, peersData, earningsData, polygonData };
     } catch (error) {
@@ -151,12 +151,12 @@ app.get('/api/profiledata', async (req, res) => {
 
         const latestPrice_endpoint = `https://finnhub.io/api/v1/quote?symbol=${stock_ticker}&token=${finnhub_api_key}`;
         
-        console.log("endpoint",latestPrice_endpoint);
+        // console.log("endpoint",latestPrice_endpoint);
         const profileResponse = await axios.get(latestPrice_endpoint);
-        console.log("responsedata",profileResponse.data)
+        // console.log("responsedata",profileResponse.data)
 
         const data = handleNullValues(profileResponse.data);;
-        console.log("15second data",data);
+        // console.log("15second data",data);
         res.json({data: data});
         
     } catch (error) {

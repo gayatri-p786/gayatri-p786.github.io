@@ -26,23 +26,26 @@ function SellModal({ show, ticker, currentPrice, moneyInWallet, existingQuantity
                 // console.log(remove_response);
                 if (remove_response.status===200){
                     console.log("Removed STock from Portfolio");
+                    const newMoneyInWallet = parseFloat(moneyInWallet + parseFloat(total));
+                
+                // Update the money in wallet using another backend endpoint
+                    const updateMoneyResponse = await axios.post(`http://${window.location.hostname}:5000/api/user/money/update`, { money: newMoneyInWallet });
+        
+                    if (updateMoneyResponse.status === 200) {
+                        // Money in wallet updated successfully
+                        // Perform any additional actions, such as closing the modal
+                        // handleClose();
+                    } else {
+                        console.error('Failed to update money in wallet');
+                        // Handle the failure scenario
+                    }
 
                 }else{
                     console.log("Could NOT remove stock");
                 }
-                const newMoneyInWallet = parseFloat(moneyInWallet + parseFloat(total));
+                handleSellSuccess();
+                handleCloseSellModal();
                 
-                // Update the money in wallet using another backend endpoint
-                const updateMoneyResponse = await axios.post(`http://${window.location.hostname}:5000/api/user/money/update`, { money: newMoneyInWallet });
-    
-                if (updateMoneyResponse.status === 200) {
-                    // Money in wallet updated successfully
-                    // Perform any additional actions, such as closing the modal
-                    // handleClose();
-                } else {
-                    console.error('Failed to update money in wallet');
-                    // Handle the failure scenario
-                }
             }else if (existingStock && parseInt(quantity)<=existingQuantity) {
                 // If the stock already exists, update the quantity, total, and average cost per share
                 const updatedPortfolio = userData.portfolio.map(stock => {
@@ -63,31 +66,30 @@ function SellModal({ show, ticker, currentPrice, moneyInWallet, existingQuantity
                 upin_response = await axios.post(`http://${window.location.hostname}:5000/api/user/portfolio/update`, {
                     portfolio: updatedPortfolio
                 });
+                if (upin_response.status === 200) {
+                    // Update the money in wallet based on the current money and total cost
+                    const newMoneyInWallet = parseFloat(moneyInWallet + parseFloat(total));
+                    
+                    // Update the money in wallet using another backend endpoint
+                    const updateMoneyResponse = await axios.post(`http://${window.location.hostname}:5000/api/user/money/update`, { money: newMoneyInWallet });
+        
+                    if (updateMoneyResponse.status === 200) {
+                        // Money in wallet updated successfully
+                        // Perform any additional actions, such as closing the modal
+                        // handleClose();
+                    } else {
+                        console.error('Failed to update money in wallet');
+                        // Handle the failure scenario
+                    }
+                } else {
+                    console.error('Failed to sell stock');
+                    // Handle the failure scenario
+                }
                 setErrorMessage('');
             } else{
                 setErrorMessage('You cannot sell the stocks that you don\'t have');
             }
 
-            if (upin_response.status === 200) {
-                // Update the money in wallet based on the current money and total cost
-                const newMoneyInWallet = parseFloat(moneyInWallet + parseFloat(total));
-                
-                // Update the money in wallet using another backend endpoint
-                const updateMoneyResponse = await axios.post(`http://${window.location.hostname}:5000/api/user/money/update`, { money: newMoneyInWallet });
-    
-                if (updateMoneyResponse.status === 200) {
-                    // Money in wallet updated successfully
-                    // Perform any additional actions, such as closing the modal
-                    // handleClose();
-                } else {
-                    console.error('Failed to update money in wallet');
-                    // Handle the failure scenario
-                }
-            } else {
-                console.error('Failed to sell stock');
-                // Handle the failure scenario
-            }
-    
             // Close the modal after successful buy
             handleSellSuccess();
             handleCloseSellModal();
@@ -104,12 +106,12 @@ function SellModal({ show, ticker, currentPrice, moneyInWallet, existingQuantity
     const handleQuantityChange = (e) => {
         const newQuantity = parseInt(e.target.value);
         setQuantity(newQuantity);
+        const newTotal = newQuantity * currentPrice;
+        setTotal(newTotal);
         if (newQuantity >= 1 && newQuantity<=existingQuantity) {
-            const newTotal = newQuantity * currentPrice;
-            setTotal(newTotal);
             setErrorMessage('');
         } else {
-            setTotal(0);
+            // setTotal(0);
             setErrorMessage('You cannot Sell Stocks you don\'t have');
         }
     };

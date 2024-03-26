@@ -16,6 +16,7 @@ import ChartsTab from './chartsTab';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { setSearchSymbol, updateLatestPriceData } from '../actions/searchActions';
+import { FaRegStar } from 'react-icons/fa'; 
 
 
 function SearchDetails() {
@@ -24,7 +25,7 @@ function SearchDetails() {
     const [errorMessage, setErrorMessage] = useState('');
     const navigate = useNavigate();
 
-    const ticker = location.state?.symbol
+    const ticker = useSelector(state => state.search.searchSymbol);
     const data = useSelector(state => state.search.searchData);
 
     console.log("new ticker",ticker);
@@ -111,7 +112,7 @@ function SearchDetails() {
         };
 
         fetchPortfolio();
-    }, [ticker]);
+    }, [ticker, buySuccess, sellSuccess]);
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -237,42 +238,6 @@ function SearchDetails() {
         setTimeout(() => setShowAlert(false), 3000); // Toggle the state
     };
 
-    
-
-    // useEffect(() => {
-    //     const interval = setInterval(async () => {
-    //         // if (isMarketOpen()) {
-    //             try {
-    //                 const response = await axios.get(`http://${window.location.hostname}:5000/api/profiledata`);
-    //                 const responseData = response.data;
-    //                 setPreviousData(data.latestPriceData); // Set the current data as previous data
-    //                 setData(responseData.data);
-    //                 dispatch(updateLatestPriceData(responseData.data.latestPriceData)); // Set new data
-    //             } catch (error) {
-    //                 console.error('Error fetching data:', error);
-    //                 setErrorMessage('Failed to fetch data');
-    //             }
-    //             // try {
-    //             //     const response = await axios.get(`http://${window.location.hostname}:5000/api/profiledata?ticker=${data.profileData.ticker}`);
-    //             //     console.log("15 second response",response);
-    //             //     if (response.status !=200) {
-    //             //         throw new Error('Failed to fetch data');
-    //             //     }
-    //             //     const newData = response.data.data;
-    //             //     setData(prevData => ({ ...prevData, profileData: newData.profileData }));
-    //             // } catch (error) {
-    //             //     console.error('Error fetching updated data:', error);
-    //             //     setErrorMessage('Failed to fetch updated data');
-    //             // }
-    //         // }
-    //     }, 15000); // Fetch data every 15 seconds
-
-    //     return () => clearInterval(interval); // Cleanup the interval on component unmount
-    // }, []);
-
-    // useEffect(() => {
-    //     setdata.latestPriceData(latestPriceData || previousData); // Update data.latestPriceData whenever data or previousData changes
-    // }, [latestPriceData, previousData]);
 
     useEffect(() => {
         const interval = setInterval(async () => {
@@ -309,9 +274,9 @@ function SearchDetails() {
     // Function to handle buy button click
     const handleBuyClick = () => {
         setShowBuyModal(true);
-        setShowAlert(true);
-        setShowSellButton(true);
-        setAlertMessage(`${ticker} bought successfully!`);
+        // setShowAlert(true);
+        // setShowSellButton(true);
+        // setAlertMessage(`${ticker} bought successfully!`);
     };
 
     // Function to handle buy modal close
@@ -319,23 +284,10 @@ function SearchDetails() {
         setShowBuyModal(false);
     };
 
-    // Function to handle buy action
-    const handleBuy = (ticker, quantity) => {
-        // Implement buy functionality
-        console.log(`Buying ${quantity} shares of ${ticker}`);
-        setShowBuyModal(false);
-    };
-
     const handleSellClick = () => {
         setShowSellModal(true);
-        setShowAlert(true);
-        setAlertMessage(`${ticker} sold successfully!`);
-    };
-
-    const handleSell = (ticker, sellQuantity) => {
-        // Implement sell functionality
-        console.log(`Selling ${sellQuantity} shares of ${ticker}`);
-        setShowSellModal(false);
+        // setShowAlert(true);
+        // setAlertMessage(`${ticker} sold successfully!`);
     };
 
     const handleCloseSellModal = () => {
@@ -344,6 +296,7 @@ function SearchDetails() {
 
     const handleSuccessfulBuy = () => {
         setBuySuccess(true);
+        setShowSellButton(true);
         setTimeout(() => {
             setBuySuccess(false);
         }, 3000);
@@ -434,7 +387,12 @@ function SearchDetails() {
                                         cursor: 'pointer',
                                     }}
                                 >
-                                    <AiFillStar style={{ fill: starClicked ? 'yellow' : 'black', color: starClicked ? 'yellow' : 'black' }} />
+                                    {starClicked ? (
+                    <AiFillStar style={{ fill: 'yellow' }} />
+                ) : (
+                    <FaRegStar/>
+                )}
+                                    {/* <AiFillStar style={{ fill: starClicked ? 'yellow' : 'black', color: starClicked ? 'yellow' : 'black' }} /> */}
                                 </button>
                             </h2>
 
@@ -518,7 +476,7 @@ function SearchDetails() {
                                         <h4 style={{ textAlign: 'center', textDecoration: 'underline' }}>About the Company</h4><br></br>
                                         <p style={{ textAlign: 'center' }}><strong>IPO Start Date:</strong> {data.profileData.ipo}</p>
                                         <p style={{ textAlign: 'center' }}><strong>Industry:</strong> {data.profileData.finnhubIndustry}</p>
-                                        <p style={{ textAlign: 'center' }}><strong>WebPage:</strong> <a href={data.profileData.weburl}>{data.profileData.weburl}</a></p>
+                                        <p style={{ textAlign: 'center' }}><strong>WebPage:</strong> <a href={data.profileData.weburl} target="_blank">{data.profileData.weburl}</a></p>
                                         <p style={{ textAlign: 'center' }}><strong>Company Peers:</strong></p>
                                         <div style={{ textAlign: 'center', maxHeight: '200px', overflowY: 'scroll' }}>
                                             {data.peersData.map((peer, index) => (
@@ -547,7 +505,8 @@ function SearchDetails() {
                             <div className={`tab-pane fade ${activeTab === 'charts' ? 'show active' : ''}`}>
                                 {/* <p>{data.historicalData.results}</p> */}
                                 
-                                <ChartsTab historicalData={data.historicalData} latestPriceData={data.latestPriceData}/>
+                                <ChartsTab historicalData={data.historicalData} />
+                                {/* <TabCharts /> */}
 
                             </div>
                             <div className={`tab-pane fade ${activeTab === 'insights' ? 'show active' : ''}`}>

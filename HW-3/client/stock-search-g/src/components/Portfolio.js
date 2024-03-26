@@ -18,6 +18,9 @@ const Portfolio = () => {
     const [showSellModal, setShowSellModal] = useState(false);
     const [buySuccess, setBuySuccess] = useState(false);
     const [sellSuccess, setSellSuccess] = useState(false);
+    const [buyModalData, setBuyModalData] = useState({});
+    const [sellModalData, setSellModalData] = useState({});
+
 
     const fetchPortfolio = async () => {
         try {
@@ -121,21 +124,42 @@ const Portfolio = () => {
         setShowSellModal(false);
     };
 
-    const openBuyModal = () => {
+    const openBuyModal = (stock) => {
         setShowBuyModal(true);
+        setBuyModalData({
+            // show: showBuyModal,
+            ticker: stock.symbol,
+            company: stock.company,
+            currentPrice: currentPrices[stock.symbol].c,
+            moneyInWallet: money,
+            handleCloseBuyModal: handleCloseBuyModal,
+            handleBuySuccess: () => handleSuccessfulBuy(stock.symbol)
+        });
     };
 
-    const openSellModal = () => {
+    const openSellModal = (stock) => {
         setShowSellModal(true);
+        setSellModalData({
+            // show: showSellModal,
+            ticker: stock.symbol,
+            existingQuantity: stock.quantity,
+            currentPrice: currentPrices[stock.symbol].c,
+            moneyInWallet: money,
+            handleCloseSellModal: handleCloseSellModal,
+            handleSellSuccess: () => handleSuccessfulSell(stock.symbol)
+        });
     };
 
     const handleSuccessfulBuy = (ticker) => {
         
+        setShowBuyModal(false);
         setBmessage(`${ticker} bought succesfully`);
         setBuySuccess(true);
+        
         setTimeout(() => {
             setBuySuccess(false);
         }, 3000);
+        
         setReloadPortfolio(prevState => !prevState);
         setReloadPortfolio(true);
         
@@ -143,11 +167,13 @@ const Portfolio = () => {
     };
 
     const handleSuccessfulSell = (ticker) => {
+        setShowSellModal(false);
         setSmessage(`${ticker} sold succesfully`);
         setSellSuccess(true);
         setTimeout(() => {
             setSellSuccess(false);
         }, 3000);
+
         setReloadPortfolio(prevState => !prevState);
         setReloadPortfolio(true);
         
@@ -202,10 +228,10 @@ const Portfolio = () => {
                                             </div>
                                         </Card.Body>
                                         <Card.Footer>
-                                            <Button variant="primary" onClick={() => openBuyModal(stock.symbol)}>Buy</Button>{' '}
-                                            <Button variant="danger" onClick={() => openSellModal(stock.symbol)}>Sell</Button>
+                                            <Button variant="primary" onClick={() => openBuyModal(stock)}>Buy</Button>{' '}
+                                            <Button variant="danger" onClick={() => openSellModal(stock)}>Sell</Button>
                                         </Card.Footer>
-                                        <BuyModal
+                                        {/* <BuyModal
                                             show={showBuyModal}
                                             onHide={handleCloseBuyModal}
                                             ticker={stock.symbol}
@@ -224,10 +250,14 @@ const Portfolio = () => {
                                             moneyInWallet={money}
                                             handleCloseSellModal={handleCloseSellModal}
                                             handleSellSuccess={() => handleSuccessfulSell(stock.symbol)} 
-                                        />
+                                        /> */}
+                                        <BuyModal show={showBuyModal} {...buyModalData} />
+                                        <SellModal show={showSellModal} {...sellModalData} />
                                     </Card>
                                     
+                                    
                                 ))}
+                                
                             </div>
                         )}
                     </div>

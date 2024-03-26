@@ -31,3 +31,12 @@ function App() {
 }
 
 export default App;
+
+
+
+
+
+// To be Done:
+// responsive
+// watchlist to search/ticker redirection
+// portfolio buy sell issue

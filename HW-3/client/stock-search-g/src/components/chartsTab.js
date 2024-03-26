@@ -1,17 +1,26 @@
 import React, { useEffect } from 'react';
 // import Highcharts from 'highcharts/highstock';
-import Highcharts from 'highcharts/highstock';
-import HC_exporting from 'highcharts/modules/exporting';
-import HighchartsMore from 'highcharts/highcharts-more';
-import HighchartsSMA from 'highcharts/indicators/indicators';
-import HighchartsVBP from 'highcharts/indicators/volume-by-price';
+import * as Highcharts from 'highcharts/highstock';
+// import HC_exporting from 'highcharts/modules/exporting';
+// import HighchartsMore from 'highcharts/highcharts-more';
+// import HighchartsSMA from 'highcharts/indicators/indicators';
+import IndicatorsCore from "highcharts/indicators/indicators";
+import IndicatorZigzag from "highcharts/indicators/zigzag";
+import IndicatorVBP from "highcharts/indicators/volume-by-price";
 
-HC_exporting(Highcharts);
-HighchartsMore(Highcharts);
-HighchartsSMA(Highcharts);
-HighchartsVBP(Highcharts);
 
-const ChartsTab = ({ historicalData, latestPriceData }) => {
+// import HighchartsVBP from 'highcharts/indicators/volume-by-price';
+
+// HC_exporting(Highcharts);
+// HighchartsMore(Highcharts);
+IndicatorsCore(Highcharts);
+IndicatorZigzag(Highcharts);
+IndicatorVBP(Highcharts);
+
+// HighchartsSMA(Highcharts);
+// HighchartsVBP(Highcharts);
+
+const ChartsTab = ({ historicalData }) => {
         
     useEffect(() => {
 
@@ -94,8 +103,8 @@ const ChartsTab = ({ historicalData, latestPriceData }) => {
                     type: 'candlestick',
                     name: 'OHLC',
                     id: 'Ticker',
-                    zIndex: 2,
-                    data: ohlc
+                    data: ohlc,
+                    zIndex: 2
                 }, {
                     type: 'column',
                     name: 'Volume',
@@ -124,7 +133,7 @@ const ChartsTab = ({ historicalData, latestPriceData }) => {
                 }]
             });
         }
-    }, [historicalData, latestPriceData]);
+    }, [historicalData]);
 
     return (
         <div id="chartcontainer"></div>

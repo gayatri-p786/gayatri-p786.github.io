@@ -90,11 +90,12 @@ const BuyModal = ({ show, ticker, company, currentPrice, moneyInWallet, onHide, 
         setQuantity(newQuantity);
         if (newQuantity >= 1) {
             const newTotal = newQuantity * currentPrice;
+            setTotal(newTotal);
             if (newTotal <= moneyInWallet) {
-                setTotal(newTotal);
+                
                 setErrorMessage('');
             } else {
-                setTotal(0);
+                // setTotal(0);
                 setErrorMessage("Not enough money in wallet!");
             }
         } else {
