@@ -5,6 +5,7 @@ import { BiCaretUp, BiCaretDown, BiStar, BiChevronLeft, BiChevronRight } from 'r
 import { AiFillStar} from 'react-icons/ai';
 import HourlyPriceChart from './HourlyPriceChart';
 import TabCharts from './TabCharts';
+import HighChartsTab from './HighchartTab'
 import './styles.css'; // Import the CSS file
 import axios from 'axios';
 import BuyModal from './BuyModal';
@@ -517,7 +518,8 @@ function SearchDetails() {
                             <div className={`tab-pane fade ${activeTab === 'charts' ? 'show active' : ''}`}>
                                 {/* <p>{data.historicalData.results}</p> */}
                                 
-                                <ChartsTab historicalData={data.historicalData} />
+                                {/* <ChartsTab historicalData={data.historicalData} /> */}
+                                <HighChartsTab historicalData={data.historicalData} />
                                 {/* <TabCharts /> */}
 
                             </div>
