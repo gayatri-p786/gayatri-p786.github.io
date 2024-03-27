@@ -38,7 +38,7 @@ export default App;
 
 // To be Done:
 // responsive (done)
-// watchlist to search/ticker redirection
+// watchlist to search/ticker redirection (done)
 // portfolio buy sell issue (Done)
 // spinner for dataLoading in SearchBar in mobile view not showing
-
+// highcharts color

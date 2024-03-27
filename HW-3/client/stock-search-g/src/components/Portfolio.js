@@ -3,9 +3,11 @@ import { Alert, Spinner, Card, Button } from 'react-bootstrap';
 import axios from 'axios';
 import BuyModal from './BuyModal';
 import SellModal from './SellModal';
+import { useNavigate } from 'react-router-dom';
 
 const Portfolio = () => {
     const [portfolio, setPortfolio] = useState([]);
+    const navigate = useNavigate(); 
     const [reloadportfolio, setReloadPortfolio] = useState(false);
     const [money, setMoney] = useState(0);
     const [loading, setLoading] = useState(true);
@@ -116,6 +118,15 @@ const Portfolio = () => {
         return { change:change, mv:marketValue };
     };
 
+    const handleSearch = async (ticker) => {
+        try {
+            navigate(`/search/home`, { state: { ticker }});
+        } catch (error) {
+            console.error('Error:', error);
+            setErrorMessage('No data found. Please Enter a Valid Ticker');
+        }
+    };
+
     const handleCloseBuyModal = () => {
         setShowBuyModal(false);
     };
@@ -166,6 +177,7 @@ const Portfolio = () => {
         
     };
 
+
     const handleSuccessfulSell = (ticker) => {
         setShowSellModal(false);
         setSmessage(`${ticker} sold succesfully`);
@@ -205,7 +217,7 @@ const Portfolio = () => {
                             <div>
                                 {portfolio.map((stock, index) => (
                                     <Card key={index} className="mb-3">
-                                        <Card.Header className="d-flex justify-content-between align-items-center">
+                                        <Card.Header className="d-flex justify-content-between align-items-center" style={{ cursor: 'pointer' }} onClick={() => handleSearch(stock.symbol)}>
                                             <div className="w-100">
                                                 <h1 className="mb-0  d-m-block d-xs-inline-block">{stock.symbol}</h1>
                                                 <Card.Subtitle className="mb-2 text-muted  d-m-block d-xs-inline-block">{stock.company}</Card.Subtitle>

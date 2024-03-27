@@ -7,7 +7,8 @@ import { setSearchSymbol } from '../actions/searchActions';
 import axios from 'axios';
 import './styles.css'; // Import the CSS file
 
-const SearchBar = ({ resetS, dropdownstate }) => {
+const SearchBar = ({ resetS, dropdownstate, watchlistTicker }) => {
+    console.log("watchlistTicker",watchlistTicker);
     const dispatch = useDispatch();
     // const initialTicker = useSelector(state => state.search.searchSymbol);
     // console.log("my ticker",initialTicker);
@@ -34,6 +35,12 @@ const SearchBar = ({ resetS, dropdownstate }) => {
             setDropdown(true);
         }
     }, [resetSearch]);
+
+    useEffect(() => {
+        if (watchlistTicker) {
+            handleSearch(watchlistTicker);
+        }
+    }, [watchlistTicker]);
 
     useEffect(() => {
         // Update ticker state when searchSymbol changes

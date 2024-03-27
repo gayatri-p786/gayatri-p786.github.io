@@ -65,17 +65,7 @@ const Watchlist = () => {
 
     const handleSearch = async (ticker) => {
         try {
-            const response = await fetch(`http://${window.location.hostname}:5000/api/data?ticker=${ticker}`);
-            if (!response.ok) {
-                throw new Error('Failed to fetch data');
-            }
-            const data = await response.json();
-            console.log(data);
-            const emptyData = Object.entries(data).find(([key, value]) => Array.isArray(value) && value.length === 0);
-            if (emptyData) {
-                throw new Error(`No ${emptyData[0]} data found.`);
-            }
-            navigate(`/search/${ticker}`, { state: { data } });
+            navigate(`/search/home`, { state: { ticker }});
         } catch (error) {
             console.error('Error:', error);
             setErrorMessage('No data found. Please Enter a Valid Ticker');
