@@ -4,21 +4,20 @@ import SearchBar from './SearchBar';
 import { BiCaretUp, BiCaretDown, BiStar, BiChevronLeft, BiChevronRight } from 'react-icons/bi'; 
 import { AiFillStar} from 'react-icons/ai';
 import HourlyPriceChart from './HourlyPriceChart';
-import TabCharts from './TabCharts';
 import HighChartsTab from './HighchartTab'
+import ChartsTab from './chartsTab'
 import './styles.css'; // Import the CSS file
 import axios from 'axios';
 import BuyModal from './BuyModal';
 import SellModal from './SellModal';
 import InsightsTab from './InsightsTab';
 import TopNewsTab from './TopNews';
-import { Alert } from 'react-bootstrap'; // Import Alert from react-bootstrap for displaying messages
-import ChartsTab from './chartsTab';
+import { Alert } from 'react-bootstrap'; 
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { setSearchSymbol, updateLatestPriceData } from '../actions/searchActions';
 import { FaRegStar } from 'react-icons/fa'; 
-
+import { BACKEND_URL } from '../config';
 
 function SearchDetails() {
     const location = useLocation();
@@ -72,7 +71,7 @@ function SearchDetails() {
 
       const handleSymbolClick = async (symbol) => {
         try {
-            const response = await fetch(`http://${window.location.hostname}:5000/api/data?ticker=${symbol}`);
+            const response = await fetch(`/api/data?ticker=${symbol}`);
             if (!response.ok) {
                 throw new Error('Failed to fetch data');
             }
@@ -94,7 +93,7 @@ function SearchDetails() {
         // Fetch user's portfolio from MongoDB
         const fetchPortfolio = async () => {
             try {
-                const response = await axios.get(`http://${window.location.hostname}:5000/api/user/portfolio`);
+                const response = await axios.get(`/api/user/portfolio`);
                 const portfolio = response.data;
                 const hasStock = portfolio.portfolio.some(item => item.symbol === ticker);
                 setHasStock(hasStock);
@@ -118,7 +117,7 @@ function SearchDetails() {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const response = await fetch(`http://${window.location.hostname}:5000/api/user/watchlist`);
+                const response = await fetch(`/api/user/watchlist`);
                 const data = await response.json();
                 if (data) {
                     setWatchlist(data.watchlist);
@@ -150,7 +149,7 @@ function SearchDetails() {
             stockdp: data.latestPriceData.dp
         };
         try {
-            const response = await axios.post(`http://${window.location.hostname}:5000/api/user/addstockwatch`, { stock: watchlistStock });
+            const response = await axios.post(`/api/user/addstockwatch`, { stock: watchlistStock });
             if (response.data.success) {
                 console.log('Stock added to watchlist successfully');
                 // Optionally, you can update the UI or show a success message
@@ -166,7 +165,7 @@ function SearchDetails() {
 
     const removeFromWatchlist = async (symbol) => {
         try {
-            const response = await axios.post(`http://${window.location.hostname}:5000/api/user/removestockwatch`, { symbol });
+            const response = await axios.post(`/api/user/removestockwatch`, { symbol });
             if (response.data.success) {
                 console.log('Stock removed from watchlist successfully');
                 setWatchlist(watchlist.filter(item => item.symbol !== symbol));
@@ -244,7 +243,7 @@ function SearchDetails() {
         const interval = setInterval(async () => {
             if (isMarketOpen()) {
             try {
-                const response = await axios.get(`http://${window.location.hostname}:5000/api/profiledata?ticker=${ticker}`);
+                const response = await axios.get(`/api/profiledata?ticker=${ticker}`);
                 const responseData = response.data;
                 dispatch(updateLatestPriceData(ticker, responseData.data)); // Update latest price data in Redux store
             } catch (error) {
@@ -518,9 +517,8 @@ function SearchDetails() {
                             <div className={`tab-pane fade ${activeTab === 'charts' ? 'show active' : ''}`}>
                                 {/* <p>{data.historicalData.results}</p> */}
                                 
-                                {/* <ChartsTab historicalData={data.historicalData} /> */}
-                                <HighChartsTab historicalData={data.historicalData} />
-                                {/* <TabCharts /> */}
+                                <ChartsTab historicalData={data.historicalData} />
+                                {/* <HighChartsTab historicalData={data.historicalData} /> */}
 
                             </div>
                             <div className={`tab-pane fade ${activeTab === 'insights' ? 'show active' : ''}`}>

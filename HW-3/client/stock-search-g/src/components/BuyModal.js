@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Modal, Button, Form} from 'react-bootstrap';
 import axios from 'axios';
+import { BACKEND_URL } from '../config';
 
 const BuyModal = ({ show, ticker, company, currentPrice, moneyInWallet, onHide, handleCloseBuyModal, handleBuySuccess }) => {
     const [quantity, setQuantity] = useState(1);
@@ -10,7 +11,7 @@ const BuyModal = ({ show, ticker, company, currentPrice, moneyInWallet, onHide, 
     const handleBuy = async () => {
         try {
             // Fetch user's portfolio data
-            const response = await axios.get(`http://${window.location.hostname}:5000/api/user/portfolio`);
+            const response = await axios.get(`/api/user/portfolio`);
             const userData = response.data;
             let upin_response = 300;
     
@@ -34,9 +35,10 @@ const BuyModal = ({ show, ticker, company, currentPrice, moneyInWallet, onHide, 
                 console.log(updatedPortfolio);
     
                 // Update the portfolio data in the backend
-                upin_response = await axios.post(`http://${window.location.hostname}:5000/api/user/portfolio/update`, {
+                upin_response = await axios.post(`/api/user/portfolio/update`, {
                     portfolio: updatedPortfolio
                 });
+                
             } else {
                 // If the stock does not exist, add a new record to the portfolio
                 const newStock = {
@@ -49,7 +51,7 @@ const BuyModal = ({ show, ticker, company, currentPrice, moneyInWallet, onHide, 
     
                 console.log(newStock);
                 // Update the portfolio data in the backend
-                upin_response = await axios.post(`http://${window.location.hostname}:5000/api/user/portfolio/insert`, {
+                upin_response = await axios.post(`/api/user/portfolio/insert`, {
                     stock: newStock
                 });
             }
@@ -58,7 +60,7 @@ const BuyModal = ({ show, ticker, company, currentPrice, moneyInWallet, onHide, 
                 const newMoneyInWallet = parseFloat(moneyInWallet - parseFloat(total));
                 
                 // Update the money in wallet using another backend endpoint
-                const updateMoneyResponse = await axios.post(`http://${window.location.hostname}:5000/api/user/money/update`, { money: newMoneyInWallet });
+                const updateMoneyResponse = await axios.post(`/api/user/money/update`, { money: newMoneyInWallet });
     
                 if (updateMoneyResponse.status === 200) {
                     // Money in wallet updated successfully
@@ -68,6 +70,9 @@ const BuyModal = ({ show, ticker, company, currentPrice, moneyInWallet, onHide, 
                     console.error('Failed to update money in wallet');
                     // Handle the failure scenario
                 }
+                handleBuySuccess();
+            // Close the modal after successful buy
+            handleCloseBuyModal();
             } else {
                 console.error('Failed to buy stock');
                 // Handle the failure scenario

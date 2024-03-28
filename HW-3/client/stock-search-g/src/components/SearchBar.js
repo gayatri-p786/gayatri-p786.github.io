@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setSearchSymbol } from '../actions/searchActions';
 import axios from 'axios';
 import './styles.css'; // Import the CSS file
+import { BACKEND_URL } from '../config';
 
 const SearchBar = ({ resetS, dropdownstate, watchlistTicker }) => {
     console.log("watchlistTicker",watchlistTicker);
@@ -55,8 +56,7 @@ const SearchBar = ({ resetS, dropdownstate, watchlistTicker }) => {
         try {
             // Perform the HTTP request to your Node.js backend
             
-            const response = await fetch(`http://${window.location.hostname}:5000/api/data?ticker=${searchticker}`);
-            // console.log(`http://${window.location.hostname}:5000/api/data/${ticker}`);
+            const response = await fetch(`/api/data?ticker=${searchticker}`);
             if (!response.ok) {
                 throw new Error('Failed to fetch data');
             }
@@ -146,7 +146,7 @@ const SearchBar = ({ resetS, dropdownstate, watchlistTicker }) => {
                     onKeyPress={handleKeyPress}
                     style={{ border: 'none' }}
                 />
-                <Button type="button" className="search-bar-button" onClick={handleSearch}>
+                <Button type="button" className="search-bar-button" onClick={()=>{handleSearch();}}>
                     <FaSearch className="search-bar-icons" />
                 </Button>
                 <Button className="search-bar-button" onClick={handleClear}>

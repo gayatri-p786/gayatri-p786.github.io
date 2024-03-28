@@ -4,6 +4,7 @@ import { FaTimes } from 'react-icons/fa';
 import { Alert, Spinner, Card, Button } from 'react-bootstrap';
 import { BiCaretUp, BiCaretDown } from 'react-icons/bi';
 import { useNavigate } from 'react-router-dom';
+import { BACKEND_URL } from '../config';
 
 const Watchlist = () => {
     const navigate = useNavigate(); // Initialize useNavigate hook
@@ -15,7 +16,7 @@ const Watchlist = () => {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const response = await fetch(`http://${window.location.hostname}:5000/api/user/watchlist`);
+                const response = await fetch(`/api/user/watchlist`);
                 const data = await response.json();
                 if (data) {
                     setWatchlist(data.watchlist);
@@ -39,7 +40,7 @@ const Watchlist = () => {
         const fetchCurrentPrices = async () => {
             try {
                 const symbols = watchlist.map(item => item.symbol);
-                const response = await axios.post(`http://${window.location.hostname}:5000/api/current-prices`, { symbols });
+                const response = await axios.post(`/api/current-prices`, { symbols });
                 setCurrentPrices(response.data);
             } catch (error) {
                 console.error('Error fetching current prices:', error);
@@ -53,7 +54,7 @@ const Watchlist = () => {
 
     const removeFromWatchlist = async (symbol) => {
         try {
-            const response = await axios.post(`http://${window.location.hostname}:5000/api/user/removestockwatch`, { symbol });
+            const response = await axios.post(`/api/user/removestockwatch`, { symbol });
             if (response) {
                 const updatedWatchlist = watchlist.filter(item => item.symbol !== symbol);
                 setWatchlist(updatedWatchlist);

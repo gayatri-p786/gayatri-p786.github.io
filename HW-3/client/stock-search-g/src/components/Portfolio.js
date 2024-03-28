@@ -4,11 +4,11 @@ import axios from 'axios';
 import BuyModal from './BuyModal';
 import SellModal from './SellModal';
 import { useNavigate } from 'react-router-dom';
+import { BACKEND_URL } from '../config';
 
 const Portfolio = () => {
     const [portfolio, setPortfolio] = useState([]);
     const navigate = useNavigate(); 
-    const [reloadportfolio, setReloadPortfolio] = useState(false);
     const [money, setMoney] = useState(0);
     const [loading, setLoading] = useState(true);
     const [priceLoading, setPriceLoading] = useState(true);
@@ -26,7 +26,7 @@ const Portfolio = () => {
 
     const fetchPortfolio = async () => {
         try {
-            const response = await fetch(`http://${window.location.hostname}:5000/api/user/portfolio`);
+            const response = await fetch(`/api/user/portfolio`);
             const data = await response.json();
             console.log("port data", data);
             if (data) {
@@ -60,7 +60,7 @@ const Portfolio = () => {
                 setPriceLoading(true);
                 try {
                     const symbols = portfolio.map(item => item.symbol);
-                    const response = await axios.post(`http://${window.location.hostname}:5000/api/current-prices`, { symbols });
+                    const response = await axios.post(`/api/current-prices`, { symbols });
                     setCurrentPrices(response.data);
                 } catch (error) {
                     console.error('Error fetching current prices:', error);
@@ -73,27 +73,7 @@ const Portfolio = () => {
         }
     }, [portfolio]);
 
-    // useEffect(() => {
-    //     // Logic to fetch portfolio data goes here
-    //     // This useEffect will run whenever reloadPortfolio changes
-    //     fetchPortfolio();
-    // }, [reloadPortfolio]);
 
-    useEffect(() => {
-        // This useEffect hook reloads the portfolio data when buy or sell is successful
-        if (buySuccess || sellSuccess) {
-            fetchPortfolio(); // Reload the portfolio data
-            // Reset buySuccess and sellSuccess after 3 seconds
-            const timer = setTimeout(() => {
-                setBuySuccess(false);
-                setSellSuccess(false);
-            }, 3000);
-            // Cleanup function to clear the timer
-            return () => clearTimeout(timer);
-        }
-    }, [reloadportfolio]);
-
-    // Function to calculate the change and market value for each stock
     // Function to calculate the change and market value for each stock
     const calculateStockData = (stock) => {
         // console.log("portfolio");
@@ -135,6 +115,7 @@ const Portfolio = () => {
         setShowSellModal(false);
     };
 
+
     const openBuyModal = (stock) => {
         setShowBuyModal(true);
         setBuyModalData({
@@ -143,6 +124,7 @@ const Portfolio = () => {
             company: stock.company,
             currentPrice: currentPrices[stock.symbol].c,
             moneyInWallet: money,
+            onHide:handleCloseBuyModal,
             handleCloseBuyModal: handleCloseBuyModal,
             handleBuySuccess: () => handleSuccessfulBuy(stock.symbol)
         });
@@ -156,6 +138,7 @@ const Portfolio = () => {
             existingQuantity: stock.quantity,
             currentPrice: currentPrices[stock.symbol].c,
             moneyInWallet: money,
+            onHide:handleCloseSellModal,
             handleCloseSellModal: handleCloseSellModal,
             handleSellSuccess: () => handleSuccessfulSell(stock.symbol)
         });
@@ -167,14 +150,11 @@ const Portfolio = () => {
         setBmessage(`${ticker} bought succesfully`);
         setBuySuccess(true);
         
+        
         setTimeout(() => {
             setBuySuccess(false);
         }, 3000);
-        
-        setReloadPortfolio(prevState => !prevState);
-        setReloadPortfolio(true);
-        
-        
+        fetchPortfolio();
     };
 
 
@@ -182,18 +162,17 @@ const Portfolio = () => {
         setShowSellModal(false);
         setSmessage(`${ticker} sold succesfully`);
         setSellSuccess(true);
+        
         setTimeout(() => {
             setSellSuccess(false);
         }, 3000);
+        fetchPortfolio();
 
-        setReloadPortfolio(prevState => !prevState);
-        setReloadPortfolio(true);
-        
     };
 
 
     return (
-        <div className="d-flex justify-content-center mt-5">
+        <div className="d-flex justify-content-center mt-5 mb-5">
             <div style={{ width: '70%' }}>
                 <h1 className="mb-4">My Portfolio</h1>
                 <h3 className="mb-4">Money in Wallet: ${money}</h3>

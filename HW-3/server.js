@@ -12,6 +12,7 @@ const uri = "mongodb+srv://patilgayatri086:EttCUjuvfbSdDta2@cluster0.grxcm5a.mon
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static('client/stock-search-g/build/'));
 
 const polygon_api_key = 'g6094_mtCEzO0IDnhM81rnPP9Zio8AYV';
 const finnhub_api_key = 'cmuu051r01qru65i12s0cmuu051r01qru65i12sg';
@@ -99,6 +100,11 @@ const fetchFinnhubData = async (stock_ticker) => {
             }
         }
 
+        const polygon_endpoint = `https://api.polygon.io/v2/aggs/ticker/${stock_ticker}/range/1/hour/${fromDate}/${toDate}?adjusted=true&sort=asc&apiKey=${polygon_api_key}`;
+        const polygonResponse = await axios.get(polygon_endpoint);
+        const polygonData = handleNullValues(polygonResponse.data);
+        
+
         // console.log(fromDate,toDate);
         
 
@@ -110,7 +116,7 @@ const fetchFinnhubData = async (stock_ticker) => {
         const sentiment_endpoint = `https://finnhub.io/api/v1/stock/insider-sentiment?symbol=${stock_ticker}&from=2022-01-01&token=${finnhub_api_key}`;
         const peers_endpoint = `https://finnhub.io/api/v1/stock/peers?symbol=${stock_ticker}&token=${finnhub_api_key}`;
         const earnings_endpoint = `https://finnhub.io/api/v1/stock/earnings?symbol=${stock_ticker}&token=${finnhub_api_key}`;
-        const polygon_endpoint = `https://api.polygon.io/v2/aggs/ticker/${stock_ticker}/range/1/hour/${fromDate}/${toDate}?adjusted=true&sort=asc&apiKey=${polygon_api_key}`;
+        // const polygon_endpoint = `https://api.polygon.io/v2/aggs/ticker/${stock_ticker}/range/1/hour/${fromDate}/${toDate}?adjusted=true&sort=asc&apiKey=${polygon_api_key}`;
         // console.log(polygon_endpoint);
         
         const profileResponse = await axios.get(profile_endpoint);
@@ -121,7 +127,7 @@ const fetchFinnhubData = async (stock_ticker) => {
         const sentimentResponse = await axios.get(sentiment_endpoint);
         const peersResponse = await axios.get(peers_endpoint);
         const earningsResponse = await axios.get(earnings_endpoint);
-        const polygonResponse = await axios.get(polygon_endpoint);
+        // const polygonResponse = await axios.get(polygon_endpoint);
         // Fetch data from additional endpoints
         
         const profileData = handleNullValues(profileResponse.data);
@@ -132,9 +138,9 @@ const fetchFinnhubData = async (stock_ticker) => {
         const sentimentData = handleNullValues(sentimentResponse.data);
         const peersData = handleNullValues(peersResponse.data);
         const earningsData = handleNullValues(earningsResponse.data);
-        const polygonData = handleNullValues(polygonResponse.data);
+        // const polygonData = handleNullValues(polygonResponse.data);
         // Handle data from additional endpoints
-        console.log(stock_ticker,profileData);
+        console.log(stock_ticker,newsData);
         
         return { profileData, historicalData, latestPriceData, newsData, recommendationData, sentimentData, peersData, earningsData, polygonData };
     } catch (error) {

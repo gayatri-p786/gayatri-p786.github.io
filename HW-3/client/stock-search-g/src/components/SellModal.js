@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import axios from 'axios';
+import { BACKEND_URL } from '../config';
 
 function SellModal({ show, ticker, currentPrice, moneyInWallet, existingQuantity, onHide, handleCloseSellModal, handleSellSuccess }) {
     const [quantity, setQuantity] = useState(1);
@@ -12,7 +13,7 @@ function SellModal({ show, ticker, currentPrice, moneyInWallet, existingQuantity
         // Validate sell quantity
         try {
             // Fetch user's portfolio data
-            const response = await axios.get(`http://${window.location.hostname}:5000/api/user/portfolio`);
+            const response = await axios.get(`/api/user/portfolio`);
             const userData = response.data;
             let upin_response = 300;
             console.log(userData);
@@ -22,14 +23,14 @@ function SellModal({ show, ticker, currentPrice, moneyInWallet, existingQuantity
             console.log(existingStock);
             const newquant=existingQuantity-parseInt(quantity);
             if (newquant<=0){
-                const remove_response=await axios.post(`http://${window.location.hostname}:5000/api/user/portfolio/remove?ticker=${ticker}`);
+                const remove_response=await axios.post(`/api/user/portfolio/remove?ticker=${ticker}`);
                 // console.log(remove_response);
                 if (remove_response.status===200){
                     console.log("Removed STock from Portfolio");
                     const newMoneyInWallet = parseFloat(moneyInWallet + parseFloat(total));
                 
                 // Update the money in wallet using another backend endpoint
-                    const updateMoneyResponse = await axios.post(`http://${window.location.hostname}:5000/api/user/money/update`, { money: newMoneyInWallet });
+                    const updateMoneyResponse = await axios.post(`/api/user/money/update`, { money: newMoneyInWallet });
         
                     if (updateMoneyResponse.status === 200) {
                         // Money in wallet updated successfully
@@ -63,7 +64,7 @@ function SellModal({ show, ticker, currentPrice, moneyInWallet, existingQuantity
                 console.log(updatedPortfolio);
     
                 // Update the portfolio data in the backend
-                upin_response = await axios.post(`http://${window.location.hostname}:5000/api/user/portfolio/update`, {
+                upin_response = await axios.post(`/api/user/portfolio/update`, {
                     portfolio: updatedPortfolio
                 });
                 if (upin_response.status === 200) {
@@ -71,7 +72,7 @@ function SellModal({ show, ticker, currentPrice, moneyInWallet, existingQuantity
                     const newMoneyInWallet = parseFloat(moneyInWallet + parseFloat(total));
                     
                     // Update the money in wallet using another backend endpoint
-                    const updateMoneyResponse = await axios.post(`http://${window.location.hostname}:5000/api/user/money/update`, { money: newMoneyInWallet });
+                    const updateMoneyResponse = await axios.post(`/api/user/money/update`, { money: newMoneyInWallet });
         
                     if (updateMoneyResponse.status === 200) {
                         // Money in wallet updated successfully
