@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Historical Data Chart</title>
+    <!-- Load Highcharts library -->
+    <script src="https://code.highcharts.com/stock/highstock.js"></script>
+    <!-- Load Highcharts Indicators -->
+    <script src="https://code.highcharts.com/stock/indicators/indicators.js"></script>
+    <script src="https://code.highcharts.com/stock/indicators/zigzag.js"></script>
+    <script src="https://code.highcharts.com/stock/indicators/volume-by-price.js"></script>
+</head>
+<body>
+
+<!-- Container for the chart -->
+<div id="historicalChartContainer" style="width:100%; height:400px;"></div>
+
+<script>
+    // Define historicalData variable with your data here
+    const historicalData = JSON.parse(Android.getHistoricalData());
+
+    // Extract OHLC and Volume data from historicalData
+    const ohlcData = historicalData.results.map(data => [
+        new Date(data.t).getTime(), // Timestamp
+        data.o, // Open
+        data.h, // High
+        data.l, // Low
+        data.c  // Close
+    ]);
+
+    const volumeData = historicalData.results.map(data => [
+        new Date(data.t).getTime(), // Timestamp
+        data.v // Volume
+    ]);
+
+    // Define grouping units for the data
+    const groupingUnits = [
+        ['week', [1]],
+        ['month', [1, 2, 3, 4, 6]]
+    ];
+
+    // Create the chart
+    Highcharts.stockChart('historicalChartContainer', {
+        rangeSelector: {
+            selected: 2
+        },
+        title: {
+            text: 'Historical Data'
+        },
+        subtitle: {
+            text: 'With SMA and Volume by Price technical indicators'
+        },
+        yAxis: [{
+            startOnTick: false,
+            endOnTick: false,
+            labels: {
+                align: 'right',
+                x: -3
+            },
+            title: {
+                text: 'OHLC'
+            },
+            height: '60%',
+            lineWidth: 2,
+            resize: {
+                enabled: true
+            }
+        }, {
+            labels: {
+                align: 'right',
+                x: -3
+            },
+            title: {
+                text: 'Volume'
+            },
+            top: '65%',
+            height: '35%',
+            offset: 0,
+            lineWidth: 2
+        }],
+        tooltip: {
+            split: true
+        },
+        plotOptions: {
+            series: {
+                dataGrouping: {
+                    units: groupingUnits
+                }
+            }
+        },
+        series: [{
+            type: 'candlestick',
+            name: 'AAPL',
+            id: 'ticker',
+            zIndex: 2,
+            data: ohlcData
+        }, {
+            type: 'column',
+            name: 'Volume',
+            id: 'volume',
+            data: volumeData,
+            yAxis: 1
+        }, {
+            type: 'vbp',
+            linkedTo: 'ticker',
+            params: {
+                volumeSeriesID: 'volume'
+            },
+            dataLabels: {
+                enabled: false
+            },
+            zoneLines: {
+                enabled: false
+            }
+        }, {
+            type: 'sma',
+            linkedTo: 'ticker',
+            zIndex: 1,
+            marker: {
+                enabled: false
+            }
+        }]
+    });
+</script>
+
+</body>
+</html>

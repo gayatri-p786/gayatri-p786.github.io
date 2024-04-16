@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hourly Price Chart</title>
+    <!-- Load Highcharts library -->
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+</head>
+<body>
+
+<!-- Container for the chart -->
+<div id="hourlyChartContainer" style="width:100%; height:400px;"></div>
+
+<script>
+    const chartData = JSON.parse(Android.getHistoricalData());
+    const lineColor = Android.getLineColor();
+
+    // Extract the results array from the parsed data
+    const results = chartData.results;
+
+    // Format the data into the desired hourlyPrices array format
+    const hourlyPrices = results.map(data => ({
+        x: new Date(data.t).getTime(), // Convert timestamp to milliseconds
+        y: data.c // Use the 'c' key for stock price
+    }));
+
+   // Create chart
+   Highcharts.chart('hourlyChartContainer', {
+       chart: {
+           type: 'line'
+       },
+       title: {
+           text: 'Hourly Price Variation Chart'
+       },
+       xAxis: {
+           type: 'datetime'
+       },
+       yAxis: {
+           title: {
+               text: null // Remove stock price label
+           },
+           opposite: true // Align yAxis to the right
+       },
+       series: [{
+           name: 'Price',
+           data: hourlyPrices,
+           color: lineColor, // Set line color based on data
+           marker: {
+               enabled: false // Disable data markers
+           }
+       }]
+   });
+</script>
+
+</body>
+</html>
