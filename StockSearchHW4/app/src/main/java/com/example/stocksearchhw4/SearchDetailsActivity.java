@@ -42,6 +42,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -71,6 +72,12 @@ public class SearchDetailsActivity extends AppCompatActivity {
 
     private LinearLayout statsSection;
     private LinearLayout aboutSection;
+
+    private LinearLayout insightSection;
+
+    private LinearLayout recChart;
+
+    private LinearLayout earnChart;
     private TextView priceTextView;
     private TextView priceChangeTextView;
 
@@ -105,7 +112,9 @@ public class SearchDetailsActivity extends AppCompatActivity {
         portSection=findViewById(R.id.portSection);
         statsSection=findViewById(R.id.statsSection);
         aboutSection=findViewById(R.id.aboutSection);
-
+        insightSection=findViewById(R.id.insightSection);
+        recChart=findViewById(R.id.recChart);
+        earnChart=findViewById(R.id.earningChart);
         // Create an adapter for the ViewPager
 
         // Retrieve ticker symbol from SharedPreferences
@@ -254,6 +263,113 @@ public class SearchDetailsActivity extends AppCompatActivity {
         PeersAdapter peerAdapter = new PeersAdapter(peersList);
         peersRecyclerView.setAdapter(peerAdapter);
         peersRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+
+
+
+        JSONObject sentimentData = responseData.getJSONObject("sentimentData");
+
+        // Now you can access the "data" array inside the sentimentData object
+        JSONArray dataArray = sentimentData.getJSONArray("data");
+
+        // Perform calculations on the data array
+        double totalMspr = 0;
+        double totalChange = 0;
+        double positiveMspr = 0;
+        double negativeMspr = 0;
+        double positiveChange = 0;
+        double negativeChange = 0;
+
+        for (int i = 0; i < dataArray.length(); i++) {
+            JSONObject sentiment = dataArray.getJSONObject(i);
+
+            double mspr = sentiment.getDouble("mspr");
+            double change = sentiment.getDouble("change");
+
+            totalMspr += mspr;
+            totalChange += change;
+
+            if (mspr > 0) {
+                positiveMspr += mspr;
+            } else if (mspr < 0) {
+                negativeMspr += mspr;
+            }
+
+            if (change > 0) {
+                positiveChange += change;
+            } else if (change < 0) {
+                negativeChange += change;
+            }
+        }
+
+        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+
+        // Find the TextViews corresponding to each cell
+        TextView tableCompanyName = findViewById(R.id.tableCompanyName);
+        TextView totalValueTextView = findViewById(R.id.totalValue);
+        TextView totalChangeTextView = findViewById(R.id.totalChange);
+        TextView positiveValueTextView = findViewById(R.id.positiveValue);
+        TextView positiveChangeTextView = findViewById(R.id.positiveChange);
+        TextView negativeValueTextView = findViewById(R.id.negativeValue);
+        TextView negativeChangeTextView = findViewById(R.id.negativeChange);
+
+        // Format the calculated values to two decimal places
+        String totalMsprFormatted = decimalFormat.format(totalMspr);
+        String totalChangeFormatted = decimalFormat.format(totalChange);
+        String positiveMsprFormatted = decimalFormat.format(positiveMspr);
+        String positiveChangeFormatted = decimalFormat.format(positiveChange);
+        String negativeMsprFormatted = decimalFormat.format(negativeMspr);
+        String negativeChangeFormatted = decimalFormat.format(negativeChange);
+
+        // Set the formatted values in the respective TextViews
+        tableCompanyName.setText(company);
+        totalValueTextView.setText(totalMsprFormatted);
+        totalChangeTextView.setText(totalChangeFormatted);
+        positiveValueTextView.setText(positiveMsprFormatted);
+        positiveChangeTextView.setText(positiveChangeFormatted);
+        negativeValueTextView.setText(negativeMsprFormatted);
+        negativeChangeTextView.setText(negativeChangeFormatted);
+        insightSection.setVisibility(View.VISIBLE);
+
+        JSONArray recommendationData =responseData.getJSONArray("recommendationData");
+
+
+        String recommendationDataString = recommendationData.toString();
+        System.out.println("recData"+recommendationDataString);
+        // Get the support FragmentManager
+        FragmentManager fragmentManager = getSupportFragmentManager();
+
+// Begin a transaction to add the fragment
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+// Create an instance of RecommendationChartFragment with the recommendation data
+        RecChartFragment recommendationFragment = RecChartFragment.newInstance(recommendationDataString);
+
+// Replace whatever is in the recChartContainer with the recommendation fragment
+        fragmentTransaction.replace(R.id.recChartContainer, recommendationFragment);
+
+// Commit the transaction
+        fragmentTransaction.commit();
+        recChart.setVisibility(View.VISIBLE);
+
+        JSONArray earningData =responseData.getJSONArray("earningsData");
+
+        String earningDataString = earningData.toString();
+        System.out.println("earnData"+earningDataString);
+        // Get the support FragmentManager
+        FragmentManager earnfragmentManager = getSupportFragmentManager();
+
+// Begin a transaction to add the fragment
+        FragmentTransaction earnfragmentTransaction = earnfragmentManager.beginTransaction();
+
+// Create an instance of RecommendationChartFragment with the recommendation data
+        EarnChartFragment earnFragment = EarnChartFragment.newInstance(earningDataString);
+
+// Replace whatever is in the recChartContainer with the recommendation fragment
+        earnfragmentTransaction.replace(R.id.earnChartContainer, earnFragment);
+
+// Commit the transaction
+        earnfragmentTransaction.commit();
+        earnChart.setVisibility(View.VISIBLE);
 
 
     }

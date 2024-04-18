@@ -429,6 +429,205 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/insightSection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@id/aboutSection"
+        android:visibility="gone">
+
+        <!-- About Heading -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Insights"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:padding="8dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/tableSection">
+            <TextView
+                android:id="@+id/socialSentimentsHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Social Sentiments"
+                android:textSize="20sp"
+                android:textAlignment="center"
+                android:padding="8dp"/>
+
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp">
+
+                <!-- Header Row -->
+                <TableRow>
+                    <!-- Company Name Header -->
+                    <TextView
+                        android:id="@+id/tableCompanyName"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:background="@drawable/bg_light_grey"
+                        android:padding="8dp"/>
+
+                    <!-- MSRP Header -->
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="MSRP"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:background="@drawable/bg_light_grey"
+                        android:padding="8dp"/>
+
+                    <!-- Change Header -->
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Change"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:background="@drawable/bg_light_grey"
+                        android:padding="8dp"/>
+                </TableRow>
+
+                <!-- Total Row -->
+                <TableRow>
+                    <!-- Total Label -->
+                    <TextView
+                        android:id="@+id/totalLabel"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_light_grey"
+                        android:layout_weight="1"
+                        android:text="Total"
+                        android:padding="8dp"/>
+
+                    <!-- Total Value -->
+                    <TextView
+                        android:id="@+id/totalValue"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_even_lighter_grey"
+                        android:layout_weight="1"
+                        android:padding="8dp"/>
+
+                    <!-- Total Change -->
+                    <TextView
+                        android:id="@+id/totalChange"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_even_lighter_grey"
+                        android:layout_weight="1"
+                        android:padding="8dp"/>
+                </TableRow>
+
+                <!-- Positive Row -->
+                <TableRow>
+                    <!-- Positive Label -->
+                    <TextView
+                        android:id="@+id/positiveLabel"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_light_grey"
+                        android:text="Positive"
+                        android:padding="8dp"/>
+
+                    <!-- Positive Value -->
+                    <TextView
+                        android:id="@+id/positiveValue"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_even_lighter_grey"
+                        android:padding="8dp"/>
+
+                    <!-- Positive Change -->
+                    <TextView
+                        android:id="@+id/positiveChange"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_even_lighter_grey"
+                        android:padding="8dp"/>
+                </TableRow>
+
+                <!-- Negative Row -->
+                <TableRow>
+                    <!-- Negative Label -->
+                    <TextView
+                        android:id="@+id/negativeLabel"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Negative"
+                        android:background="@drawable/bg_light_grey"
+                        android:padding="8dp"/>
+
+                    <!-- Negative Value -->
+                    <TextView
+                        android:id="@+id/negativeValue"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_even_lighter_grey"
+                        android:padding="8dp"/>
+
+                    <!-- Negative Change -->
+                    <TextView
+                        android:id="@+id/negativeChange"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_even_lighter_grey"
+                        android:padding="8dp"/>
+                </TableRow>
+
+            </TableLayout>
+
+
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/recChart"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:layout_below="@id/tableSection">
+
+            <FrameLayout
+                android:id="@+id/recChartContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/earningChart"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:layout_below="@id/recChart">
+
+            <FrameLayout
+                android:id="@+id/earnChartContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+    </LinearLayout>
 
 
 </RelativeLayout>
