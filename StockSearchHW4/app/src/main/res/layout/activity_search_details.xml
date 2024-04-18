@@ -1,6 +1,12 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="match_parent">
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:background="@android:color/white">
 
     <!-- Top bar with back button and favorite icon -->
@@ -159,16 +165,271 @@
             android:background="@color/white"/> <!-- TabLayout directly below ViewPager -->
 
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/TestTextView"
-        android:layout_below="@+id/tabs"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/portSection"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="Hello"
-        android:textColor="@android:color/black"
-        android:textSize="16sp"
-        android:gravity="start"/>
+        android:orientation="vertical"
+        android:layout_below="@id/tabs"
+        android:visibility="gone">
+
+        <!-- Portfolio Title -->
+        <TextView
+            android:id="@+id/portfolioTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Portfolio"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:padding="8dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <!-- Left Section -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:padding="8dp"
+                android:gravity="start">
+
+                <!-- Stock Details -->
+                <TextView
+                    android:id="@+id/numberOfStocks"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Shares Owned: 0"
+                    android:textSize="16sp"/>
+
+                <TextView
+                    android:id="@+id/avgCostPerShare"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Avg Cost/Share: $0.00"
+                    android:textSize="16sp"/>
+
+                <TextView
+                    android:id="@+id/totalCostOfSharesOwned"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Total Cost: $0.00"
+                    android:textSize="16sp"/>
+
+                <TextView
+                    android:id="@+id/changeInPrice"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Change: $0.00"
+                    android:textSize="16sp"/>
+
+                <TextView
+                    android:id="@+id/marketValue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Market Value: $0.00"
+                    android:textSize="16sp"/>
+
+            </LinearLayout>
+
+            <!-- Right Section: Customized Trade Button -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:padding="8dp"
+                android:gravity="end|center_vertical">
+                <Button
+                    android:id="@+id/tradeButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="TRADE"
+                    android:textColor="@android:color/white"
+                    android:background="@color/green"
+                    android:layout_gravity="end"
+                    android:layout_margin="8dp"/>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/statsSection"
+        android:layout_below="@id/portSection"
+        android:visibility="gone"
+        android:orientation="vertical">
+
+        <!-- Heading -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Stats"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:padding="8dp"/>
+
+        <!-- Stats Grid -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <!-- First Column -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:padding="8dp">
+
+                <TextView
+                    android:id="@+id/openPriceTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Open Price"/>
+
+                <TextView
+                    android:id="@+id/lowPriceTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Low Price"/>
+            </LinearLayout>
+
+            <!-- Second Column -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:padding="8dp">
+
+                <TextView
+                    android:id="@+id/highPriceTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="High Price"/>
+
+                <TextView
+                    android:id="@+id/prevCloseTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Prev. Close"/>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/aboutSection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@id/statsSection"
+        android:visibility="gone">
+
+        <!-- About Heading -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="About"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:padding="8dp"/>
+
+        <!-- First Column: Labels -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="8dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <!-- IPO Start Date -->
+            <TextView
+                android:id="@+id/ipoStartDateLabelTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="IPO Start Date"
+                android:textSize="16sp"/>
+
+            <!-- Industry -->
+            <TextView
+                android:id="@+id/industryLabelTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Industry"
+                android:textSize="16sp"/>
+
+            <!-- Webpage Label -->
+            <TextView
+                android:id="@+id/webpageLabelTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Webpage"
+                android:textSize="16sp"/>
+
+            <!-- Peers Label -->
+            <TextView
+                android:id="@+id/companyPeersLabelTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Peers"
+                android:textSize="16sp"/>
+        </LinearLayout>
+
+        <!-- Second Column: Data -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <!-- IPO Start Date -->
+            <TextView
+                android:id="@+id/ipoStartDateTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"/>
+
+            <!-- Industry -->
+            <TextView
+                android:id="@+id/industryTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"/>
+
+            <!-- Webpage TextView -->
+            <TextView
+                android:id="@+id/webpageTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textColor="@color/blue"
+                android:clickable="true"
+                android:focusable="true"/>
+
+            <!-- Peers RecyclerView -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/peersRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:orientation="horizontal"/>
+
+        </LinearLayout>
+    </LinearLayout>
+
+    </LinearLayout>
+
+
 
 </RelativeLayout>
+</ScrollView>

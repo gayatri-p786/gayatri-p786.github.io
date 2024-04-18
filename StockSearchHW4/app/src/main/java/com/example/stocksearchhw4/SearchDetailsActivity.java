@@ -1,6 +1,8 @@
 package com.example.stocksearchhw4;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
@@ -12,11 +14,16 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.SharedPreferences;
+import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -27,11 +34,19 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.JsonRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.tabs.TabLayout;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 public class SearchDetailsActivity extends AppCompatActivity {
 
@@ -51,6 +66,11 @@ public class SearchDetailsActivity extends AppCompatActivity {
     private LinearLayout chartFragmentContainer;
 
     private LinearLayout tabs;
+
+    private LinearLayout portSection;
+
+    private LinearLayout statsSection;
+    private LinearLayout aboutSection;
     private TextView priceTextView;
     private TextView priceChangeTextView;
 
@@ -82,6 +102,9 @@ public class SearchDetailsActivity extends AppCompatActivity {
         tabLayout = findViewById(R.id.tabLayout);
         chartFragmentContainer = findViewById(R.id.chart);
         tabs=findViewById(R.id.tabs);
+        portSection=findViewById(R.id.portSection);
+        statsSection=findViewById(R.id.statsSection);
+        aboutSection=findViewById(R.id.aboutSection);
 
         // Create an adapter for the ViewPager
 
@@ -140,6 +163,7 @@ public class SearchDetailsActivity extends AppCompatActivity {
         System.out.println("inside displaySections");
 //        System.out.println("in display"+responseData.getJSONObject("profileData").getString("ticker"));
         JSONObject profileData = responseData.getJSONObject("profileData");
+//        JSONObject peersData = responseData.getJSONObject("peersData");
         JSONObject latestPriceData = responseData.getJSONObject("latestPriceData");
         JSONObject historicalData = responseData.getJSONObject("historicalData");
         historicalDataString = historicalData.toString();
@@ -198,6 +222,167 @@ public class SearchDetailsActivity extends AppCompatActivity {
                 tab.setIcon(tabIcons[i]);
             }
         }
+
+        fetchDataFromPortfolio(ticker,latestPriceData.getDouble("c"));
+        fetchQuoteDataFromAPI(ticker);
+
+        TextView ipoStartDateTextView = findViewById(R.id.ipoStartDateTextView);
+        TextView industryTextView = findViewById(R.id.industryTextView);
+        TextView webpageTextView = findViewById(R.id.webpageTextView);
+        ipoStartDateTextView.setText(profileData.getString("ipo"));
+        industryTextView.setText(profileData.getString("finnhubIndustry"));
+        webpageTextView.setText(profileData.getString("weburl"));
+        webpageTextView.setOnClickListener(v -> {
+            // Get the URL from the TextView
+            String url = ((TextView) v).getText().toString();
+            System.out.println("url="+url);
+
+            // Create an Intent to open a web browser
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            startActivity(intent);
+        });
+
+
+        aboutSection.setVisibility(View.VISIBLE);
+        List<String> peersList = new ArrayList<>();
+        JSONArray peersData = responseData.getJSONArray("peersData");
+        for (int i = 0; i < peersData.length(); i++) {
+            peersList.add(peersData.getString(i));
+        }
+
+        RecyclerView peersRecyclerView = findViewById(R.id.peersRecyclerView);
+        PeersAdapter peerAdapter = new PeersAdapter(peersList);
+        peersRecyclerView.setAdapter(peerAdapter);
+        peersRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+
+
+    }
+
+    private void fetchDataFromPortfolio(String ticker, Double current) {
+        // Show progress bar
+//        progressBar.setVisibility(View.VISIBLE);
+        String url = BASE_URL + "api/user/portfolio";
+        System.out.println("Inside portfolio fetching");
+        TextView numberOfStocksTextView = findViewById(R.id.numberOfStocks);
+        TextView avgCostPerShareTextView = findViewById(R.id.avgCostPerShare);
+        TextView totalCostOfSharesOwnedTextView = findViewById(R.id.totalCostOfSharesOwned);
+        TextView changeInPriceTextView = findViewById(R.id.changeInPrice);
+        TextView marketValueTextView = findViewById(R.id.marketValue);
+        System.out.println("inside portfolio"+ticker+current);
+
+        JsonRequest<JSONObject> request = new JsonObjectRequest(Request.Method.GET, url, null,
+                response -> {
+//                    System.out.println("Inside Response");
+                    // Process the portfolio data
+                    try {
+
+                        // Parse the JSON response
+                        JSONArray portfolioArray = response.getJSONArray("portfolio");
+                        System.out.println("inside response try"+portfolioArray);
+
+                        // Loop through the portfolio items
+                        for (int i = 0; i < portfolioArray.length(); i++) {
+                            JSONObject stockJson = portfolioArray.getJSONObject(i);
+
+                            // Extract fields for the symbol that matches searchTicker
+                            String symbol = stockJson.getString("symbol");
+                            System.out.println("symbol"+symbol);
+                            if (symbol.equals(ticker)) {
+                                System.out.println("inside if");
+                                double quantity = stockJson.getInt("quantity");
+                                double total = stockJson.getDouble("total");
+                                double averageCostPerShare = stockJson.getDouble("averageCostPerShare");
+                                double marketValue = quantity*current;
+
+                                // Set these values to TextViews
+                                String quant = "Shares Owned:"+String.format("%.2f",quantity);
+                                String avgcost = "Avg Cost/Share: $"+String.format("%.2f",averageCostPerShare);
+                                String totalcost = "Total Cost: $"+String.format("%.2f",total);
+                                String mv = "Market Value: $"+String.format("%.2f",marketValue);
+                                double change=total-marketValue;
+                                String changetext= "Change:"+String.format("%.2f",change);
+
+                                System.out.println(quant);
+                                System.out.print(avgcost);
+                                numberOfStocksTextView.setText(quant);
+                                avgCostPerShareTextView.setText(avgcost);
+                                totalCostOfSharesOwnedTextView.setText(totalcost);
+                                changeInPriceTextView.setText(changetext);
+                                marketValueTextView.setText(mv);
+                                if (current<averageCostPerShare){
+                                    changeInPriceTextView.setTextColor(ContextCompat.getColor(this, R.color.red));
+                                    marketValueTextView.setTextColor(ContextCompat.getColor(this, R.color.red));
+                                }else{
+                                    changeInPriceTextView.setTextColor(ContextCompat.getColor(this, R.color.green));
+                                    marketValueTextView.setTextColor(ContextCompat.getColor(this, R.color.green));
+                                }
+
+                                // Break out of the loop since we found the matching symbol
+                                break;
+
+                            }
+
+                        }
+                        portSection.setVisibility(View.VISIBLE);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                },
+                error -> {
+                    // Handle error (network failure or server error)
+                    System.out.println(error);
+                });
+
+        VolleySingleton.getInstance(this).addToRequestQueue(request);
+
+        // Hide progress bar when done
+//        progressBar.setVisibility(View.GONE);
+    }
+
+    private void fetchQuoteDataFromAPI(String ticker) {
+        // Perform API call to fetch data from baseurl/api/profiledata?ticker=${ticker}
+        // Update the UI with the fetched data
+        String url = BASE_URL + "api/profiledata?ticker=" + ticker;
+
+        JsonRequest<JSONObject> request = new JsonObjectRequest(Request.Method.GET, url, null,
+                response -> {
+                    try {
+                        JSONObject data = response.getJSONObject("data");
+
+                        // Extract data from the JSON object
+                        double highPrice = data.getDouble("h");
+                        double lowPrice = data.getDouble("l");
+                        double openPrice = data.getDouble("o");
+                        double previousClose = data.getDouble("pc");
+
+                        // Find the TextViews for each stat
+                        TextView openPriceTextView = findViewById(R.id.openPriceTextView);
+                        TextView lowPriceTextView = findViewById(R.id.lowPriceTextView);
+                        TextView highPriceTextView = findViewById(R.id.highPriceTextView);
+                        TextView prevCloseTextView = findViewById(R.id.prevCloseTextView);
+
+// Set values for each TextView
+                        openPriceTextView.setText("Open Price: $" + openPrice);
+                        lowPriceTextView.setText("Low Price: $" + lowPrice);
+                        highPriceTextView.setText("High Price: $" + highPrice);
+                        prevCloseTextView.setText("Prev. Close: $" + previousClose);
+
+                        statsSection.setVisibility(View.VISIBLE);
+
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.e("API_ERROR", "Error parsing JSON response for " + ticker + ": " + e.toString());
+                    }
+                },
+                error -> {
+                    // Handle error
+                    Log.e("API_ERROR", "Error fetching data for " + ticker + ": " + error.toString());
+                });
+
+        VolleySingleton.getInstance(this).addToRequestQueue(request);
     }
 
 

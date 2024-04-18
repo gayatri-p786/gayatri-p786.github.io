@@ -34,12 +34,12 @@ public class PortfolioItemAdapter extends RecyclerView.Adapter<PortfolioItemAdap
         PortfolioItem portfolioItem = portfolioItems.get(position);
         // Bind portfolioItem data to views within the ViewHolder
         holder.symbolTextView.setText(portfolioItem.getSymbol());
-        holder.marketValueTextView.setText("$" + portfolioItem.marketValue);
+        holder.marketValueTextView.setText("$" + String.format("%.2f",portfolioItem.marketValue));
         // Set stock change and direction (up or down)
         double priceChange = portfolioItem.changeFromTotalCost;
         String priceChangeText = "$"+String.format("%.2f", priceChange) + "("+String.format("%.2f",portfolioItem.changeFromTotalCostPercentage)+"%)";
         holder.changeTextView.setText(priceChangeText);
-        holder.totalSharesTextView.setText(portfolioItem.getQuantity()+" shares");
+        holder.totalSharesTextView.setText(String.format("%.2f",portfolioItem.getQuantity())+" shares");
 
 
         // Set arrow image based on condition

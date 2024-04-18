@@ -35,12 +35,12 @@ public class StockItemAdapter extends RecyclerView.Adapter<StockItemAdapter.View
         holder.symbolTextView.setText(stockItem.symbol);
         holder.companyNameTextView.setText(stockItem.companyName);
         // Set stock price
-        String priceText = "$"+stockItem.stockPrice;
+        String priceText = "$"+String.format("%.2f",stockItem.stockPrice);
         holder.priceTextView.setText(priceText);
 
         // Set stock change and direction (up or down)
         double priceChange = stockItem.stockChange;
-        String priceChangeText = "$"+String.format("%.2f", priceChange) + "("+stockItem.stockdp+"%)";
+        String priceChangeText = "$"+String.format("%.2f", priceChange) + "("+String.format("%.2f",stockItem.stockdp)+"%)";
         holder.priceChangeTextView.setText(priceChangeText);
 
         // Set arrow image based on condition

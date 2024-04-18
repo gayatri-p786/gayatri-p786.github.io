@@ -3,7 +3,7 @@ package com.example.stocksearchhw4;
 public class PortfolioItem {
     String symbol;
     String company;
-    int quantity;
+    double quantity;
     double total;
     double averageCostPerShare;
 
@@ -30,7 +30,7 @@ public class PortfolioItem {
         return company;
     }
 
-    public int getQuantity() {
+    public double getQuantity() {
         return quantity;
     }
 
