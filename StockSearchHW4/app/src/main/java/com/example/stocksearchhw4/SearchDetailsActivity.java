@@ -8,7 +8,9 @@ import android.os.Bundle;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -21,6 +23,7 @@ import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.SharedPreferences;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -42,6 +45,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -49,7 +54,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class SearchDetailsActivity extends AppCompatActivity {
+public class SearchDetailsActivity extends AppCompatActivity implements NewsAdapter.NewsItemClickListener{
 
     private ProgressBar progressBar;
 
@@ -78,6 +83,8 @@ public class SearchDetailsActivity extends AppCompatActivity {
     private LinearLayout recChart;
 
     private LinearLayout earnChart;
+
+    private LinearLayout newsSection;
     private TextView priceTextView;
     private TextView priceChangeTextView;
 
@@ -88,6 +95,10 @@ public class SearchDetailsActivity extends AppCompatActivity {
     String polygonDataString;
 
     Boolean linecolour;
+
+    private RecyclerView newsRecyclerView;
+    private NewsAdapter newsAdapter;
+
     private static final String BASE_URL = "https://stock-search-g-service-iigicr37lq-wm.a.run.app/";
 
     @Override
@@ -115,6 +126,7 @@ public class SearchDetailsActivity extends AppCompatActivity {
         insightSection=findViewById(R.id.insightSection);
         recChart=findViewById(R.id.recChart);
         earnChart=findViewById(R.id.earningChart);
+        newsSection=findViewById(R.id.newsSection);
         // Create an adapter for the ViewPager
 
         // Retrieve ticker symbol from SharedPreferences
@@ -372,6 +384,168 @@ public class SearchDetailsActivity extends AppCompatActivity {
         earnChart.setVisibility(View.VISIBLE);
 
 
+        JSONArray newsData =responseData.getJSONArray("newsData");
+        // Initialize a new JSONArray to store filtered news data
+        JSONArray filteredNewsData = new JSONArray();
+
+// Loop through the newsData JSONArray
+        for (int i = 0; i < newsData.length(); i++) {
+            try {
+                JSONObject newsItem = newsData.getJSONObject(i);
+                // Check if the image key is not empty
+                if (newsItem.has("image") && !newsItem.isNull("image")) {
+                    String imageUrl = newsItem.getString("image");
+                    if (!TextUtils.isEmpty(imageUrl)) {
+                        // Add the news item to the filtered array
+                        filteredNewsData.put(newsItem);
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+// Ensure that we have a maximum of 20 items in the filtered array
+        int maxItems = Math.min(filteredNewsData.length(), 20);
+
+// Create a new JSONArray to store the top 20 items
+        JSONArray topNewsData = new JSONArray();
+
+// Add the top 20 items to the new JSONArray
+        for (int i = 0; i < maxItems; i++) {
+            try {
+                topNewsData.put(filteredNewsData.getJSONObject(i));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+// Now topNewsData contains the filtered news data with a maximum of 20 items, each with a non-empty image URL
+
+        newsRecyclerView = findViewById(R.id.newsRecyclerView);
+        newsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        newsAdapter = new NewsAdapter(this, topNewsData, this);
+        // Set adapter to RecyclerView
+        newsRecyclerView.setAdapter(newsAdapter);
+
+        newsSection.setVisibility(View.VISIBLE);
+
+
+    }
+
+    @Override
+    public void onNewsItemClick(JSONObject newsItem) {
+        // Display the news dialog here
+        showNewsDialog(newsItem);
+    }
+
+    private void showNewsDialog(JSONObject newsItem) {
+        // Create and customize the dialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.RoundedDialogTheme);
+//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View dialogView = getLayoutInflater().inflate(R.layout.news_article_dialog, null);
+
+        // Find views in the dialog layout
+        TextView sourceTextView = dialogView.findViewById(R.id.dialog_news_source);
+        TextView publishedDateTextView = dialogView.findViewById(R.id.dialog_news_published_date);
+        TextView titleTextView = dialogView.findViewById(R.id.dialog_news_title);
+        TextView descriptionTextView = dialogView.findViewById(R.id.dialog_news_description);
+        AppCompatImageButton chromeButton = (AppCompatImageButton) dialogView.findViewById(R.id.button_chrome);
+        AppCompatImageButton twitterButton = (AppCompatImageButton) dialogView.findViewById(R.id.button_twitter);
+        AppCompatImageButton facebookButton = (AppCompatImageButton) dialogView.findViewById(R.id.button_facebook);
+
+        try {
+            // Populate dialog views with data from newsItem
+            sourceTextView.setText(newsItem.getString("source"));
+            // Set published date in the format: Month dd, yyyy
+            SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault());
+            long datetime = newsItem.getLong("datetime") * 1000; // Convert seconds to milliseconds
+            String publishedDate = dateFormat.format(new Date(datetime));
+            publishedDateTextView.setText(publishedDate);
+            titleTextView.setText(newsItem.getString("headline"));
+            descriptionTextView.setText(newsItem.getString("summary"));
+
+            // Set click listeners for buttons
+            chromeButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try {
+                        // Open the article in Chrome
+                        // Replace "article_url" with the actual key for the article URL in your JSON object
+                        String articleUrl = newsItem.getString("url");
+                        openInChrome(articleUrl);
+                    }catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+            twitterButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try {
+                        // Share the article on Twitter
+                        String articleUrl = newsItem.getString("url");
+                        shareOnTwitter(articleUrl);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+            facebookButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try {
+                        // Share the article on Facebook
+                        String articleUrl = newsItem.getString("url");
+                        shareOnFacebook(articleUrl);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+            // Similar listeners for twitterButton and facebookButton
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        // Set the custom view for the dialog and show it
+        builder.setView(dialogView);
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void openInChrome(String articleUrl) {
+        // Logic to open the article in Chrome
+        // You can use intents to open URLs in external browsers
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(articleUrl));
+        startActivity(intent);
+    }
+
+    private void shareOnTwitter(String articleUrl) {
+        try {
+            // Append additional text to the URL
+            String tweetText = "Check out this article: " + articleUrl;
+            // Encode the tweet text to be URL-safe
+            String encodedTweetText = URLEncoder.encode(tweetText, "UTF-8");
+
+            // Construct the URL for sharing on Twitter with the encoded tweet text
+            String twitterUrl = "https://twitter.com/intent/tweet?text=" + encodedTweetText;
+
+            // Open the URL in Chrome or the Twitter app
+            openInChrome(twitterUrl);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void shareOnFacebook(String articleUrl) {
+        // You need to implement logic to open Facebook and post the article URL
+        // Here, I'm opening the URL in Chrome as an example
+        openInChrome("https://www.facebook.com/sharer/sharer.php?u=" + articleUrl);
     }
 
     private void fetchDataFromPortfolio(String ticker, Double current) {

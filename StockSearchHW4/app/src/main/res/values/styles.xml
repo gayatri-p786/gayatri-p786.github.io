@@ -3,4 +3,8 @@
     <style name="AppToolbar" parent="Widget.AppCompat.Toolbar">
         <item name="android:background">@color/white</item>
     </style>
+    <style name="RoundedDialogTheme" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:windowBackground">@drawable/dialog_rounded_background</item>
+    </style>
+
 </resources>

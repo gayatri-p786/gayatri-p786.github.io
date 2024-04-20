@@ -40,6 +40,9 @@ dependencies {
     implementation("com.android.volley:volley:1.2.1")
     implementation ("com.google.android.material:material:1.4.0")
     implementation("it.xabaras.android:recyclerview-swipedecorator:1.2.2")
+    implementation ("com.squareup.picasso:picasso:2.71828")
+    implementation ("androidx.cardview:cardview:1.0.0")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

@@ -629,6 +629,32 @@
         </LinearLayout>
     </LinearLayout>
 
+    <LinearLayout
+    android:id="@+id/newsSection"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_below="@id/insightSection"
+    android:visibility="gone">
+
+    <!-- News Heading -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="News"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:padding="8dp"/>
+
+        <!-- RecyclerView for News Articles -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/newsRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"/>
+
+</LinearLayout>
+
 
 </RelativeLayout>
 </ScrollView>
