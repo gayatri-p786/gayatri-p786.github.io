@@ -1,9 +1,12 @@
 package com.example.stocksearchhw4;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -59,6 +62,24 @@ public class StockItemAdapter extends RecyclerView.Adapter<StockItemAdapter.View
             holder.arrowImageView.setVisibility(View.GONE);
             holder.priceChangeTextView.setTextColor(ContextCompat.getColor(context, R.color.black));
         }
+            holder.arrowImageButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Get the symbol of the corresponding item
+                    String symbol = stockItem.symbol;
+
+                    // Store the symbol in SharedPreferences
+                    SharedPreferences sharedPreferences = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("searchTicker", symbol);
+                    editor.apply();
+
+                    // Start a new activity (Replace YourActivity.class with your desired activity)
+                    Intent intent = new Intent(context, SearchDetailsActivity.class);
+                    context.startActivity(intent);
+                }
+            });
+
     }
     @Override
     public int getItemCount() {
@@ -74,6 +95,8 @@ public class StockItemAdapter extends RecyclerView.Adapter<StockItemAdapter.View
 
         ImageView arrowImageView;
 
+        ImageButton arrowImageButton;
+
         ViewHolder(View itemView) {
             super(itemView);
             symbolTextView = itemView.findViewById(R.id.symbolTextView);
@@ -81,6 +104,7 @@ public class StockItemAdapter extends RecyclerView.Adapter<StockItemAdapter.View
             priceTextView = itemView.findViewById(R.id.priceTextView);
             priceChangeTextView = itemView.findViewById(R.id.priceChangeTextView);
             arrowImageView = itemView.findViewById(R.id.arrowImageView);
+            arrowImageButton = itemView.findViewById(R.id.rightarrowbutton);
         }
     }
 }

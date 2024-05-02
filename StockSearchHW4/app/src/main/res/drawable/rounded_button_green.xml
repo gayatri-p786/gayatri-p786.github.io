@@ -1,0 +1,4 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@color/modal_green" />
+    <corners android:radius="20dp" /> <!-- Adjust the corner radius as needed -->
+</shape>

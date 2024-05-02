@@ -1,8 +1,11 @@
 package com.example.stocksearchhw4;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -58,6 +61,24 @@ public class PortfolioItemAdapter extends RecyclerView.Adapter<PortfolioItemAdap
             holder.arrowImageView.setVisibility(View.GONE);
             holder.changeTextView.setTextColor(ContextCompat.getColor(context, R.color.black));
         }
+            holder.arrowImageButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Get the symbol of the corresponding item
+                    String symbol = portfolioItem.getSymbol();
+
+                    // Store the symbol in SharedPreferences
+                    SharedPreferences sharedPreferences = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("searchTicker", symbol);
+                    editor.apply();
+
+                    // Start a new activity (Replace YourActivity.class with your desired activity)
+                    Intent intent = new Intent(context, SearchDetailsActivity.class);
+                    context.startActivity(intent);
+                }
+            });
+//        }
 //        String percent=""
 //        holder.changeTextView.setText(portfolioItem.change);
 //        holder.changePercentageTextView.setText("Change in Price Percentage: " + portfolioItem.changePercentage + "%");
@@ -83,6 +104,8 @@ public class PortfolioItemAdapter extends RecyclerView.Adapter<PortfolioItemAdap
 
         ImageView arrowImageView;
 
+        ImageButton arrowImageButton;
+
         ViewHolder(View itemView) {
             super(itemView);
             symbolTextView = itemView.findViewById(R.id.PortsymbolTextView);
@@ -90,6 +113,7 @@ public class PortfolioItemAdapter extends RecyclerView.Adapter<PortfolioItemAdap
             changeTextView = itemView.findViewById(R.id.PortpriceChangeTextView);
             totalSharesTextView = itemView.findViewById(R.id.TotalSharesTextView);
             arrowImageView = itemView.findViewById(R.id.PortarrowImageView);
+            arrowImageButton = itemView.findViewById(R.id.rightarrowportbutton);
         }
     }
 }

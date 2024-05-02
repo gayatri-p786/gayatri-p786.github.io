@@ -3,7 +3,12 @@
     android:layout_height="match_parent"
     android:background="@android:color/white">
 
-    <!-- White text bar -->
+    <LinearLayout
+        android:id="@+id/topSection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
     <!-- White text bar -->
     <LinearLayout
         android:id="@+id/textBar"
@@ -11,7 +16,7 @@
         android:layout_height="wrap_content"
         android:background="@android:color/white"
         android:elevation="4dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="35dp"
         android:padding="8dp"
         android:orientation="horizontal">
 
@@ -31,32 +36,37 @@
             android:layout_height="0dp"
             android:id="@+id/space"
             android:layout_weight="1" />
-        <!-- Search icon -->
 
-        <!-- SearchView -->
-<!--        <ImageView-->
-<!--            android:id="@+id/searchIcon"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_gravity="end"-->
-<!--            android:src="@drawable/search"-->
-<!--            android:visibility="visible" />-->
-
-        <android.widget.SearchView
-            android:id="@+id/searchView"
+        <!-- Icon button -->
+        <ImageButton
+            android:id="@+id/searchButton"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"/>
+
 
     </LinearLayout>
+    <LinearLayout
+        android:id="@+id/searchLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <android.widget.SearchView
+        android:id="@+id/searchView"
+        android:layout_marginTop="35dp"
+        android:layout_marginBottom="35dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:focusable="false"
+        android:visibility="gone"/>
 
-
+    </LinearLayout>
+</LinearLayout>
 
     <!-- Current date text view -->
     <TextView
         android:id="@+id/textViewDate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/textBar"
+        android:layout_below="@id/topSection"
         android:layout_marginTop="8dp"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"

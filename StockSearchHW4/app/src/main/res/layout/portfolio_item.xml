@@ -1,84 +1,110 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:layout_margin="2dp">
 
-    <androidx.cardview.widget.CardView
-        xmlns:android="http://schemas.android.com/apk/res/android"
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="20dp">
+        android:orientation="horizontal"
+        android:padding="5dp">
 
-        <!-- Symbol and Price -->
+
+        <!-- First LinearLayout (First Column) -->
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="8dp">
+            android:layout_weight="2"
+            android:orientation="vertical">
+
 
             <!-- Symbol -->
             <TextView
                 android:id="@+id/PortsymbolTextView"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:layout_weight="1"
                 android:textStyle="bold"
                 android:textSize="18sp"
-                android:text="Symbol" />
+                android:text="Symbol"
+                android:layout_marginBottom="8dp" />
+
+
+            <!-- Total Shares -->
+            <TextView
+                android:id="@+id/TotalSharesTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Total Shares" />
+        </LinearLayout>
+
+
+        <!-- Second LinearLayout (Second Column) -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:orientation="vertical"
+            android:gravity="end"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp">
+
 
             <!-- Price -->
             <TextView
                 android:id="@+id/PortpriceTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:gravity="end"
-                android:layout_weight="1"
                 android:textStyle="bold"
                 android:textSize="18sp"
-                android:text="Price" />
-        </LinearLayout>
+                android:text="Price"
+                android:layout_marginBottom="8dp" />
 
-        <!-- Company Name -->
-        <TextView
-            android:id="@+id/TotalSharesTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="Total Shares" />
-
-        <!-- Arrow and Price Change -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="20dp"
-            android:gravity="end">
-
-            <!-- Arrow Image -->
-            <ImageView
-                android:id="@+id/PortarrowImageView"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="visible" />
+                android:orientation="horizontal"
+                android:gravity="end">
+                <ImageView
+                   android:id="@+id/PortarrowImageView"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:visibility="visible" />
 
-            <!-- Price Change -->
+                   <!-- Price Change -->
             <TextView
                 android:id="@+id/PortpriceChangeTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Price Change"
-                android:gravity="end"
-                android:visibility="visible" />
+                android:text="Price Change" />
+            </LinearLayout>
         </LinearLayout>
 
-    </androidx.cardview.widget.CardView>
 
-    <!-- Add bottom margin to create space between each item -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="8dp" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center_vertical|end">
 
-</LinearLayout>
+
+            <!-- ImageButton -->
+            <ImageButton
+                android:id="@+id/rightarrowportbutton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/right_arrow"
+                android:background="@android:color/transparent"
+                android:layout_gravity="end"
+                android:layout_marginBottom="8dp"/>
+        </LinearLayout>
+
+
+
+
+    </LinearLayout>
+
+
+</androidx.cardview.widget.CardView>
+

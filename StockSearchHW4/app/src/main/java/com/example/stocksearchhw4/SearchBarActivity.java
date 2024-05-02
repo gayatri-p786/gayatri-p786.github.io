@@ -27,6 +27,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.CursorAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
@@ -69,7 +70,7 @@ public class SearchBarActivity extends AppCompatActivity implements SwipeToDelet
     PortfolioItemAdapter portfolioItemAdapter = new PortfolioItemAdapter(this, portfolio);
     private static boolean isMarketOpen = false;
 
-    private static final long API_CALL_INTERVAL = 15000; // 15 seconds
+    private static final long API_CALL_INTERVAL = 30000; // 15 seconds
     private boolean isPortfolioDataLoaded = false;
     private boolean isWatchlistDataLoaded = false;
     private Handler mHandler = new Handler(Looper.getMainLooper());
@@ -98,14 +99,22 @@ public class SearchBarActivity extends AppCompatActivity implements SwipeToDelet
     private double openPrice;
     private double previousClose;
 
+    private ImageButton searchButton;
+
     private long timestamp;
 
 
     @Override
     protected void onResume() {
         super.onResume();
+        System.out.println("Resumed function");
+        watchlist.clear();
+        portfolio.clear();
+
+        // Fetch data from API for watchlist and portfolio
+        fetchDataFromApi1();
         // Start fetching data when the activity is resumed
-        startFetchingData();
+//        startFetchingData();
     }
 
     @Override
@@ -220,6 +229,8 @@ public class SearchBarActivity extends AppCompatActivity implements SwipeToDelet
         balanceTextView = findViewById(R.id.balance);
         searchAutoCompleteTextView = findViewById(R.id.searchView);
         portfolioSection = findViewById(R.id.portfolioSection);
+        searchButton = findViewById(R.id.searchButton);
+        LinearLayout textBar = findViewById(R.id.textBar);
         String currentDate = getCurrentDate();
 
 
@@ -227,7 +238,6 @@ public class SearchBarActivity extends AppCompatActivity implements SwipeToDelet
         fetchDataFromApi1();
 
         textViewDate.setText(currentDate);
-        textViewDate.setVisibility(View.VISIBLE);
         Space space = findViewById(R.id.space);
         TextView stocksTitle = findViewById(R.id.stocksTitle);
 
@@ -245,12 +255,17 @@ public class SearchBarActivity extends AppCompatActivity implements SwipeToDelet
 //        SearchView searchView = findViewById(R.id.searchView);
         searchAutoCompleteTextView.setSuggestionsAdapter(adapter);
 
-        searchAutoCompleteTextView.setOnClickListener(v -> {
-            space.setVisibility(View.GONE);
-            stocksTitle.setVisibility(View.GONE);
-            ViewGroup.LayoutParams params = searchAutoCompleteTextView.getLayoutParams();
-            params.width = ViewGroup.LayoutParams.MATCH_PARENT;
-            searchAutoCompleteTextView.setLayoutParams(params);
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Hide the textBar
+                textBar.setVisibility(View.GONE);
+
+                // Show the SearchView
+                searchAutoCompleteTextView.setVisibility(View.VISIBLE);
+                searchAutoCompleteTextView.setIconified(false);
+                searchAutoCompleteTextView.requestFocus();
+            }
         });
 
         searchAutoCompleteTextView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
@@ -275,7 +290,7 @@ public class SearchBarActivity extends AppCompatActivity implements SwipeToDelet
                         // Extract symbol and description from the suggestion
                         String[] parts = suggestion.split("\\|");
                         if (parts.length == 2) {
-                            String symbol = parts[0];
+                            String symbol = parts[0].trim();
                             String description = parts[1];
                             System.out.println("symbol"+symbol);
                             // Perform your desired operation with symbol and description
@@ -307,13 +322,9 @@ public class SearchBarActivity extends AppCompatActivity implements SwipeToDelet
         });
     }
 
-
     private void fetchSuggestions(String query) {
         String url = "https://finnhub.io/api/v1/search?q=" + query + "&token=" + API_KEY;
-//        suggestions= Arrays.asList("AAPL | Apple Inc.", "GOOGL | Alphabet Inc.", "MSFT | Microsoft Corporation");
-//        progressBar.setVisibility(View.VISIBLE);
-//        System.out.println(suggestions);
-//        updateSuggestions(suggestions);
+
         JsonObjectRequest  request = new JsonObjectRequest (Request.Method.GET, url, null,
                 response -> {
             System.out.println("Inside response for suggestion");
@@ -366,56 +377,7 @@ private void updateSuggestions(MatrixCursor cursor) {
         Intent intent = new Intent(SearchBarActivity.this, SearchDetailsActivity.class);
         startActivity(intent);
 
-        // Make API call
-//        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
-//                (Request.Method.GET, BASE_URL + "api/data?ticker=" + searchText, null, new Response.Listener<JSONObject>() {
-//
-//                    @Override
-//                    public void onResponse(JSONObject response) {
-//                        try {
-//                            JSONObject profileData = response.getJSONObject("profileData");
-//                            if (profileData.length() == 0) {
-//                                // If profileData is empty, display error
-//                                Toast.makeText(SearchBarActivity.this, "Invalid ticker or no data available", Toast.LENGTH_SHORT).show();
-//                            } else {
-//                                // If profileData is not empty, redirect to next screen
-//                                Intent intent = new Intent(SearchBarActivity.this, SearchDetailsActivity.class);
-//                                startActivity(intent);
-//                            }
-//                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                            Toast.makeText(SearchBarActivity.this, "Error parsing JSON response", Toast.LENGTH_SHORT).show();
-//                        }
-//                    }
-//                }, new Response.ErrorListener() {
-//
-//                    @Override
-//                    public void onErrorResponse(VolleyError error) {
-//                        // Handle error
-//                        Log.e("SearchBarActivity", "Error: " + error.getMessage());
-//                        Toast.makeText(SearchBarActivity.this, "Error fetching data", Toast.LENGTH_SHORT).show();
-//                    }
-//                });
-//
-//        // Add the request to the RequestQueue.
-//        Volley.newRequestQueue(this).add(jsonObjectRequest);
     }
-
-    private void showKeyboard() {
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (imm != null) {
-            imm.showSoftInput(searchAutoCompleteTextView, InputMethodManager.SHOW_IMPLICIT);
-        }
-    }
-
-    private void hideKeyboard() {
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (imm != null) {
-            imm.hideSoftInputFromWindow(searchAutoCompleteTextView.getWindowToken(), 0);
-        }
-    }
-
-
     private void updateWatchlistandPortfolio() {
         // Update each item in the watchlist
         for (StockItem item : watchlist) {
@@ -474,6 +436,7 @@ private void updateSuggestions(MatrixCursor cursor) {
                     try {
                         System.out.println("Inside Try");
                         JSONArray watchlistArray = response.getJSONArray("watchlist");
+                        watchlist.clear();
 
                         for (int i = 0; i < watchlistArray.length(); i++) {
                             JSONObject stockJson = watchlistArray.getJSONObject(i);
@@ -505,7 +468,7 @@ private void updateSuggestions(MatrixCursor cursor) {
                             ItemTouchHelper itemTouchHelper1 = new ItemTouchHelper(swipeToDeleteHelper1);
                             itemTouchHelper1.attachToRecyclerView(recyclerView);
 
-                            ItemTouchHelper.Callback callback = new ItemReOrder(stockItemAdapter);
+                            ItemTouchHelper.Callback callback = new ItemReOrder(stockItemAdapter, watchlist);
                             ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
                             itemTouchHelper.attachToRecyclerView(recyclerView);
 
@@ -518,6 +481,8 @@ private void updateSuggestions(MatrixCursor cursor) {
                         e.printStackTrace();
                     }
                     progressBar.setVisibility(View.GONE);
+
+                    textViewDate.setVisibility(View.VISIBLE);
                     portfolioSection.setVisibility(View.VISIBLE);
                     favoriteSection.setVisibility(View.VISIBLE);
                     footer.setVisibility(View.VISIBLE);
@@ -535,12 +500,6 @@ private void updateSuggestions(MatrixCursor cursor) {
 
         VolleySingleton.getInstance(this).addToRequestQueue(request);
 
-
-        // Fetch data from API 1
-        // Handle the response and update UI
-
-        // Hide progress bar when done
-//        progressBar.setVisibility(View.GONE);
     }
 
     @Override
@@ -632,6 +591,7 @@ private void updateSuggestions(MatrixCursor cursor) {
                     try {
                         System.out.println("Inside Try");
                         JSONArray portfolioArray = response.getJSONArray("portfolio");
+                        portfolio.clear();
 
                         for (int i = 0; i < portfolioArray.length(); i++) {
                             JSONObject stockJson = portfolioArray.getJSONObject(i);
@@ -643,13 +603,6 @@ private void updateSuggestions(MatrixCursor cursor) {
                                     stockJson.getDouble("averageCostPerShare"),
                                     0,0,0
                             );
-//                            System.out.println("Portfolio Item Details:");
-//                            System.out.println("Symbol: " + portfolioItem.getSymbol());
-//                            System.out.println("Company: " + portfolioItem.getCompany());
-//                            System.out.println("Quantity: " + portfolioItem.getQuantity());
-//                            System.out.println("Total: " + portfolioItem.getTotal());
-//                            System.out.println("Average Cost Per Share: " + portfolioItem.getAverageCostPerShare());
-                            // Add the portfolioItem to the portfolio list
                             portfolio.add(portfolioItem);
                             fetchQuoteDataFromAPI(portfolioItem.symbol);
                             PortfolioItemUpdate(i);
@@ -677,7 +630,7 @@ private void updateSuggestions(MatrixCursor cursor) {
                             itemTouchHelperPD.attachToRecyclerView(recyclerViewP);
 
                             // Attach item reorder helper
-                            ItemTouchHelper.Callback callback = new ItemReOrder(portfolioItemAdapter);
+                            ItemTouchHelper.Callback callback = new ItemReOrder(portfolioItemAdapter, portfolio);
                             ItemTouchHelper itemTouchHelperPR = new ItemTouchHelper(callback);
                             itemTouchHelperPR.attachToRecyclerView(recyclerViewP);
                         });

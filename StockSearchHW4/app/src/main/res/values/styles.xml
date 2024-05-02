@@ -6,5 +6,9 @@
     <style name="RoundedDialogTheme" parent="Theme.AppCompat.Light.Dialog">
         <item name="android:windowBackground">@drawable/dialog_rounded_background</item>
     </style>
-
+    <style name="ButtonStyle">
+        <item name="android:background">@drawable/rounded_button_white</item> <!-- Apply your custom background -->
+        <item name="android:textColor">@android:color/white</item> <!-- Apply your custom text color -->
+        <!-- Add any other customizations you want for your button -->
+    </style>
 </resources>

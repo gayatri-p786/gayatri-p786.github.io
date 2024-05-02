@@ -3,10 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
 
     android:layout_width="match_parent"
+    android:fillViewport="true"
     android:layout_height="match_parent">
 <RelativeLayout
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
     android:background="@android:color/white">
 
     <!-- Top bar with back button and favorite icon -->
@@ -44,7 +46,6 @@
             android:id="@+id/favoriteButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/star_border"
             android:background="?android:attr/selectableItemBackground"/>
     </LinearLayout>
 
@@ -87,8 +88,11 @@
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
         android:layout_centerInParent="true"
-        android:visibility="gone" />
+        android:visibility="gone"
+        />
 
     <!-- Company Name and Changes row -->
     <LinearLayout
@@ -243,13 +247,13 @@
                 android:orientation="vertical"
                 android:padding="8dp"
                 android:gravity="end|center_vertical">
-                <Button
+                <android.widget.Button
                     android:id="@+id/tradeButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="TRADE"
                     android:textColor="@android:color/white"
-                    android:background="@color/green"
+                    android:background="@drawable/rounded_button_green"
                     android:layout_gravity="end"
                     android:layout_margin="8dp"/>
             </LinearLayout>
