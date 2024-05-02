@@ -231,15 +231,16 @@ public class SearchBarActivity extends AppCompatActivity implements SwipeToDelet
         portfolioSection = findViewById(R.id.portfolioSection);
         searchButton = findViewById(R.id.searchButton);
         LinearLayout textBar = findViewById(R.id.textBar);
-        String currentDate = getCurrentDate();
+        ImageButton arrowButton = findViewById(R.id.backButtonImage);
+//        String currentDate = getCurrentDate();
 
 
         checkMarketStatusAndFetchData(this);
         fetchDataFromApi1();
 
-        textViewDate.setText(currentDate);
-        Space space = findViewById(R.id.space);
-        TextView stocksTitle = findViewById(R.id.stocksTitle);
+//        textViewDate.setText(currentDate);
+//        Space space = findViewById(R.id.space);
+//        TextView stocksTitle = findViewById(R.id.stocksTitle);
 
 
         String[] from = new String[]{"suggestion"};
@@ -260,6 +261,7 @@ public class SearchBarActivity extends AppCompatActivity implements SwipeToDelet
             public void onClick(View v) {
                 // Hide the textBar
                 textBar.setVisibility(View.GONE);
+                arrowButton.setVisibility(View.VISIBLE);
 
                 // Show the SearchView
                 searchAutoCompleteTextView.setVisibility(View.VISIBLE);
@@ -480,8 +482,9 @@ private void updateSuggestions(MatrixCursor cursor) {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+                    String currentDate = getCurrentDate();
                     progressBar.setVisibility(View.GONE);
-
+                    textViewDate.setText(currentDate);
                     textViewDate.setVisibility(View.VISIBLE);
                     portfolioSection.setVisibility(View.VISIBLE);
                     favoriteSection.setVisibility(View.VISIBLE);
@@ -685,7 +688,7 @@ private void updateSuggestions(MatrixCursor cursor) {
 
     private String getCurrentDate() {
         Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
         return dateFormat.format(calendar.getTime());
     }
 }

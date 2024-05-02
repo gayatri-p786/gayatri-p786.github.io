@@ -44,7 +44,7 @@ public class ItemReOrder extends ItemTouchHelper.Callback {
 
         Collections.swap(dataset, fromPosition, toPosition);
 
-//        adapter.notifyDataSetChanged();
+        adapter.notifyDataSetChanged();
 
         // Update the dataset and notify the adapter
         adapter.notifyItemMoved(fromPosition, toPosition);
@@ -67,6 +67,9 @@ public class ItemReOrder extends ItemTouchHelper.Callback {
 //            // Get the dragged item
 //            View draggedView = viewHolder.itemView;
 //
+//            // Calculate the center position of the dragged item
+//            int draggedCenterY = (int) (draggedView.getY() + draggedView.getHeight() / 2);
+//
 //            // Adjust the elevation of other item views when dragged over them
 //            for (int i = 0; i < recyclerView.getChildCount(); i++) {
 //                View targetView = recyclerView.getChildAt(i);
@@ -76,24 +79,27 @@ public class ItemReOrder extends ItemTouchHelper.Callback {
 //                    continue;
 //                }
 //
+//                // Calculate the center position of the target view
+//                int targetCenterY = (int) (targetView.getY() + targetView.getHeight() / 2);
+//
 //                // Determine if the dragged item is over this target view
-//                if (dY > targetView.getTop() && dY < targetView.getBottom()) {
+//                if (draggedCenterY > targetView.getTop() && draggedCenterY < targetView.getBottom()) {
 //                    // Reduce elevation to make the target view appear below the dragged item
 //                    ViewCompat.setElevation(targetView, elevation - 1f);
 //
 //                    // Apply translation animation to move items above and below each other
-//                    if (targetView.getTop() < draggedView.getTop()) {
+//                    if (targetCenterY < draggedCenterY) {
 //                        // Move target view below the dragged item
-//                        targetView.animate().translationYBy(draggedView.getHeight()).setDuration(100).start();
+//                        targetView.animate().translationYBy(draggedView.getHeight()).setDuration(50).start();
 //                    } else {
 //                        // Move target view above the dragged item
-//                        targetView.animate().translationYBy(-draggedView.getHeight()).setDuration(100).start();
+//                        targetView.animate().translationYBy(-draggedView.getHeight()).setDuration(50).start();
 //                    }
 //                }
 //            }
 //        }
 //    }
-//
+
 
     @Override
     public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {

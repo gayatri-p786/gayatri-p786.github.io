@@ -2,14 +2,15 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="2dp">
+    android:layout_marginBottom="3dp"
+    android:elevation="2dp">
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="5dp">
+        android:padding="2dp">
 
 
         <!-- First LinearLayout (First Column) -->
@@ -28,7 +29,7 @@
                 android:textStyle="bold"
                 android:textSize="18sp"
                 android:text="Symbol"
-                android:layout_marginBottom="8dp" />
+                android:layout_marginBottom="4dp" />
 
 
             <!-- Total Shares -->
@@ -59,7 +60,7 @@
                 android:textStyle="bold"
                 android:textSize="18sp"
                 android:text="Price"
-                android:layout_marginBottom="8dp" />
+                android:layout_marginBottom="4dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -97,7 +98,7 @@
                 android:src="@drawable/right_arrow"
                 android:background="@android:color/transparent"
                 android:layout_gravity="end"
-                android:layout_marginBottom="8dp"/>
+                android:layout_marginBottom="2dp"/>
         </LinearLayout>
 
 

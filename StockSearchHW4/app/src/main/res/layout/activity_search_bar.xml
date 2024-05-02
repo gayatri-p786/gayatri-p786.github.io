@@ -5,6 +5,8 @@
 
     <LinearLayout
         android:id="@+id/topSection"
+        android:elevation="10dp"
+        android:background="@color/cardview_light_background"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -40,26 +42,50 @@
         <!-- Icon button -->
         <ImageButton
             android:id="@+id/searchButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:src="@drawable/search_f"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:scaleType="fitCenter"
+            android:background="@color/white"/>
+    </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/searchLayout"
+            android:layout_width="match_parent"
+            android:elevation="10dp"
+            android:background="@color/cardview_light_background"
+            android:layout_height="wrap_content">
+
+            <!-- Arrow Image Button -->
+            <ImageButton
+                android:id="@+id/backButtonImage"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/arrow_back"
+                android:scaleType="fitCenter"
+                android:background="@color/white"
+                android:visibility="gone" />
+
+            <!-- SearchView -->
+            <android.widget.SearchView
+                android:id="@+id/searchView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/backButtonImage"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="10dp"
+                android:focusable="false"
+                android:visibility="gone" />
+
+        </RelativeLayout>
+
+
 
 
     </LinearLayout>
-    <LinearLayout
-        android:id="@+id/searchLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    <android.widget.SearchView
-        android:id="@+id/searchView"
-        android:layout_marginTop="35dp"
-        android:layout_marginBottom="35dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:focusable="false"
-        android:visibility="gone"/>
-
-    </LinearLayout>
-</LinearLayout>
 
     <!-- Current date text view -->
     <TextView
@@ -68,10 +94,11 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/topSection"
         android:layout_marginTop="8dp"
+        android:textStyle="bold"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
-        android:textColor="@android:color/black"
-        android:textSize="16sp" />
+        android:textColor="@color/date_color"
+        android:textSize="20sp" />
 
 
 
@@ -96,9 +123,11 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/darker_gray"
+            android:background="@color/dark_grey"
             android:orientation="horizontal"
             android:paddingLeft="8dp"
+            android:paddingBottom="5dp"
+            android:paddingTop="5dp"
             android:paddingRight="8dp">
 
             <TextView
@@ -124,15 +153,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Net Worth"
-                android:textColor="@android:color/black"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:textColor="@color/date_color"
                 android:layout_weight="1" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Cash Balance"
+                android:textStyle="bold"
                 android:gravity="end"
-                android:textColor="@android:color/black"
+                android:textSize="20sp"
+                android:textColor="@color/date_color"
                 android:layout_weight="1" />
 
         </LinearLayout>
@@ -146,10 +179,12 @@
             <TextView
                 android:id="@+id/money"
                 android:layout_width="0dp"
+                android:textStyle="bold"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Money"
-                android:textColor="@android:color/black" />
+                android:textSize="20sp"
+                android:textColor="@color/date_color" />
 
             <TextView
                 android:id="@+id/balance"
@@ -157,8 +192,10 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="end"
+                android:textStyle="bold"
                 android:text="Balance"
-                android:textColor="@android:color/black" />
+                android:textSize="20sp"
+                android:textColor="@color/date_color" />
 
         </LinearLayout>
     </LinearLayout>
@@ -175,12 +212,14 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/darker_gray"
+        android:background="@color/dark_grey"
         android:layout_below="@id/portfolioRecyclerView"
         android:orientation="horizontal"
         android:id="@+id/favoritesSection"
         android:visibility="gone"
         android:paddingLeft="8dp"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp"
         android:paddingRight="8dp">
 
         <TextView

@@ -2,9 +2,10 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="dark_grey">#333333</color>
+    <color name="dark_grey">#e1e1e1</color>
     <color name="green">#00FF00</color>
     <color name="red">#FF0000</color>
     <color name="blue">#0000FF</color>
+    <color name="date_color">#727272</color>
     <color name="modal_green">#0ca32b</color>
 </resources>
